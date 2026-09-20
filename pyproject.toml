@@ -1,0 +1,36 @@
+[project]
+name = "geo-mini-rag"
+version = "0.1.0"
+description = "Triage a messy E&P document drive, then RAG over what survives with cheap OpenRouter models"
+readme = "README.md"
+authors = [
+    { name = "Bryan Hughes", email = "bryan@purr.io" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "datasketch>=2.0.0",
+    "duckdb>=1.5.5",
+    "fsspec>=2026.7.0",
+    "httpx>=0.28.1",
+    "lasio>=0.32",
+    "pypdfium2>=5.13.0",
+    "python-docx>=1.2.0",
+    "python-dotenv>=1.2.3",
+    "python-magic>=0.4.27",
+    "pyyaml>=6.0.3",
+    "rich>=15.0.0",
+    "typer>=0.27.2",
+]
+
+[project.scripts]
+geo-mini-rag = "geo_mini_rag:main"
+
+[build-system]
+requires = ["uv_build>=0.9.18,<0.10.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+    "ruff>=0.16.8",
+]

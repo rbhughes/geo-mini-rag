@@ -1,0 +1,24 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+.env
+.DS_Store
+.pytest_cache/
+.ruff_cache/
+
+# Documents and everything derived from them stay local
+data/raw/*
+data/manifests/*
+data/ocr/*
+data/index/*
+data/tiny/*
+data/subset/*
+!data/*/.gitkeep
+evals/runs/

@@ -1,0 +1,21 @@
+# The pipeline's settings. One chat model, one embedding model: this project
+# studies appraisal and ingest for E&P documents, not model selection.
+# Changing the embedding model or the chunking requires `ingest --rebuild`.
+embed:
+  model: openai/text-embedding-3-small   # OpenRouter; `geo-mini-rag models --embeddings` lists the alternatives
+  batch_size: 100                        # chunks per embeddings request
+
+answer:
+  model: inclusionai/ling-3.0-flash      # cheap, 262k context; `-m` overrides it for one question
+  max_tokens: 800
+
+chunk:
+  chars: 1200
+  overlap: 200
+
+extract:
+  max_pdf_pages: 200          # longer PDFs are truncated, and the row says so
+  max_text_bytes: 5000000     # plain text and HTML read cap
+
+retrieve:
+  top_k: 6

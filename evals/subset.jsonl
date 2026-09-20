@@ -1,0 +1,33 @@
+# Question set for data/subset. Every expectation was read out of the file itself,
+# not out of a retrieval result. `expect_path` is a substring of the document path;
+# `expect_text` is a string that must appear in the retrieved chunk.
+#
+# Groups: documents with a text layer, documents recovered by OCR, LAS headers,
+# project/config text. The LAS questions ask for header facts that are buried in
+# megabytes of curve data, so they are the ones that move when LAS parsing changes.
+
+{"q": "Which company developed the airborne micro-gravity and electric field sensing technology tested at Teapot Dome?", "expect_path": "TPDFinal rpt", "expect_text": "Electro-Seise", "note": "DOE/RMOTC final report, text layer present"}
+{"q": "What is the CRADA number for the RMOTC airborne survey test?", "expect_path": "TPDFinal rpt", "expect_text": "2001-011", "note": "identifier buried in the report's cover page"}
+{"q": "When was the airborne survey over the Teapot Dome field flown?", "expect_path": "TPDFinal rpt", "expect_text": "Nov/Dec 2000"}
+
+{"q": "Who is the lessee on Wyoming state oil and gas lease parcel 770?", "expect_path": "WY_lease_00-00537", "expect_text": "YATES PETROLEUM", "note": "scanned lease; only answerable after text recovery"}
+{"q": "Under the Wyoming state lease, what happens if the lessor owns less than the entire fee simple estate?", "expect_path": "WY_lease_00-00537", "expect_text": "less than the", "note": "Section 3 proportional reduction clause"}
+{"q": "Which federal act is cited as the authority for approving the East Teapot unit agreement?", "expect_path": "EAST_TEAPOT_MKM", "expect_text": "February 25, 1920", "note": "Mineral Leasing Act, scanned unit agreement"}
+{"q": "In which county and state is the East Teapot Amax Shannon Sand Unit Area?", "expect_path": "EAST_TEAPOT_MKM", "expect_text": "NATRONA"}
+{"q": "What formation and age were logged in the 48X-28 core description?", "expect_path": "48X-28", "expect_text": "PERMIAN", "note": "handwritten core sheet; OCR quality is poor, a hard case on purpose"}
+
+{"q": "What is the API number of the NPR #3 #13SX11-11 well?", "expect_path": "49025102940000", "expect_text": "490251029400", "note": "LAS header fact"}
+{"q": "Which service company logged the well 54 S 34 #54-34 in August 1978?", "expect_path": "us49025107010000", "expect_text": "BIRDWELL", "note": "LAS header fact"}
+{"q": "Which wells were logged by Schlumberger in the Teapot field?", "expect_path": "49025102940000", "expect_text": "Schlumberger", "note": "LAS header fact, cross-file question"}
+{"q": "What depth interval does the log for FLUOR 41 X #1-2 cover?", "expect_path": "49025226450000", "expect_text": "985", "note": "LAS header fact: 1.5 to 985.0 ft"}
+{"q": "Which well log records a gamma ray curve from the density log?", "expect_path": "49025102940000", "expect_text": "GAMMA RAY", "note": "LAS curve section"}
+
+{"q": "What coordinate system and datum does the Powder project database use?", "expect_path": "Powder/ReadmeDataInfo", "expect_text": "NAD 1927"}
+{"q": "What are the northern and southern extents of the Moosehead project?", "expect_path": "Moosehead/ReadmeDataInfo", "expect_text": "58.1"}
+{"q": "Which seismic datum was the Sooner project time-depth curve built from?", "expect_path": "time_depth", "expect_text": "4800 feet"}
+{"q": "Which Kingdom project file must never be deleted?", "expect_path": "KINGDOM Project file types", "expect_text": "DO NOT DELETE", "note": ".tks project control file"}
+{"q": "Which Kingdom files are regenerated automatically when a project starts?", "expect_path": "KINGDOM Project file types", "expect_text": "regenerated"}
+{"q": "Who is the licensor of the PETRA software and where are they located?", "expect_path": "PETRA Perpetual Terms", "expect_text": "IHS Global"}
+{"q": "How much notice is required to cancel PETRA maintenance before the term expires?", "expect_path": "PETRA Perpetual Terms", "expect_text": "thirty (30) days"}
+{"q": "Which ARIES software version does the 2012 update readme describe?", "expect_path": "aries_update", "expect_text": "5000.1.10.1"}
+{"q": "On which Windows platforms does the ARIES update install?", "expect_path": "aries_update", "expect_text": "Windows"}

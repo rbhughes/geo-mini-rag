@@ -1,0 +1,40 @@
+# Appraisal policy. The manifest id is a hash of this file plus the inventory,
+# so changing policy produces a new, comparable manifest instead of a rebuild.
+version: 1
+
+inventory:
+  magic_bytes: 2048            # bytes read per file for type detection
+  junk_names: [".DS_Store", "Thumbs.db", "desktop.ini"]
+  junk_prefixes: ["~$", "._"]
+
+# E&P formats that are data, not documents. Excluded with a stated reason.
+not_documents:
+  extensions: [".sgy", ".segy", ".dlis", ".lis", ".shp", ".shx", ".dbf", ".dwg", ".dxf"]
+  # Petra / GeoGraphix project folders. Left empty until the real on-disk
+  # signatures are confirmed from actual projects or vendor documentation.
+  project_dirs: []
+
+# Multi-file formats: one primary file plus sidecars that are not documents on
+# their own. Pass 0 records each sidecar's primary in `part_of`.
+# Only the ESRI shapefile family is listed; vendor project bundles go here once
+# their real sidecar extensions are confirmed.
+bundles:
+  ".shp": [".shx", ".dbf", ".prj", ".sbn", ".sbx", ".cpg", ".qix", ".aih", ".ain", ".atx", ".shp.xml"]
+
+# Structured text that wants its own summarizer, not a chunker
+special_classes:
+  las: [".las"]
+
+dedupe:
+  prefilter_bytes: 1048576     # hash size + first/last 1MB before a full sha256
+  minhash_permutations: 128
+  near_dup_threshold: 0.85
+  boilerplate_doc_fraction: 0.30
+
+probe:
+  pdf_pages: 5
+  docx_bytes: 20000
+  scanned_chars_per_page: 50   # below this a PDF is treated as having no text layer
+
+version_family:
+  keeper: latest_mtime         # latest_mtime | most_text | shallowest_path
