@@ -18,7 +18,6 @@ rather than an in-place rebuild.
 from __future__ import annotations
 
 import hashlib
-import json
 import time
 from collections.abc import Callable
 from dataclasses import asdict, dataclass
@@ -29,7 +28,8 @@ import fsspec
 import yaml
 
 from geo_mini_rag import settings
-from geo_mini_rag.rag.index import DB_PATH, _sql, connect
+from geo_mini_rag.appraisal import manifest
+from geo_mini_rag.rag.index import DB_PATH, connect
 from geo_mini_rag.rag.trace import OFF, Tracer
 
 PASS = 0
@@ -234,46 +234,10 @@ def manifest_id(policy_text: str, rows: list[Row]) -> str:
     return hashlib.sha256(policy_text.encode() + inv.hexdigest().encode()).hexdigest()[:12]
 
 
-def ensure_tables(con: duckdb.DuckDBPyConnection, trace: Tracer = OFF) -> None:
-    _sql(con, trace, """
-        CREATE TABLE IF NOT EXISTS appraisal (
-            manifest_id VARCHAR, pass INTEGER, path VARCHAR, part_of VARCHAR,
-            size BIGINT, mtime DOUBLE,
-            ext VARCHAR, mime VARCHAR, description VARCHAR, ext_mismatch BOOLEAN,
-            verdict VARCHAR, reason VARCHAR
-        )""")
-    _sql(con, trace, """
-        CREATE TABLE IF NOT EXISTS appraisal_runs (
-            manifest_id VARCHAR, pass INTEGER, root VARCHAR, files BIGINT,
-            excluded BIGINT, pending BIGINT, seconds DOUBLE, ran_at TIMESTAMP
-        )""")
-
-
 def write(con: duckdb.DuckDBPyConnection, mid: str, root: str, rows: list[Row],
           seconds: float, trace: Tracer = OFF) -> Path:
     """Write this pass to DuckDB and to its JSONL manifest."""
-    ensure_tables(con, trace)
-    _sql(con, trace, "BEGIN")
-    _sql(con, trace, "DELETE FROM appraisal WHERE manifest_id = ? AND pass = ?", [mid, PASS])
-    _sql(con, trace, "DELETE FROM appraisal_runs WHERE manifest_id = ? AND pass = ?", [mid, PASS])
-    con.executemany(
-        "INSERT INTO appraisal VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-        [(mid, PASS, r.path, r.part_of, r.size, r.mtime, r.ext, r.mime, r.description,
-          r.ext_mismatch, r.verdict, r.reason) for r in rows],
-    )
-    excluded = sum(1 for r in rows if r.verdict == "EXCLUDE")
-    _sql(con, trace,
-         "INSERT INTO appraisal_runs VALUES (?, ?, ?, ?, ?, ?, ?, now())",
-         [mid, PASS, root, len(rows), excluded, len(rows) - excluded, seconds])
-    _sql(con, trace, "COMMIT")
-
-    settings.MANIFEST_DIR.mkdir(parents=True, exist_ok=True)
-    manifest = settings.MANIFEST_DIR / f"pass{PASS}_{mid}.jsonl"
-    with manifest.open("w") as f:
-        for r in rows:
-            f.write(json.dumps({"manifest_id": mid, "pass": PASS, **asdict(r)}) + "\n")
-    trace("manifest", f"{len(rows)} rows -> {manifest}")
-    return manifest
+    return manifest.write(con, mid, PASS, root, [asdict(r) for r in rows], seconds, trace)
 
 
 def run(

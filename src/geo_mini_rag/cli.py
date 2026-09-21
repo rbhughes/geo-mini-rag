@@ -77,6 +77,7 @@ def ingest(
     rebuild: bool = typer.Option(False, help="Drop the index and start over."),
     limit: int = typer.Option(None, help="Stop after this many files (for quick trials)."),
     embed_model: str = typer.Option(None, "--embed-model", "-e", help="OpenRouter embedding model; defaults to config/rag.yaml."),
+    manifest_id: str = typer.Option(None, "--manifest", help="Ingest only what an appraisal manifest admits: an id, or 'latest'. Without it the whole drive is walked."),
     db: Path = DB_OPTION,
     verbose: bool = typer.Option(False, "--verbose", "-v", help="Print one line per file."),
     trace: bool = typer.Option(False, "--trace", help="Print every step: sniffing, extraction, chunks, embedding calls, SQL."),
@@ -94,6 +95,25 @@ def ingest(
     db = _db(db)
     counts: Counter[str] = Counter()
     spent = 0.0
+    root = root or settings.docs_root()
+    paths = None
+    if manifest_id:
+        from geo_mini_rag.appraisal import manifest as manifest_mod
+        from geo_mini_rag.rag import index as index_mod
+
+        with index_mod.connect(db) as con:
+            mid, pass_n = (
+                manifest_mod.latest(con, root) if manifest_id == "latest" else (manifest_id, None)
+            )
+        if pass_n is None:  # explicit id: use the highest pass written for it
+            pass_n = max(
+                n for n in range(10) if manifest_mod.path_for(n, mid).exists()
+            )
+        admitted = manifest_mod.admitted(pass_n, mid)
+        paths = [settings.ROOT / p for p in admitted]
+        console.print(
+            f"manifest [bold]{mid}[/] pass {pass_n}: {len(paths)} files admitted"
+        )
     # A live progress bar fights with line-by-line trace output, so tracing turns it off.
     with Progress(console=console, transient=True, disable=trace) as progress:
         task = progress.add_task("ingesting", total=None)
@@ -115,8 +135,12 @@ def ingest(
                 console.print(Text(f"{e.status:>9}  ", style="bold") + Text(f"{e.path}  {e.detail}"))
 
         tracer = Tracer(emit, trace_chars) if trace else OFF
-        index.ingest(root or settings.docs_root(), db=db, rebuild=rebuild, limit=limit, embed_model=embed_model,
-                     on_event=on_event, trace=tracer)
+        index.ingest(root, db=db, rebuild=rebuild, limit=limit, embed_model=embed_model,
+                     paths=paths, on_event=on_event, trace=tracer)
+    if manifest_id:
+        with index.connect(db) as con:
+            con.execute("INSERT OR REPLACE INTO meta VALUES ('manifest_id', ?)", [mid])
+            con.execute("INSERT OR REPLACE INTO meta VALUES ('manifest_pass', ?)", [str(pass_n)])
     console.print(f"{dict(counts)}  embedding cost this run: ${spent:.4f}")
     stats(db)
 
@@ -204,43 +228,89 @@ def stats(db: Path = DB_OPTION) -> None:
 def appraise(
     root: str = typer.Option(None, help="Folder or fsspec URL to inventory; defaults to GEO_DOCS_ROOT."),
     db: Path = DB_OPTION,
-    limit: int = typer.Option(None, help="Stop after this many files."),
+    limit: int = typer.Option(None, help="Stop after this many files (pass 0 only)."),
+    stop_after: int = typer.Option(None, "--stop-after", help="Last pass to run; default is all implemented."),
     verbose: bool = typer.Option(False, "--verbose", "-v", help="Print one line per file."),
-    trace: bool = typer.Option(False, "--trace", help="Print the walk, magic verdicts, SQL and manifest write."),
+    trace: bool = typer.Option(False, "--trace", help="Print the walk, magic verdicts, hashing, SQL and manifest writes."),
     trace_chars: int = typer.Option(160, "--trace-chars", help="Text sample length in trace output; 0 for full."),
 ) -> None:
-    """Pass 0: inventory the drive, drop obvious junk, write the manifest. Free: no API calls."""
+    """Appraise the drive: pass 0 inventory, pass 1 exact duplicates. Free: no API calls."""
     from rich.progress import Progress
     from rich.text import Text
 
-    from geo_mini_rag.appraisal import pass0
+    from geo_mini_rag.appraisal import pass0, pass1, pass2
     from geo_mini_rag.rag.trace import OFF, Tracer
 
     db = _db(db)
+    root = root or settings.docs_root()
+    last = stop_after if stop_after is not None else 2
+
+    def emit(stage: str, message: str) -> None:
+        line = Text(f"  {stage:>8}  ", style=STAGE_STYLES.get(stage, "cyan"))
+        line.append(message)
+        console.print(line, soft_wrap=True)
+
+    tracer = Tracer(emit, trace_chars) if trace else OFF
+
     with Progress(console=console, transient=True, disable=trace) as progress:
-        task = progress.add_task("inventory", total=None)
+        task = progress.add_task("pass 0", total=None)
 
-        def emit(stage: str, message: str) -> None:
-            line = Text(f"  {stage:>8}  ", style=STAGE_STYLES.get(stage, "cyan"))
-            line.append(message)
-            console.print(line, soft_wrap=True)
-
-        def on_row(r: pass0.Row) -> None:
+        def on_row(r) -> None:
             progress.update(task, advance=1)
             if verbose or trace:
-                console.print(Text(f"{r.verdict:>8}  ", style="bold")
-                              + Text(f"{r.path}  {r.mime}  {r.reason or ''}"))
+                path = r.path if hasattr(r, "path") else r["path"]
+                verdict = r.verdict if hasattr(r, "verdict") else r["verdict"]
+                detail = (r.reason if hasattr(r, "reason") else r.get("reason")) or ""
+                console.print(Text(f"{verdict:>8}  ", style="bold") + Text(f"{path}  {detail}"))
 
-        tracer = Tracer(emit, trace_chars) if trace else OFF
-        result = pass0.run(root or settings.docs_root(), db=db, limit=limit, on_row=on_row, trace=tracer)
+        p0 = pass0.run(root, db=db, limit=limit, on_row=on_row, trace=tracer)
+    _pass_table(0, "inventory", p0.counts(), p0.seconds, p0.manifest_path)
+    console.print(f"manifest_id [bold]{p0.manifest_id}[/]")
+    if last < 1:
+        return
 
-    table = Table("outcome", "files", title=f"PASS 0 — inventory  ({result.seconds:.1f}s)")
-    for key, n in sorted(result.counts().items(), key=lambda kv: -kv[1]):
-        table.add_row(key, str(n))
+    with Progress(console=console, transient=True, disable=trace) as progress:
+        task = progress.add_task("pass 1", total=None)
+
+        def on_dup(row: dict) -> None:
+            progress.update(task, advance=1)
+            if verbose or trace:
+                console.print(Text("EXCLUDE  ", style="bold")
+                              + Text(f"{row['path']}  duplicate of {row['dup_of']}"))
+
+        p1 = pass1.run(p0.manifest_id, db=db, root=root, on_row=on_dup, trace=tracer)
+    _pass_table(1, "exact duplicates", p1.counts(), p1.seconds, p1.manifest_path)
+    console.print(
+        f"[dim]hashed {p1.hashed} files ({p1.bytes_read / 1e6:.0f} MB read); "
+        f"{p1.duplicates} duplicates holding {p1.bytes_duplicated / 1e6:.0f} MB[/]"
+    )
+    if last < 2:
+        return
+
+    with Progress(console=console, transient=True, disable=trace) as progress:
+        task = progress.add_task("pass 2", total=None)
+
+        def on_family(family_id: str, members: list[dict]) -> None:
+            progress.update(task, advance=1)
+            if verbose or trace:
+                console.print(Text(f"{family_id}  ", style="bold")
+                              + Text(f"{len(members)} versions: "
+                                     + ", ".join(m["path"].rsplit("/", 1)[-1] for m in members[:4])))
+
+        p2 = pass2.run(p0.manifest_id, db=db, root=root, on_family=on_family, trace=tracer)
+    _pass_table(2, "version families", p2.counts(), p2.seconds, p2.manifest_path)
+    console.print(f"[dim]{p2.families} families covering {p2.grouped} files; "
+                  f"largest: {', '.join(f'{name} x{n}' for name, n in p2.largest[:4]) or 'none'}[/]")
+    console.print(f"[dim]SELECT * FROM appraisal WHERE manifest_id = '{p0.manifest_id}' "
+                  f"AND pass = {last} AND family_id IS NOT NULL ORDER BY family_id;[/]")
+
+
+def _pass_table(n: int, name: str, counts: dict[str, int], seconds: float, manifest_path) -> None:
+    table = Table("outcome", "files", title=f"PASS {n} — {name}  ({seconds:.1f}s)")
+    for key, count in sorted(counts.items(), key=lambda kv: -kv[1]):
+        table.add_row(key, str(count))
     console.print(table)
-    console.print(f"manifest_id [bold]{result.manifest_id}[/]  ->  {result.manifest_path}")
-    console.print(f"[dim]appraisal table in {db}: SELECT * FROM appraisal WHERE manifest_id = "
-                  f"'{result.manifest_id}'[/]")
+    console.print(f"[dim]{manifest_path}[/]")
 
 
 @app.command("eval")

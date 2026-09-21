@@ -190,10 +190,11 @@ def ingest(
     rebuild: bool = False,
     limit: int | None = None,
     embed_model: str | None = None,
+    paths: list[Path] | None = None,
     on_event: Callable[[IngestEvent], None] = lambda e: None,
     trace: Tracer = OFF,
 ) -> None:
-    if "://" in root:
+    if paths is None and "://" in root:
         raise UserError(
             "ingest reads local paths for now; fsspec URLs come with appraisal"
         )
@@ -209,9 +210,16 @@ def ingest(
         f"max_pdf_pages={cfg['extract']['max_pdf_pages']} max_text_bytes={cfg['extract']['max_text_bytes']:,}",
     )
 
+    source = iter(paths) if paths is not None else _walk(root_path)
+    if paths is not None:
+        trace("walk", f"{len(paths)} files from the manifest; not walking {root_path}")
+
     with connect(db) as con:
         _init(con, model, rebuild, trace)
-        for n, path in enumerate(_walk(root_path)):
+        for n, path in enumerate(source):
+            if not path.exists():
+                on_event(IngestEvent(str(path), "error", "listed in the manifest but missing"))
+                continue
             if limit is not None and n >= limit:
                 trace("walk", f"--limit {limit} reached; stopping")
                 break
