@@ -21,7 +21,7 @@ from geo_mini_rag.rag.trace import OFF, Tracer
 # stays null until a later pass has something to say.
 COLUMNS = (
     "path", "part_of", "size", "mtime", "ext", "mime", "description",
-    "ext_mismatch", "verdict", "reason", "sha256", "dup_of", "family_id", "family_size",
+    "ext_mismatch", "verdict", "reason", "sha256", "dup_of", "family_id", "family_size", "text_class", "signals",
 )
 
 
@@ -36,11 +36,12 @@ def ensure_tables(con: duckdb.DuckDBPyConnection, trace: Tracer = OFF) -> None:
             size BIGINT, mtime DOUBLE,
             ext VARCHAR, mime VARCHAR, description VARCHAR, ext_mismatch BOOLEAN,
             verdict VARCHAR, reason VARCHAR, sha256 VARCHAR, dup_of VARCHAR,
-            family_id VARCHAR, family_size INTEGER
+            family_id VARCHAR, family_size INTEGER, text_class VARCHAR, signals VARCHAR
         )""")
     # indexes written before a pass added its columns
     for column, kind in (("sha256", "VARCHAR"), ("dup_of", "VARCHAR"), ("part_of", "VARCHAR"),
-                         ("family_id", "VARCHAR"), ("family_size", "INTEGER")):
+                         ("family_id", "VARCHAR"), ("family_size", "INTEGER"),
+                         ("text_class", "VARCHAR"), ("signals", "VARCHAR")):
         _sql(con, trace, f"ALTER TABLE appraisal ADD COLUMN IF NOT EXISTS {column} {kind}")
     _sql(con, trace, """
         CREATE TABLE IF NOT EXISTS appraisal_runs (

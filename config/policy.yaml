@@ -9,7 +9,7 @@ inventory:
 
 # E&P formats that are data, not documents. Excluded with a stated reason.
 not_documents:
-  extensions: [".sgy", ".segy", ".dlis", ".lis", ".shp", ".shx", ".dbf", ".dwg", ".dxf"]
+  extensions: [".sgy", ".segy", ".dlis", ".lis", ".dwg", ".dxf"]
   # Petra / GeoGraphix project folders. Left empty until the real on-disk
   # signatures are confirmed from actual projects or vendor documentation.
   project_dirs: []
@@ -19,39 +19,17 @@ not_documents:
 # Only the ESRI shapefile family is listed; vendor project bundles go here once
 # their real sidecar extensions are confirmed.
 bundles:
-  ".shp": [".shx", ".dbf", ".prj", ".sbn", ".sbx", ".cpg", ".qix", ".aih", ".ain", ".atx", ".shp.xml"]
+  exclude_sidecars: true   # a sidecar belongs to its primary; it is not a document
+  formats:
+    ".shp": [".shx", ".dbf", ".prj", ".sbn", ".sbx", ".cpg", ".qix", ".aih", ".ain", ".atx", ".shp.xml"]
 
 # Structured text that wants its own summarizer, not a chunker
 special_classes:
   las: [".las"]
+  # The primary of a bundle: its handler reads the sidecars off disk, so the
+  # .prj, .dbf and .shp.xml never stand alone as documents.
+  shapefile: [".shp"]
 
 dedupe:
   prefilter_bytes: 1048576     # hash size + first/last 1MB before a full sha256
-  minhash_permutations: 128
-  near_dup_threshold: 0.85
-  boilerplate_doc_fraction: 0.30
 
-probe:
-  pdf_pages: 5
-  docx_bytes: 20000
-  scanned_chars_per_page: 50   # below this a PDF is treated as having no text layer
-
-version_family:
-  # Deliberately weak. Filename-based versioning is rare on real E&P drives:
-  # this one has 4,320 live files and only two genuine cases, both literal
-  # "copy of" duplicates, while looser patterns produced false families out of
-  # API numbers and map tiles. Content-based near-duplicate detection (pass 4)
-  # is the trustworthy way to find versions; this pass only tags the cases that
-  # are unambiguous from the name alone, and never excludes anything.
-  keeper: latest_mtime         # latest_mtime | most_text | shallowest_path (applied at pass 5)
-  scope: directory             # directory | tree — how far apart two versions may sit
-  match_extension: true        # report.doc and report.pdf are different families
-  # Only explicit copy markers. No v2/rev3/final and no date stripping: a
-  # timestamp in an E&P filename is usually part of the identity of the file
-  # (a log run, a survey date), not a version of its neighbour.
-  strip_patterns:
-    - '[ _-]*\((?:copy *)?\d+\)$'             # report (1), report (copy 2)
-    - '[ _-]*-? *copy(?: *\d+)?$'               # report copy, report - copy 2
-    # The prefix needs "of" or a number after it, or a well named
-    # "Copy Creek 1-2H" loses its first word.
-    - '^copy[ _-]*(?:of[ _-]+|\d+[ _-]+)'       # copy of report, copy_of_report, copy 2 report

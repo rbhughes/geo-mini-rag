@@ -132,7 +132,9 @@ def _bundle_key(name: str, sidecars: set[str]) -> tuple[str, str] | None:
 
 def _link_bundles(rows: list[Row], policy: dict, trace: Tracer = OFF) -> None:
     """Point each sidecar at its primary: same directory, same stem, primary present."""
-    bundles = {k.lower(): [s.lower() for s in v] for k, v in (policy.get("bundles") or {}).items()}
+    config = policy.get("bundles") or {}
+    bundles = {k.lower(): [s.lower() for s in v] for k, v in (config.get("formats") or {}).items()}
+    exclude = config.get("exclude_sidecars", False)
     if not bundles:
         return
     sidecar_to_primary = {s: primary for primary, sides in bundles.items() for s in sides}
@@ -151,7 +153,9 @@ def _link_bundles(rows: list[Row], policy: dict, trace: Tracer = OFF) -> None:
         primary = primaries.get((directory, stem.lower()))
         if primary and primary != row.path:
             row.part_of = primary
-            if not row.reason:
+            if exclude and row.verdict == "PENDING":
+                row.verdict = "EXCLUDE"
+            if not row.reason or row.verdict == "EXCLUDE":
                 row.reason = f"bundle_sidecar: {sidecar_to_primary[sidecar]}"
             linked += 1
     trace("bundle", f"{linked} sidecars linked to {len(primaries)} primaries")

@@ -30,13 +30,29 @@ def test_drops_junk_and_empty_files(tmp_path):
 def test_excludes_non_document_formats(tmp_path):
     rows = build(tmp_path, {
         "survey.sgy": b"\x00" * 4000,
-        "wells.shp": b"\x00\x00\x27\x0a" + b"\x00" * 200,
+        "model.dwg": b"AC1015" + b"\x00" * 200,
         "notes.txt": b"plain text",
     })
     assert rows["survey.sgy"].verdict == "EXCLUDE"
     assert "not_a_document" in rows["survey.sgy"].reason
-    assert rows["wells.shp"].verdict == "EXCLUDE"
+    assert rows["model.dwg"].verdict == "EXCLUDE"
     assert rows["notes.txt"].verdict == "PENDING"
+
+
+def test_shapefile_primary_is_a_special_class_and_sidecars_are_excluded(tmp_path):
+    rows = build(tmp_path, {
+        "layers/leases.shp": b"\x00\x00\x27\x0a" + b"\x00" * 200,
+        "layers/leases.dbf": b"\x03" + b"\x00" * 200,
+        "layers/leases.prj": b'PROJCS["NAD_1927_StatePlane"]',
+        "layers/leases.shp.xml": b"<metadata><abstract>lease polygons</abstract></metadata>",
+    })
+    primary = rows["leases.shp"]
+    assert primary.verdict == "PENDING"
+    assert "special_class" in primary.reason, "the handler decides what a shapefile means"
+    for sidecar in ("leases.dbf", "leases.prj", "leases.shp.xml"):
+        assert rows[sidecar].verdict == "EXCLUDE", sidecar
+        assert rows[sidecar].reason.startswith("bundle_sidecar"), sidecar
+        assert rows[sidecar].part_of.endswith("leases.shp")
 
 
 def test_las_is_flagged_as_its_own_class_not_excluded(tmp_path):

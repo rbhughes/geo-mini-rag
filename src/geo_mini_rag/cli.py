@@ -145,61 +145,7 @@ def ingest(
     stats(db)
 
 
-@app.command()
-def ocr(
-    db: Path = DB_OPTION,
-    limit: int = typer.Option(None, help="Stop after this many documents."),
-    force: bool = typer.Option(False, help="Re-run OCR even where a copy already exists."),
-    language: str = typer.Option("eng", help="Tesseract language(s), e.g. eng or eng+spa."),
-    verbose: bool = typer.Option(False, "--verbose", "-v", help="Print one line per document."),
-    trace: bool = typer.Option(False, "--trace", help="Print the ocrmypdf command, extraction, chunks and SQL."),
-    trace_chars: int = typer.Option(160, "--trace-chars", help="Text sample length in trace output; 0 for full."),
-) -> None:
-    """Text recovery: OCR the held PDFs (indexed with no text layer) and index what they yield. Paid."""
-    from collections import Counter
-
-    from rich.progress import Progress
-    from rich.text import Text
-
-    from geo_mini_rag.rag import ocr as ocr_mod
-    from geo_mini_rag.rag.trace import OFF, Tracer
-
-    db = _db(db)
-    counts: Counter[str] = Counter()
-    spent = 0.0
-    seconds = 0.0
-    with Progress(console=console, transient=True, disable=trace) as progress:
-        task = progress.add_task("ocr", total=None)
-
-        def emit(stage: str, message: str) -> None:
-            if stage == "file":
-                console.rule(Text(message, style="bold"), align="left")
-                return
-            line = Text(f"  {stage:>7}  ", style=STAGE_STYLES.get(stage, "cyan"))
-            line.append(message)
-            console.print(line, soft_wrap=True)
-
-        def on_event(e: ocr_mod.OcrEvent) -> None:
-            nonlocal spent, seconds
-            counts[e.status] += 1
-            spent += e.cost
-            seconds += e.seconds
-            progress.update(task, advance=1, description=f"{dict(counts)} ${spent:.4f}")
-            if trace or verbose or e.status in ("failed", "empty"):
-                console.print(
-                    Text(f"{e.status:>9}  ", style="bold")
-                    + Text(f"{e.path}  {e.detail}  [{e.seconds:.1f}s]")
-                )
-
-        tracer = Tracer(emit, trace_chars) if trace else OFF
-        ocr_mod.run(db=db, limit=limit, force=force, language=language, on_event=on_event, trace=tracer)
-    console.print(
-        f"{dict(counts)}  OCR time: {seconds / 60:.1f} min  embedding cost this run: ${spent:.4f}"
-    )
-    stats(db)
-
-
-STAGE_STYLES = {"sql": "magenta", "embed": "green", "chunk": "yellow", "skip": "red", "error": "bold red", "ocr": "blue"}
+STAGE_STYLES = {"sql": "magenta", "embed": "green", "chunk": "yellow", "skip": "red", "error": "bold red", "ocr": "blue", "partition": "blue", "handler": "blue"}
 
 
 @app.command()
@@ -234,16 +180,16 @@ def appraise(
     trace: bool = typer.Option(False, "--trace", help="Print the walk, magic verdicts, hashing, SQL and manifest writes."),
     trace_chars: int = typer.Option(160, "--trace-chars", help="Text sample length in trace output; 0 for full."),
 ) -> None:
-    """Appraise the drive: pass 0 inventory, pass 1 exact duplicates. Free: no API calls."""
+    """Appraise the drive: inventory, then exact duplicates. Free: no API calls."""
     from rich.progress import Progress
     from rich.text import Text
 
-    from geo_mini_rag.appraisal import pass0, pass1, pass2
+    from geo_mini_rag.appraisal import pass0, pass1
     from geo_mini_rag.rag.trace import OFF, Tracer
 
     db = _db(db)
     root = root or settings.docs_root()
-    last = stop_after if stop_after is not None else 2
+    last = stop_after if stop_after is not None else 1
 
     def emit(stage: str, message: str) -> None:
         line = Text(f"  {stage:>8}  ", style=STAGE_STYLES.get(stage, "cyan"))
@@ -284,26 +230,6 @@ def appraise(
         f"[dim]hashed {p1.hashed} files ({p1.bytes_read / 1e6:.0f} MB read); "
         f"{p1.duplicates} duplicates holding {p1.bytes_duplicated / 1e6:.0f} MB[/]"
     )
-    if last < 2:
-        return
-
-    with Progress(console=console, transient=True, disable=trace) as progress:
-        task = progress.add_task("pass 2", total=None)
-
-        def on_family(family_id: str, members: list[dict]) -> None:
-            progress.update(task, advance=1)
-            if verbose or trace:
-                console.print(Text(f"{family_id}  ", style="bold")
-                              + Text(f"{len(members)} versions: "
-                                     + ", ".join(m["path"].rsplit("/", 1)[-1] for m in members[:4])))
-
-        p2 = pass2.run(p0.manifest_id, db=db, root=root, on_family=on_family, trace=tracer)
-    _pass_table(2, "version families", p2.counts(), p2.seconds, p2.manifest_path)
-    console.print(f"[dim]{p2.families} families covering {p2.grouped} files; "
-                  f"largest: {', '.join(f'{name} x{n}' for name, n in p2.largest[:4]) or 'none'}[/]")
-    console.print(f"[dim]SELECT * FROM appraisal WHERE manifest_id = '{p0.manifest_id}' "
-                  f"AND pass = {last} AND family_id IS NOT NULL ORDER BY family_id;[/]")
-
 
 def _pass_table(n: int, name: str, counts: dict[str, int], seconds: float, manifest_path) -> None:
     table = Table("outcome", "files", title=f"PASS {n} — {name}  ({seconds:.1f}s)")

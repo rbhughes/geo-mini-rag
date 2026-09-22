@@ -1,24 +1,39 @@
 import pytest
 
 from geo_mini_rag.rag.answer import build_messages
-from geo_mini_rag.rag.chunk import chunk_segments
+from geo_mini_rag.rag.chunk import chunks_from
 from geo_mini_rag.rag.extract import Skip, extract, sniff
 from geo_mini_rag.rag.index import Hit
 
 
-def test_chunks_overlap_and_track_pages():
+def test_oversized_elements_split_with_overlap_and_keep_pages():
     segs = [(1, "alpha " * 300), (2, "beta " * 300)]
-    chunks = chunk_segments(segs, chars=500, overlap=100)
+    chunks = chunks_from(segs, max_characters=500, overlap=100)
     assert all(len(c.text) <= 500 for c in chunks)
     assert chunks[0].page == 1
     assert chunks[-1].page == 2
     assert [c.ord for c in chunks] == list(range(len(chunks)))
-    # consecutive chunks share text
-    assert chunks[0].text[-50:].split()[-1] in chunks[1].text
+    assert chunks[0].text[-50:].split()[-1] in chunks[1].text, "split pieces overlap"
+
+
+def test_paragraphs_are_combined_not_cut():
+    paragraphs = "\n\n".join(f"Paragraph {n} about the well and the completion report." for n in range(6))
+    chunks = chunks_from([(None, paragraphs)], max_characters=200, overlap=50)
+    assert len(chunks) > 1
+    for chunk in chunks:
+        for line in chunk.text.split("\n\n"):
+            assert line.startswith("Paragraph"), "elements are kept whole"
+            assert line.endswith("report."), "elements are kept whole"
+
+
+def test_page_breaks_are_not_crossed():
+    chunks = chunks_from([(1, "short one"), (2, "short two")], max_characters=1000, overlap=0)
+    assert len(chunks) == 2, "two pages, two chunks, even though both would fit in one"
+    assert [c.page for c in chunks] == [1, 2]
 
 
 def test_chunking_empty_text_yields_nothing():
-    assert chunk_segments([(1, "   \n\n "), (2, "")], chars=500, overlap=100) == []
+    assert chunks_from([(1, "   \n\n "), (2, "")], max_characters=500, overlap=100) == []
 
 
 def test_sniff_ignores_extension(tmp_path):
@@ -66,3 +81,24 @@ def test_missing_index_is_a_user_error(tmp_path):
 
     with pytest.raises(UserError, match="no index at"):
         connect(tmp_path / "absent.duckdb", read_only=True)
+
+
+def test_needs_ocr_only_for_pdfs_without_a_text_layer():
+    from geo_mini_rag.rag.extract import Extracted
+    from geo_mini_rag.rag.parse import needs_ocr
+
+    cfg = {"extract": {"ocr_below_chars_per_page": 50}}
+    scan = Extracted("pdf", [(1, ""), (2, "  ")])
+    typed = Extracted("pdf", [(1, "The lease is made between the parties named below. " * 5)])
+    text_file = Extracted("text", [(None, "")])
+    assert needs_ocr(scan, cfg) is True
+    assert needs_ocr(typed, cfg) is False
+    assert needs_ocr(text_file, cfg) is False, "only PDFs have a text layer to be missing"
+
+
+def test_ocr_output_mirrors_the_drive_layout():
+    from geo_mini_rag import settings
+    from geo_mini_rag.rag import ocr
+
+    out = ocr.output_path(settings.ROOT / "data/raw/leases/WY_00537.pdf")
+    assert out == settings.OCR_DIR / "data/raw/leases/WY_00537.pdf"

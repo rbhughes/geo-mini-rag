@@ -15,7 +15,7 @@ import duckdb
 
 from geo_mini_rag import openrouter, settings
 from geo_mini_rag.errors import UserError
-from geo_mini_rag.rag.chunk import chunks_from, join_segments
+from geo_mini_rag.rag.chunk import chunks_from
 from geo_mini_rag.rag.extract import Skip
 from geo_mini_rag.rag.parse import parse
 from geo_mini_rag.rag.trace import OFF, Tracer
@@ -201,12 +201,12 @@ def ingest(
     cfg = settings.load_rag_config()
     model = embed_model or cfg["embed"]["model"]
     batch_size = cfg["embed"]["batch_size"]
-    chunk_chars, chunk_overlap = cfg["chunk"]["chars"], cfg["chunk"]["overlap"]
+    chunking = cfg["chunk"]
     root_path = Path(root)
     trace(
         "config",
         f"db={db} root={root_path} embed_model={model} batch_size={batch_size} "
-        f"chunk_chars={chunk_chars} overlap={chunk_overlap} "
+        f"max_characters={chunking['max_characters']} overlap={chunking['overlap']} "
         f"max_pdf_pages={cfg['extract']['max_pdf_pages']} max_text_bytes={cfg['extract']['max_text_bytes']:,}",
     )
 
@@ -282,25 +282,16 @@ def ingest(
 
             n_chars = sum(len(t) for _, t in ex.segments)
             chunks = chunks_from(
-                ex.segments, chars=chunk_chars, overlap=chunk_overlap, atomic=ex.atomic
+                ex.segments,
+                max_characters=chunking["max_characters"],
+                overlap=chunking["overlap"],
+                atomic=ex.atomic,
+                respect_page_breaks=chunking.get("respect_page_breaks", True),
             )
             if trace.on:
-                full, starts = join_segments(ex.segments)
-                trace(
-                    "chunk",
-                    f"{len(ex.segments)} segments, {n_chars:,} chars -> whitespace-normalized and joined: "
-                    f"{len(full):,} chars from {len(starts)} non-empty segments",
-                )
-                prev_end = None
                 for c in chunks:
-                    shared = max(0, prev_end - c.start) if prev_end is not None else 0
                     page = f" page={c.page}" if c.page is not None else ""
-                    trace(
-                        "chunk",
-                        f"chunk {c.ord}{page} [{c.start:,}:{c.end:,}] {len(c.text):,} chars, "
-                        f"{shared} overlap with previous  {trace.text(c.text)}",
-                    )
-                    prev_end = c.end
+                    trace("chunk", f"chunk {c.ord}{page} {len(c.text):,} chars  {trace.text(c.text)}")
             if not chunks:
                 trace("skip", "extraction produced no text to chunk")
                 _doc_row(
@@ -335,6 +326,7 @@ def ingest(
                 n_chunks=len(chunks),
                 embed_tokens=tokens,
                 embed_cost=cost,
+                ocr_path=ex.metadata.get("ocr_path"),
             )
             _store_metadata(con, doc_id, ex.metadata, trace)
             _sql(con, trace, "COMMIT")

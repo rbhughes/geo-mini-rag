@@ -1,4 +1,14 @@
-"""Fixed-size character chunks with overlap, breaking on whitespace where possible."""
+"""Chunking over document elements.
+
+Following Unstructured's model: partitioning yields elements — paragraphs,
+table rows, pages — and chunking combines sequential elements up to
+`max_characters` rather than cutting raw text at fixed offsets. Overlap is
+applied only where a single element is too large to fit and has to be split,
+which is the one case where a boundary falls mid-sentence.
+
+Keeping page breaks means a chunk never mixes text from two pages, so the page
+a citation names is the page the text came from.
+"""
 
 from __future__ import annotations
 
@@ -6,84 +16,116 @@ import re
 from collections.abc import Sequence
 from dataclasses import dataclass
 
+PARAGRAPH_BREAK = re.compile(r"\n\s*\n+")
+WHITESPACE = re.compile(r"[ \t\f\r]+")
+
+
+@dataclass
+class Element:
+    text: str
+    page: int | None = None
+    atomic: bool = False   # a handler's record: keep it whole if it fits
+
 
 @dataclass
 class Chunk:
     ord: int
     text: str
-    page: int | None  # page where the chunk starts, when the source has pages
-    start: int = 0  # offsets into the joined, whitespace-normalized text
+    page: int | None    # page the chunk starts on
+    start: int = 0      # offsets within the element stream, for tracing
     end: int = 0
 
 
-def join_segments(
-    segments: Sequence[tuple[int | None, str]],
-) -> tuple[str, list[tuple[int, int | None]]]:
-    """Normalize whitespace, drop empty segments, and join with blank lines.
-
-    Returns the joined text and (offset, page) where each kept segment starts.
-    """
-    starts: list[tuple[int, int | None]] = []
-    parts: list[str] = []
-    pos = 0
-    for page, text in segments:
-        text = re.sub(r"[ \t\f\r]+", " ", text)
-        text = re.sub(r"\n\s*\n+", "\n\n", text).strip()
-        if not text:
+def elements_from(segments: Sequence[tuple[int | None, str]], *, atomic: bool = False) -> list[Element]:
+    """Split extracted segments into elements: paragraphs, or whole records."""
+    out: list[Element] = []
+    for page, raw in segments:
+        text = WHITESPACE.sub(" ", raw or "")
+        if atomic:
+            body = text.strip()
+            if body:
+                out.append(Element(body, page, atomic=True))
             continue
-        starts.append((pos, page))
-        parts.append(text)
-        pos += len(text) + 2
-    return "\n\n".join(parts), starts
+        for part in PARAGRAPH_BREAK.split(text):
+            body = part.strip()
+            if body:
+                out.append(Element(body, page))
+    return out
 
 
-def chunk_segments(
-    segments: Sequence[tuple[int | None, str]], *, chars: int, overlap: int
+def chunk_elements(
+    elements: Sequence[Element],
+    *,
+    max_characters: int,
+    overlap: int,
+    respect_page_breaks: bool = True,
 ) -> list[Chunk]:
-    full, starts = join_segments(segments)
     chunks: list[Chunk] = []
+    buffer: list[str] = []
+    buffer_page: int | None = None
+    position = 0
+    start = 0
+
+    def flush() -> None:
+        nonlocal buffer, buffer_page, start
+        if buffer:
+            chunks.append(Chunk(len(chunks), "\n\n".join(buffer), buffer_page, start, position))
+            buffer = []
+            buffer_page = None
+        start = position
+
+    for element in elements:
+        if respect_page_breaks and buffer and element.page != buffer_page:
+            flush()
+        if len(element.text) > max_characters:
+            flush()
+            for piece in _split(element.text, max_characters, overlap):
+                chunks.append(Chunk(len(chunks), piece, element.page, position, position + len(piece)))
+                position += len(piece)
+            start = position
+            continue
+        projected = sum(len(b) for b in buffer) + 2 * len(buffer) + len(element.text)
+        if buffer and projected > max_characters:
+            flush()
+        if not buffer:
+            buffer_page = element.page
+        buffer.append(element.text)
+        position += len(element.text)
+    flush()
+    return chunks
+
+
+def _split(text: str, max_characters: int, overlap: int) -> list[str]:
+    """One oversized element, cut on whitespace, with overlap between pieces."""
+    pieces: list[str] = []
     i = 0
-    while i < len(full):
-        end = min(i + chars, len(full))
-        if end < len(full):
-            brk = full.rfind(" ", i + chars // 2, end)
+    while i < len(text):
+        end = min(i + max_characters, len(text))
+        if end < len(text):
+            brk = text.rfind(" ", i + max_characters // 2, end)
             if brk != -1:
                 end = brk
-        body = full[i:end].strip()
+        body = text[i:end].strip()
         if body:
-            chunks.append(Chunk(len(chunks), body, _page_at(starts, i), i, end))
-        if end >= len(full):
+            pieces.append(body)
+        if end >= len(text):
             break
         i = max(end - overlap, i + 1)
-    # print("................")
-    # print(chunks)
-    # print("................")
-    return chunks
+    return pieces
 
 
-def chunks_from(segments: Sequence[tuple[int | None, str]], *, chars: int, overlap: int,
-                atomic: bool = False) -> list[Chunk]:
-    """Chunk a document. `atomic` keeps each segment whole (a LAS header card,
-    a SEGY textual header), splitting one only if it is far past the chunk size."""
-    if not atomic:
-        return chunk_segments(segments, chars=chars, overlap=overlap)
-    chunks: list[Chunk] = []
-    for page, text in segments:
-        text = text.strip()
-        if not text:
-            continue
-        if len(text) <= chars * 2:
-            chunks.append(Chunk(len(chunks), text, page, 0, len(text)))
-            continue
-        for part in chunk_segments([(page, text)], chars=chars, overlap=overlap):
-            chunks.append(Chunk(len(chunks), part.text, page, part.start, part.end))
-    return chunks
-
-
-def _page_at(starts: list[tuple[int, int | None]], offset: int) -> int | None:
-    page = None
-    for start, p in starts:
-        if start > offset:
-            break
-        page = p
-    return page
+def chunks_from(
+    segments: Sequence[tuple[int | None, str]],
+    *,
+    max_characters: int,
+    overlap: int,
+    atomic: bool = False,
+    respect_page_breaks: bool = True,
+) -> list[Chunk]:
+    """Segments as extraction produced them, to chunks ready for embedding."""
+    return chunk_elements(
+        elements_from(segments, atomic=atomic),
+        max_characters=max_characters,
+        overlap=overlap,
+        respect_page_breaks=respect_page_breaks,
+    )

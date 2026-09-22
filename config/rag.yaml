@@ -9,13 +9,21 @@ answer:
   model: inclusionai/ling-3.0-flash      # cheap, 262k context; `-m` overrides it for one question
   max_tokens: 800
 
+# Chunks are built from document elements (paragraphs, table rows, pages), not
+# by cutting raw text at fixed offsets: sequential elements are combined up to
+# max_characters, and overlap applies only when one element is too big to fit.
 chunk:
-  chars: 1200
+  max_characters: 1200
   overlap: 200
+  respect_page_breaks: true   # never merge text from two pages into one chunk
 
 extract:
   max_pdf_pages: 200          # longer PDFs are truncated, and the row says so
   max_text_bytes: 5000000     # plain text and HTML read cap
+  # A PDF yielding less than this per page has no usable text layer, so it is
+  # OCR'd and read again. Same idea as Unstructured's fast -> ocr_only fallback.
+  ocr_below_chars_per_page: 50
+  ocr_language: eng
 
 retrieve:
   top_k: 6
