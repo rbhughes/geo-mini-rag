@@ -1,9 +1,9 @@
 """OCR as a partitioning strategy.
 
 A scanned PDF has no text layer, so text extraction returns nothing and the
-document is invisible to retrieval — on an E&P drive that is most leases, unit
+document is invisible to retrieval — in E&P material that is most leases, unit
 agreements and completion reports. ocrmypdf writes a searchable copy into
-data/ocr/, mirroring the drive's own layout, and partitioning reads that copy
+data/ocr/, mirroring the source layout, and partitioning reads that copy
 instead. The original is never modified.
 
 Copies are reused: OCR costs seconds per page and nothing in dollars, so the

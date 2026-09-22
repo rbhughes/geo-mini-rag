@@ -1,6 +1,6 @@
 """Text extraction for the baseline RAG path.
 
-Deliberately naive: this is the "raw drive" condition, with no appraisal. The
+Deliberately naive: this is the ungated condition, with no appraisal. The
 type comes from the file's leading bytes, not its extension. Anything that
 is not PDF, DOCX, HTML, or plain text is skipped with a reason.
 

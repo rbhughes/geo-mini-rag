@@ -3,7 +3,7 @@
 A 120 KB LAS file is one screen of header followed by thousands of rows of
 floating point. Chunking the whole thing produces ~100 chunks of numbers that
 match nothing and crowd out real documents. The header, by contrast, is the
-most queryable text on an E&P drive: well name, API number, field, county,
+most queryable text in an E&P collection: well name, API number, field, county,
 operator, service company, log date, depth range and the curve list.
 
 This handler emits one chunk for the well header and one for the curves, and

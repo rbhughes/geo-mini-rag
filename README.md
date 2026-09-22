@@ -1,6 +1,6 @@
 # geo-mini-rag
 
-Appraise a drive of mixed oil and gas documents, then run retrieval-augmented
+Appraise a directory of mixed oil and gas documents, then run retrieval-augmented
 generation (RAG) over what survives.
 
 **Scope.** This project is about appraisal, ingest and embedding for E&P
@@ -18,7 +18,7 @@ uv run geo-mini-rag models   # free: the two configured models, with live prices
 uv run geo-mini-rag ping     # one tiny paid call to confirm the key
 ```
 
-## RAG over the drive (appraisal not wired in yet)
+## RAG over a directory
 
 ```sh
 uv run geo-mini-rag ingest            # extract and chunk data/raw, embed via OpenRouter (paid, cents)
@@ -40,10 +40,10 @@ uv run geo-mini-rag ask "question" --db data/index/tiny.duckdb
 ```
 
 `--trace-chars 0` prints extracted text and chunks in full. `data/tiny/` holds
-one random file per extension, copied out of the drive. It sits outside
-`data/raw` so a full `ingest` does not pick it up.
+one random file per extension, copied out of `data/raw`. It sits outside
+`data/raw` so an `ingest` of that root does not pick it up.
 
-Sample drive: GovDocs1 `thread0` (991 mixed files from .gov sites) sits in
+Sample material: GovDocs1 `thread0` (991 mixed files from .gov sites) sits in
 `data/raw/govdocs1_thread0/`, from
 `https://digitalcorpora.s3.amazonaws.com/corpora/files/govdocs1/threads/thread0.zip`.
 
@@ -52,7 +52,7 @@ Sample drive: GovDocs1 `thread0` (991 mixed files from .gov sites) sits in
 ```
 config/rag.yaml        models, chunking, extraction caps, retrieval depth
 config/policy.yaml     appraisal policy; its hash is part of each manifest id
-data/raw/              the document drive, or set GEO_DOCS_ROOT (gitignored)
+data/raw/              documents to ingest, or set GEO_DOCS_ROOT (gitignored)
 data/manifests/        JSONL written by each appraisal pass (gitignored)
 data/ocr/              OCR'd copies of held scans, from text recovery (gitignored)
 data/index/            DuckDB chunks and embeddings (gitignored)

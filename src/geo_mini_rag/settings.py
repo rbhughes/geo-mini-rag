@@ -20,7 +20,7 @@ load_dotenv(ROOT / ".env")
 
 
 def docs_root() -> str:
-    """Root of the document drive; any fsspec URL or local path."""
+    """Root directory of the documents to ingest; any fsspec URL or local path."""
     raw = os.environ.get("GEO_DOCS_ROOT", "data/raw")
     if "://" in raw or Path(raw).is_absolute():
         return raw

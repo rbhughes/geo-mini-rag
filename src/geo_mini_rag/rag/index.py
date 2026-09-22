@@ -3,20 +3,21 @@
 from __future__ import annotations
 
 import hashlib
-import math
 import os
 import re
 from collections.abc import Callable, Iterator
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
 import duckdb
+import numpy as np
 
 from geo_mini_rag import openrouter, settings
 from geo_mini_rag.errors import UserError
 from geo_mini_rag.rag.chunk import chunks_from
-from geo_mini_rag.rag.extract import Skip
+from geo_mini_rag.rag.extract import Extracted, Skip
 from geo_mini_rag.rag.parse import parse
 from geo_mini_rag.rag.trace import OFF, Tracer
 
@@ -128,43 +129,61 @@ def _ensure_chunks_table(
     )
 
 
-def _embed_all(
-    model: str, texts: list[str], batch_size: int, trace: Tracer
+def _embed_batches(
+    model: str, texts: list[str], batch_size: int, workers: int, trace: Tracer
 ) -> tuple[list[list[float]], int, float, dict[str, str]]:
+    """Embed many texts, several batches in flight at once.
+
+    Batches are filled across documents rather than per document: most files
+    produce a handful of chunks, and sending those one request at a time left
+    the pipeline waiting on round trips instead of using the 100-input limit.
+    """
+    batches = [texts[i : i + batch_size] for i in range(0, len(texts), batch_size)]
+    results: list[openrouter.EmbedResult | None] = [None] * len(batches)
+    trace("embed", f"{len(texts):,} texts in {len(batches)} batches, {workers} in flight")
+
+    with ThreadPoolExecutor(max_workers=workers) as pool:
+        futures = {pool.submit(openrouter.embed, model, batch): n for n, batch in enumerate(batches)}
+        for future in as_completed(futures):
+            n = futures[future]
+            res = future.result()   # a failed batch aborts the group; the caller records it
+            results[n] = res
+            trace(
+                "embed",
+                f"batch {n + 1}/{len(batches)}: {len(res.vectors)} vectors, "
+                f"prompt_tokens={res.usage.get('prompt_tokens')} cost=${res.usage.get('cost')} "
+                f"{res.latency_s:.2f}s attempts={res.attempts}",
+            )
+
     vectors: list[list[float]] = []
     tokens, cost = 0, 0.0
     served: dict[str, str] = {}
-    n_batches = math.ceil(len(texts) / batch_size)
-    for b, i in enumerate(range(0, len(texts), batch_size), 1):
-        batch = texts[i : i + batch_size]
-        trace(
-            "embed",
-            f"batch {b}/{n_batches}: POST /embeddings model={model} inputs={len(batch)} "
-            f"chars={sum(map(len, batch)):,}",
-        )
-        res = openrouter.embed(model, batch)
-        u = res.usage
-        trace(
-            "embed",
-            f"batch {b}/{n_batches}: provider={res.provider} prompt_tokens={u.get('prompt_tokens')} "
-            f"cost=${u.get('cost')} latency={res.latency_s:.2f}s attempts={res.attempts}",
-        )
-        if trace.on:
-            v = res.vectors[0]
-            norm = math.sqrt(sum(x * x for x in v))
-            trace(
-                "embed",
-                f"batch {b}/{n_batches}: {len(res.vectors)} vectors x {len(v)} dims; "
-                f"vector 0 starts {[round(x, 4) for x in v[:4]]}, L2 norm {norm:.4f}",
-            )
+    for res in results:
+        assert res is not None
+        vectors.extend(res.vectors)
+        tokens += int(res.usage.get("prompt_tokens") or 0)
+        cost += float(res.usage.get("cost") or 0)
         served = {
             "embed_model_served": res.served_model or "unreported",
             "embed_provider": res.provider or "unreported",
         }
-        vectors.extend(res.vectors)
-        tokens += int(u.get("prompt_tokens") or 0)
-        cost += float(u.get("cost") or 0)
     return vectors, tokens, cost, served
+
+
+@dataclass
+class _Parsed:
+    """A document waiting for its chunks to be embedded with everyone else's."""
+
+    doc_id: str
+    rel: str
+    st: os.stat_result
+    ex: Extracted
+    chunks: list
+    n_chars: int
+
+    @property
+    def chars(self) -> int:
+        return sum(len(c.text) for c in self.chunks)
 
 
 @dataclass
@@ -201,11 +220,13 @@ def ingest(
     cfg = settings.load_rag_config()
     model = embed_model or cfg["embed"]["model"]
     batch_size = cfg["embed"]["batch_size"]
+    workers = cfg["embed"].get("concurrency", 6)
     chunking = cfg["chunk"]
     root_path = Path(root)
     trace(
         "config",
         f"db={db} root={root_path} embed_model={model} batch_size={batch_size} "
+        f"concurrency={workers} "
         f"max_characters={chunking['max_characters']} overlap={chunking['overlap']} "
         f"max_pdf_pages={cfg['extract']['max_pdf_pages']} max_text_bytes={cfg['extract']['max_text_bytes']:,}",
     )
@@ -214,8 +235,19 @@ def ingest(
     if paths is not None:
         trace("walk", f"{len(paths)} files from the manifest; not walking {root_path}")
 
+    pending: list[_Parsed] = []
+    pending_chunks = 0
+    flush_at = batch_size * workers
+
     with connect(db) as con:
         _init(con, model, rebuild, trace)
+
+        def flush() -> None:
+            nonlocal pending_chunks
+            _flush_group(con, pending, model=model, batch_size=batch_size,
+                         workers=workers, on_event=on_event, trace=trace)
+            pending_chunks = 0
+
         for n, path in enumerate(source):
             if not path.exists():
                 on_event(IngestEvent(str(path), "error", "listed in the manifest but missing"))
@@ -252,20 +284,18 @@ def ingest(
                 else f"changed since indexing (was size={prev[0]} mtime={prev[1]})",
             )
             _sql(con, trace, "BEGIN")
-            if _has_table(con, "chunks"):
-                _sql(con, trace, "DELETE FROM chunks WHERE doc_id = ?", [doc_id])
-            _sql(con, trace, "DELETE FROM doc_meta WHERE doc_id = ?", [doc_id])
-            _sql(con, trace, "DELETE FROM documents WHERE doc_id = ?", [doc_id])
             try:
                 ex = parse(path, cfg, trace)
             except Skip as s:
                 trace("skip", str(s))
+                _replace_rows(con, trace, doc_id)
                 _doc_row(con, trace, doc_id, rel, st, "skipped", None, str(s))
                 _sql(con, trace, "COMMIT")
                 on_event(IngestEvent(rel, "skipped", str(s)))
                 continue
             except Exception as exc:  # noqa: BLE001 - one bad file must not stop the run
                 trace("error", f"extract raised {type(exc).__name__}: {exc}")
+                _replace_rows(con, trace, doc_id)
                 _doc_row(
                     con,
                     trace,
@@ -294,67 +324,111 @@ def ingest(
                     trace("chunk", f"chunk {c.ord}{page} {len(c.text):,} chars  {trace.text(c.text)}")
             if not chunks:
                 trace("skip", "extraction produced no text to chunk")
+                _replace_rows(con, trace, doc_id)
                 _doc_row(
                     con, trace, doc_id, rel, st, "skipped", ex, "no extractable text"
                 )
                 _sql(con, trace, "COMMIT")
                 on_event(IngestEvent(rel, "skipped", f"{ex.kind}: no extractable text"))
                 continue
-            try:
-                tokens, cost = embed_and_store(
-                    con, doc_id, chunks, model, batch_size, trace
-                )
-            except Exception as exc:  # noqa: BLE001 - record and move on; rerun retries it
-                trace("error", f"embedding raised {type(exc).__name__}: {exc}")
-                _sql(con, trace, "ROLLBACK")
-                on_event(
-                    IngestEvent(
-                        rel, "error", f"embedding failed: {type(exc).__name__}: {exc}"
-                    )
-                )
-                continue
-            _doc_row(
-                con,
-                trace,
-                doc_id,
-                rel,
-                st,
-                "indexed",
-                ex,
-                None,
-                n_chars=n_chars,
-                n_chunks=len(chunks),
-                embed_tokens=tokens,
-                embed_cost=cost,
-                ocr_path=ex.metadata.get("ocr_path"),
-            )
-            _store_metadata(con, doc_id, ex.metadata, trace)
+            # Nothing is written yet: this document waits for a full batch.
             _sql(con, trace, "COMMIT")
-            on_event(
-                IngestEvent(
-                    rel,
-                    "indexed",
-                    f"{ex.kind}, {len(chunks)} chunks, ${cost:.5f}",
-                    cost,
-                )
-            )
+            pending.append(_Parsed(doc_id, rel, st, ex, chunks, n_chars))
+            pending_chunks += len(chunks)
+            if pending_chunks >= flush_at:
+                flush()
+
+        flush()
 
 
-def embed_and_store(con, doc_id: str, chunks, model: str, batch_size: int, trace: Tracer) -> tuple[int, float]:
-    """Embed a document's chunks and write them. Shared by ingest and the OCR pass."""
-    vectors, tokens, cost, served = _embed_all(model, [c.text for c in chunks], batch_size, trace)
+def _flush_group(
+    con,
+    pending: list[_Parsed],
+    *,
+    model: str,
+    batch_size: int,
+    workers: int,
+    on_event: Callable[[IngestEvent], None],
+    trace: Tracer,
+) -> None:
+    """Embed a group of documents together, then write them in one transaction."""
+    if not pending:
+        return
+    texts = [c.text for doc in pending for c in doc.chunks]
+    try:
+        vectors, tokens, cost, served = _embed_batches(model, texts, batch_size, workers, trace)
+    except Exception as exc:  # noqa: BLE001 - the group is not written; a rerun retries it
+        trace("error", f"embedding raised {type(exc).__name__}: {exc}")
+        for doc in pending:
+            on_event(IngestEvent(doc.rel, "error", f"embedding failed: {type(exc).__name__}: {exc}"))
+        pending.clear()
+        return
+
+    group_chars = sum(doc.chars for doc in pending) or 1
+    _sql(con, trace, "BEGIN")
     _ensure_chunks_table(con, len(vectors[0]), trace)
     _record_serving(con, served, trace)
-    trace(
-        "sql",
-        f"INSERT INTO chunks VALUES (?, ?, ?, ?, ?)   x{len(chunks)} rows "
-        f"(doc_id, ord, page, text, {len(vectors[0])}-float embedding)",
+    offset = 0
+    arrow_rows: list[tuple[str, int, int | None, str, list[float]]] = []
+    for doc in pending:
+        take = len(doc.chunks)
+        _replace_rows(con, trace, doc.doc_id)
+        arrow_rows.extend(
+            (doc.doc_id, c.ord, c.page, c.text, v)
+            for c, v in zip(doc.chunks, vectors[offset : offset + take], strict=True)
+        )
+        offset += take
+        # Batches span documents, so usage is apportioned by share of characters.
+        share = doc.chars / group_chars
+        doc_cost = cost * share
+        _doc_row(
+            con, trace, doc.doc_id, doc.rel, doc.st, "indexed", doc.ex, None,
+            n_chars=doc.n_chars, n_chunks=take,
+            embed_tokens=int(tokens * share), embed_cost=doc_cost,
+            ocr_path=doc.ex.metadata.get("ocr_path"),
+        )
+        _store_metadata(con, doc.doc_id, doc.ex.metadata, trace)
+        on_event(IngestEvent(doc.rel, "indexed", f"{doc.ex.kind}, {take} chunks, ${doc_cost:.5f}", doc_cost))
+    _insert_chunks(con, arrow_rows, len(vectors[0]), trace)
+    _sql(con, trace, "COMMIT")
+    trace("sql", f"wrote {len(pending)} documents, {len(vectors):,} chunks in one transaction")
+    pending.clear()
+
+
+def _insert_chunks(con, rows: list[tuple], dim: int, trace: Tracer) -> None:
+    """Bulk-load chunks through Arrow.
+
+    Row-by-row `executemany` moves each of the 1536 floats across the Python
+    boundary on its own: measured at 7 rows/s, against 2,150 rows/s for the
+    documented bulk path of registering an Arrow table and selecting from it.
+    """
+    if not rows:
+        return
+    import pyarrow as pa
+
+    flat = np.fromiter(
+        (value for row in rows for value in row[4]), dtype=np.float32, count=len(rows) * dim
     )
-    con.executemany(
-        "INSERT INTO chunks VALUES (?, ?, ?, ?, ?)",
-        [(doc_id, c.ord, c.page, c.text, v) for c, v in zip(chunks, vectors, strict=True)],
-    )
-    return tokens, cost
+    table = pa.table({
+        "doc_id": pa.array([r[0] for r in rows], pa.string()),
+        "ord": pa.array([r[1] for r in rows], pa.int32()),
+        "page": pa.array([r[2] for r in rows], pa.int32()),
+        "text": pa.array([r[3] for r in rows], pa.string()),
+        "embedding": pa.FixedSizeListArray.from_arrays(pa.array(flat), dim),
+    })
+    trace("sql", f"INSERT INTO chunks SELECT * FROM <arrow table>   {len(rows):,} rows x {dim} dims")
+    con.register("chunk_batch", table)
+    try:
+        con.execute("INSERT INTO chunks SELECT * FROM chunk_batch")
+    finally:
+        con.unregister("chunk_batch")
+
+
+def _replace_rows(con, trace: Tracer, doc_id: str) -> None:
+    if _has_table(con, "chunks"):
+        _sql(con, trace, "DELETE FROM chunks WHERE doc_id = ?", [doc_id])
+    _sql(con, trace, "DELETE FROM doc_meta WHERE doc_id = ?", [doc_id])
+    _sql(con, trace, "DELETE FROM documents WHERE doc_id = ?", [doc_id])
 
 
 def _store_metadata(con, doc_id: str, metadata: dict[str, str], trace: Tracer) -> None:

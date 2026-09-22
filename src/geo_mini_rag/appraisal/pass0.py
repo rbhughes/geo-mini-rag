@@ -1,6 +1,6 @@
 """Pass 0 — inventory.
 
-Walk the drive, record what is there, and drop what is obviously not a document
+Walk the root directory, record what is there, and drop what is obviously not a document
 before anything expensive happens. No full file reads: each file contributes its
 path, size, mtime, extension and the first `inventory.magic_bytes` bytes, which
 libmagic turns into a type verdict.
@@ -11,7 +11,7 @@ Output goes to two places, because they answer different questions:
     which diffs cleanly between policy runs
 
 `manifest_id` is a hash of config/policy.yaml plus a hash of the inventory, so
-the same drive under a different policy produces a new, comparable manifest
+the same files under a different policy produce a new, comparable manifest
 rather than an in-place rebuild.
 """
 

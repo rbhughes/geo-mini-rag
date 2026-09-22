@@ -12,7 +12,7 @@ from geo_mini_rag import openrouter, settings
 
 app = typer.Typer(
     no_args_is_help=True,
-    help="Appraise an E&P document drive and run RAG over it.",
+    help="Appraise a directory of E&P documents and run RAG over it.",
     context_settings={"help_option_names": ["-h", "--help"]},
 )
 console = Console()
@@ -77,7 +77,7 @@ def ingest(
     rebuild: bool = typer.Option(False, help="Drop the index and start over."),
     limit: int = typer.Option(None, help="Stop after this many files (for quick trials)."),
     embed_model: str = typer.Option(None, "--embed-model", "-e", help="OpenRouter embedding model; defaults to config/rag.yaml."),
-    manifest_id: str = typer.Option(None, "--manifest", help="Ingest only what an appraisal manifest admits: an id, or 'latest'. Without it the whole drive is walked."),
+    manifest_id: str = typer.Option(None, "--manifest", help="Ingest only what an appraisal manifest admits: an id, or 'latest'. Without it every file under the root is walked."),
     db: Path = DB_OPTION,
     verbose: bool = typer.Option(False, "--verbose", "-v", help="Print one line per file."),
     trace: bool = typer.Option(False, "--trace", help="Print every step: sniffing, extraction, chunks, embedding calls, SQL."),
@@ -180,7 +180,7 @@ def appraise(
     trace: bool = typer.Option(False, "--trace", help="Print the walk, magic verdicts, hashing, SQL and manifest writes."),
     trace_chars: int = typer.Option(160, "--trace-chars", help="Text sample length in trace output; 0 for full."),
 ) -> None:
-    """Appraise the drive: inventory, then exact duplicates. Free: no API calls."""
+    """Appraise a root directory: inventory, then exact duplicates. Free: no API calls."""
     from rich.progress import Progress
     from rich.text import Text
 

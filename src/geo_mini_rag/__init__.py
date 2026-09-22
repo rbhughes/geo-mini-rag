@@ -1,4 +1,4 @@
-"""geo-mini-rag: appraise a messy E&P document drive, then run RAG over what survives."""
+"""geo-mini-rag: appraise a directory of E&P documents, then run RAG over what survives."""
 
 
 def main() -> None:

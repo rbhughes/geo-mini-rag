@@ -4,6 +4,7 @@
 embed:
   model: openai/text-embedding-3-small   # OpenRouter; `geo-mini-rag models --embeddings` lists the alternatives
   batch_size: 100                        # chunks per embeddings request
+  concurrency: 6                         # requests in flight; batches are filled across documents
 
 answer:
   model: inclusionai/ling-3.0-flash      # cheap, 262k context; `-m` overrides it for one question

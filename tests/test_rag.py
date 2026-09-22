@@ -96,7 +96,7 @@ def test_needs_ocr_only_for_pdfs_without_a_text_layer():
     assert needs_ocr(text_file, cfg) is False, "only PDFs have a text layer to be missing"
 
 
-def test_ocr_output_mirrors_the_drive_layout():
+def test_ocr_output_mirrors_the_source_layout():
     from geo_mini_rag import settings
     from geo_mini_rag.rag import ocr
 
