@@ -12,6 +12,7 @@ lifts the identifying fields into document metadata so they can be filtered on.
 
 from __future__ import annotations
 
+import re
 from pathlib import Path
 
 from geo_mini_rag.rag.extract import Extracted, Skip
@@ -55,23 +56,32 @@ class LasHandler:
         except Exception as exc:  # lasio raises many shapes on malformed files
             raise Skip(f"unreadable las: {type(exc).__name__}: {exc}") from exc
 
-        meta = {}
+        meta: dict[str, object] = {}
         for item in las.well:
             key = WELL_FIELDS.get(item.mnemonic.upper())
             value = str(item.value).strip()
             if key and value and value not in ("-999.25", "None"):
                 meta[key] = value
 
-        depth = _depth_range(las)
-        if depth:
-            meta["depth_range"] = depth
-        meta["curve_count"] = str(len(las.curves))
-        meta["curves"] = ", ".join(c.mnemonic for c in las.curves)
+        # One row per fact: each curve is its own value, depths are numbers, so
+        # they can be filtered (--where curve=RHOB, --where depth_max>5000) and
+        # weighted by how rare they are, rather than sitting inside one string.
+        meta["curve"] = [c.mnemonic for c in las.curves if c.mnemonic]
+        meta["curve_description"] = sorted(
+            {c.descr.strip() for c in las.curves if (c.descr or "").strip()}
+        )
+        meta["curve_count"] = len(las.curves)
+        meta.update(_depth_facts(las))
+        year = _log_year(meta.get("log_date"))
+        if year:
+            meta["log_year"] = year
 
+        depth = _depth_text(meta)
         header = _header_text(path, meta, depth)
         curves = _curve_text(path, meta, las)
         trace("las", f"header {len(header)} chars, curves {len(curves)} chars, "
-                     f"metadata: {', '.join(f'{k}={v}' for k, v in meta.items() if k != 'curves')}")
+                     f"{sum(len(v) if isinstance(v, list) else 1 for v in meta.values())} facts "
+                     f"over {len(meta)} keys")
         return Extracted(
             kind="las",
             segments=[(None, header), (None, curves)],
@@ -80,22 +90,44 @@ class LasHandler:
         )
 
 
-def _depth_range(las) -> str:
-    def well_value(mnemonic):
+def _depth_facts(las) -> dict[str, object]:
+    """STRT/STOP/STEP as numbers, so they can be compared rather than matched."""
+    def well_item(mnemonic):
         try:
-            return las.well[mnemonic].value
+            return las.well[mnemonic]
         except (KeyError, AttributeError):
             return None
 
-    start, stop, step = well_value("STRT"), well_value("STOP"), well_value("STEP")
-    if start is None or stop is None:
+    facts: dict[str, object] = {}
+    for mnemonic, key in (("STRT", "depth_min"), ("STOP", "depth_max"), ("STEP", "depth_step")):
+        item = well_item(mnemonic)
+        if item is None or item.value in (None, ""):
+            continue
+        try:
+            facts[key] = float(item.value)
+        except (TypeError, ValueError):
+            continue
+    start = well_item("STRT")
+    if start is not None and (start.unit or "").strip():
+        facts["depth_units"] = start.unit.strip()
+    return facts
+
+
+def _log_year(log_date: object) -> int | None:
+    """The year out of a LAS date, when one is unambiguous: 27-FEB-1977 -> 1977."""
+    if not log_date:
+        return None
+    found = re.search(r"(18|19|20)\d{2}", str(log_date))
+    return int(found.group()) if found else None
+
+
+def _depth_text(meta: dict) -> str:
+    """The logged interval, for the header card a reader sees."""
+    if "depth_min" not in meta or "depth_max" not in meta:
         return ""
-    try:
-        unit = las.well["STRT"].unit or ""
-    except (KeyError, AttributeError):
-        unit = ""
-    text = f"{start} to {stop} {unit}".strip()
-    return f"{text}, step {step}" if step is not None else text
+    units = f" {meta['depth_units']}" if meta.get("depth_units") else ""
+    text = f"{meta['depth_min']:g} to {meta['depth_max']:g}{units}"
+    return f"{text}, step {meta['depth_step']:g}" if "depth_step" in meta else text
 
 
 def _header_text(path: Path, meta: dict, depth: str) -> str:
@@ -105,7 +137,7 @@ def _header_text(path: Path, meta: dict, depth: str) -> str:
             lines.append(f"{label}: {meta[key]}")
     if depth:
         lines.append(f"Logged interval: {depth}")
-    lines.append(f"Curves recorded: {meta.get('curve_count', '0')}")
+    lines.append(f"Curves recorded: {meta.get('curve_count', 0)}")
     return "\n".join(lines)
 
 
