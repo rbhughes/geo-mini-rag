@@ -28,3 +28,11 @@ extract:
 
 retrieve:
   top_k: 6
+  # Document metadata a handler extracted (well, api, field, operator...) is part
+  # of ranking: when a question names a value that exists in the index, that
+  # document's chunks get this added to their cosine score. Identifiers are what
+  # embeddings are worst at, and 1,400 near-identical LAS headers rank alike
+  # without it. `search --where key=value` filters instead of boosting.
+  metadata_boost: 0.10           # full boost goes to a value only one document carries
+  metadata_min_value_length: 4   # shorter values match too much to be evidence
+  metadata_skip_keys: []         # rarity governs the weight, so every key can take part

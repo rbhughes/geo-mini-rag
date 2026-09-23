@@ -102,3 +102,30 @@ def test_ocr_output_mirrors_the_source_layout():
 
     out = ocr.output_path(settings.ROOT / "data/raw/leases/WY_00537.pdf")
     assert out == settings.OCR_DIR / "data/raw/leases/WY_00537.pdf"
+
+
+def test_metadata_rows_expand_lists_and_type_numbers():
+    from geo_mini_rag.rag.index import metadata_rows
+
+    rows = metadata_rows("doc1", {
+        "well": "NPR #3 #13SX11-11",
+        "curve": ["GRD", "RHOB", "CALD"],
+        "depth_max": 570.0,
+        "depth_step": "0.5",
+        "blank": "",
+    })
+    keys = [(k, v, n) for _, k, v, n in rows]
+    assert ("curve", "GRD", None) in keys and ("curve", "RHOB", None) in keys
+    assert sum(1 for k, _, _ in keys if k == "curve") == 3, "one row per curve"
+    assert ("depth_max", "570.0", 570.0) in keys, "numbers keep a numeric reading"
+    assert ("depth_step", "0.5", 0.5) in keys, "numeric strings too"
+    assert ("well", "NPR #3 #13SX11-11", None) in keys
+    assert not any(k == "blank" for k, _, _ in keys), "empty values are dropped"
+
+
+def test_idf_weights_rarity():
+    from geo_mini_rag.rag.index import _idf
+
+    assert _idf(1, 1000) == pytest.approx(1.0), "a value only one document carries"
+    assert _idf(1000, 1000) == 0.0, "a value every document carries is no evidence"
+    assert _idf(10, 1000) > _idf(500, 1000)

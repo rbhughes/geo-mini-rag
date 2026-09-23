@@ -39,7 +39,8 @@ def build_messages(question: str, hits: list[Hit]) -> list[dict[str, str]]:
     ]
 
 
-def ask(question: str, *, model: str, k: int, max_tokens: int, db: Path = DB_PATH) -> Answer:
-    hits, qres = search(question, k, db)
+def ask(question: str, *, model: str, k: int, max_tokens: int, db: Path = DB_PATH,
+        where: dict[str, str] | None = None) -> Answer:
+    hits, qres = search(question, k, db, where=where)
     result = openrouter.chat(model, build_messages(question, hits), max_tokens=max_tokens)
     return Answer(result.text, hits, result, qres)

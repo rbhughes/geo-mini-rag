@@ -56,6 +56,29 @@ def models(
 
 MODEL_HELP = "Chat model for this one call; any OpenRouter id. Defaults to config/rag.yaml."
 DB_OPTION = typer.Option(None, "--db", help="DuckDB index file. Defaults to data/index/rag.duckdb.")
+WHERE_OPTION = typer.Option(
+    None, "--where", "-w",
+    help="Filter on document metadata: key=value, or key>value on a numeric fact. "
+         "Repeatable; `geo-mini-rag meta` lists the keys.",
+)
+
+
+def _where(pairs: list[str] | None) -> list[tuple[str, str, str]]:
+    """key=value, or a comparison on a numeric fact: depth_max>5000, log_year>=1990."""
+    from geo_mini_rag.rag.index import COMPARISONS
+
+    clauses: list[tuple[str, str, str]] = []
+    for pair in pairs or []:
+        for op in COMPARISONS:
+            key, sep, value = pair.partition(op)
+            if sep and key.strip() and value.strip():
+                clauses.append((key.strip(), op, value.strip()))
+                break
+        else:
+            raise typer.BadParameter(
+                f"expected key=value or key>value, got {pair!r}", param_hint="--where"
+            )
+    return clauses
 
 
 def _db(path: Path | None) -> Path:
@@ -239,6 +262,48 @@ def _pass_table(n: int, name: str, counts: dict[str, int], seconds: float, manif
     console.print(f"[dim]{manifest_path}[/]")
 
 
+@app.command()
+def meta(
+    key: str = typer.Argument(None, help="Show the values for one key instead of the summary."),
+    limit: int = typer.Option(25, help="Values to list."),
+    db: Path = DB_OPTION,
+) -> None:
+    """What document metadata the index holds, and what can be filtered on. Free."""
+    from geo_mini_rag.rag import index
+
+    db = _db(db)
+    with index.connect(db, read_only=True) as con:
+        if key:
+            rows = con.execute(
+                "SELECT value, count(*) FROM doc_meta WHERE key = ? GROUP BY 1 ORDER BY 2 DESC, 1 LIMIT ?",
+                [key, limit],
+            ).fetchall()
+            if not rows:
+                console.print(f"[red]no metadata key {key!r} in {db}[/]")
+                raise typer.Exit(1)
+            table = Table(key, "documents")
+            for value, n in rows:
+                table.add_row(value, str(n))
+            console.print(table)
+            span = con.execute(
+                "SELECT min(num_value), max(num_value), count(num_value) FROM doc_meta WHERE key = ?",
+                [key],
+            ).fetchone()
+            if span and span[2]:
+                console.print(f"[dim]numeric on {span[2]} documents: {span[0]:g} to {span[1]:g} "
+                              f"— filter with --where {key}'>'{span[0]:g}[/]")
+            return
+        keys = index.metadata_keys(con)
+    if not keys:
+        console.print(f"[dim]{db} has no document metadata: no handler has extracted any.[/]")
+        return
+    table = Table("key", "documents", "distinct values", title=f"metadata in {db.name}")
+    for name, docs, distinct in keys:
+        table.add_row(name, str(docs), str(distinct))
+    console.print(table)
+    console.print("[dim]filter with: search \"question\" --where key=value[/]")
+
+
 @app.command("eval")
 def eval_(
     question_set: str = typer.Argument("evals/subset.jsonl", help="JSONL question set."),
@@ -273,11 +338,16 @@ def eval_(
 
 
 def _print_hits(hits, full: bool) -> None:
-    table = Table("#", "score", "source", "text")
+    show_matched = any(getattr(h, "matched", "") for h in hits)
+    columns = ["#", "score", "source"] + (["metadata match"] if show_matched else []) + ["text"]
+    table = Table(*columns)
     for h in hits:
-        where = h.path + (f" p{h.page}" if h.page else "")
+        source = h.path + (f" p{h.page}" if h.page else "")
         text = h.text if full else h.text[:160].replace("\n", " ") + "…"
-        table.add_row(str(h.rank), f"{h.score:.3f}", where, text)
+        row = [str(h.rank), f"{h.score:.3f}", source]
+        if show_matched:
+            row.append(getattr(h, "matched", ""))
+        table.add_row(*row, text)
     console.print(table)
 
 
@@ -286,12 +356,15 @@ def search(
     question: str,
     k: int = typer.Option(None, "-k", help="Chunks to return; defaults to config/rag.yaml."),
     full: bool = typer.Option(False, help="Show whole chunks."),
+    where: list[str] = WHERE_OPTION,
     db: Path = DB_OPTION,
 ) -> None:
     """Retrieval only, no LLM. Costs one tiny embedding call."""
     from geo_mini_rag.rag import index
 
-    hits, _ = index.search(question, k or settings.load_rag_config()["retrieve"]["top_k"], _db(db))
+    cfg = settings.load_rag_config()
+    hits, _ = index.search(question, k or cfg["retrieve"]["top_k"], _db(db),
+                           where=_where(where), cfg=cfg)
     _print_hits(hits, full)
 
 
@@ -301,6 +374,7 @@ def ask(
     model: str = typer.Option(None, "--model", "-m", help=MODEL_HELP),
     k: int = typer.Option(None, "-k", help="Chunks to retrieve; defaults to config/rag.yaml."),
     show_context: bool = typer.Option(False, help="Print the retrieved chunks too."),
+    where: list[str] = WHERE_OPTION,
     db: Path = DB_OPTION,
 ) -> None:
     """Retrieve chunks and answer with an OpenRouter chat model. Paid."""
@@ -311,7 +385,7 @@ def ask(
     cfg = settings.load_rag_config()
     model_id = settings.chat_model(model)
     a = answer.ask(question, model=model_id, k=k or cfg["retrieve"]["top_k"], max_tokens=cfg["answer"]["max_tokens"],
-                   db=_db(db))
+                   db=_db(db), where=_where(where))
     console.print(Markdown(a.text or "_(empty response)_"))
     console.print()
     if show_context:

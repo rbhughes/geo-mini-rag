@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import math
 import os
 import re
 from collections.abc import Callable, Iterator
@@ -104,8 +105,9 @@ def migrate(con: duckdb.DuckDBPyConnection, trace: Tracer = OFF) -> None:
     _sql(con, trace, "ALTER TABLE documents ADD COLUMN IF NOT EXISTS ocr_path VARCHAR")
     _sql(con, trace, """
         CREATE TABLE IF NOT EXISTS doc_meta (
-            doc_id VARCHAR, key VARCHAR, value VARCHAR
+            doc_id VARCHAR, key VARCHAR, value VARCHAR, num_value DOUBLE
         )""")
+    _sql(con, trace, "ALTER TABLE doc_meta ADD COLUMN IF NOT EXISTS num_value DOUBLE")
 
 
 def _ensure_chunks_table(
@@ -431,15 +433,39 @@ def _replace_rows(con, trace: Tracer, doc_id: str) -> None:
     _sql(con, trace, "DELETE FROM documents WHERE doc_id = ?", [doc_id])
 
 
-def _store_metadata(con, doc_id: str, metadata: dict[str, str], trace: Tracer) -> None:
-    """Document-level fields a domain handler lifted out, for filtering later."""
-    if not metadata:
+def _as_number(value) -> float | None:
+    """The numeric reading of a value, when it has one: 570.0 is a depth, 'TEAPOT' is not."""
+    if isinstance(value, bool):
+        return None
+    if isinstance(value, (int, float)):
+        return float(value)
+    try:
+        return float(str(value).strip())
+    except (TypeError, ValueError):
+        return None
+
+
+def metadata_rows(doc_id: str, metadata: dict) -> list[tuple[str, str, str, float | None]]:
+    """One row per fact. A list value becomes one row per item, so a log with ten
+    curves gets ten `curve` rows rather than one string holding all of them."""
+    rows: list[tuple[str, str, str, float | None]] = []
+    for key, value in metadata.items():
+        items = value if isinstance(value, (list, tuple, set)) else [value]
+        for item in items:
+            if item is None or str(item).strip() == "":
+                continue
+            rows.append((doc_id, key, str(item).strip(), _as_number(item)))
+    return rows
+
+
+def _store_metadata(con, doc_id: str, metadata: dict, trace: Tracer) -> None:
+    """Document-level facts a domain handler lifted out, for filtering and ranking."""
+    rows = metadata_rows(doc_id, metadata)
+    if not rows:
         return
-    trace("meta", f"{len(metadata)} fields: {', '.join(sorted(metadata))}")
-    con.executemany(
-        "INSERT INTO doc_meta VALUES (?, ?, ?)",
-        [(doc_id, k, v) for k, v in metadata.items()],
-    )
+    numeric = sum(1 for r in rows if r[3] is not None)
+    trace("meta", f"{len(rows)} facts over {len(metadata)} keys ({numeric} numeric)")
+    con.executemany("INSERT INTO doc_meta VALUES (?, ?, ?, ?)", rows)
 
 
 def _record_serving(con: duckdb.DuckDBPyConnection, served: dict[str, str], trace: Tracer) -> None:
@@ -505,27 +531,133 @@ class Hit:
     path: str
     page: int | None
     text: str
+    matched: str = ""   # metadata values from the question that this document carries
+
+
+def metadata_keys(con) -> list[tuple[str, int, int]]:
+    """(key, documents carrying it, distinct values) — what can be filtered on."""
+    if not _has_table(con, "doc_meta"):
+        return []
+    return con.execute(
+        "SELECT key, count(*), count(DISTINCT value) FROM doc_meta GROUP BY 1 ORDER BY 2 DESC"
+    ).fetchall()
+
+
+def mentioned_metadata(con, question: str, cfg: dict) -> list[tuple[str, str, str, int]]:
+    """(doc_id, key, value) where a value stored in the index appears in the question.
+
+    Identifiers are what embeddings are worst at: 1,400 near-identical LAS
+    headers rank alike for "the API number of NPR #3 #13SX11-11". Matching the
+    question against values already in the index is exact, needs no model, and
+    is limited to the vocabulary the handlers actually extracted.
+    """
+    if not _has_table(con, "doc_meta"):
+        return []
+    retrieve = cfg.get("retrieve", {})
+    skip = set(retrieve.get("metadata_skip_keys", []))
+    min_len = retrieve.get("metadata_min_value_length", 4)
+    rows = con.execute(
+        """
+        SELECT m.doc_id, m.key, m.value, c.docs
+        FROM doc_meta m
+        JOIN (
+            SELECT key, value, count(DISTINCT doc_id) AS docs FROM doc_meta GROUP BY 1, 2
+        ) c USING (key, value)
+        WHERE length(m.value) >= ? AND lower(?) LIKE '%' || lower(m.value) || '%'
+        """,
+        [min_len, question],
+    ).fetchall()
+    return [r for r in rows if r[1] not in skip]
+
+
+COMPARISONS = (">=", "<=", "!=", ">", "<", "=")
+
+
+def _as_clauses(where) -> list[tuple[str, str, str]]:
+    """Accept {key: value} or [(key, op, value)] and normalise to clauses."""
+    if not where:
+        return []
+    if isinstance(where, dict):
+        return [(k, "=", v) for k, v in where.items()]
+    return list(where)
+
+
+def _idf(docs_with_value: int, total_docs: int) -> float:
+    """1.0 for a value only one document carries, 0.0 for one they all carry."""
+    if total_docs <= 1 or docs_with_value >= total_docs:
+        return 0.0
+    return math.log(total_docs / max(docs_with_value, 1)) / math.log(total_docs)
 
 
 def search(
-    question: str, k: int, db: Path = DB_PATH
+    question: str,
+    k: int,
+    db: Path = DB_PATH,
+    *,
+    where: dict[str, str] | list[tuple[str, str, str]] | None = None,
+    cfg: dict | None = None,
 ) -> tuple[list[Hit], openrouter.EmbedResult]:
-    """Embed the question with the index's own model (one small paid call) and rank chunks."""
+    """Embed the question and rank chunks, with metadata in both stages.
+
+    `where` restricts the candidates; any metadata value the question names
+    lifts its documents up the ranking.
+    """
+    cfg = cfg if cfg is not None else settings.load_rag_config()
+    boost = cfg.get("retrieve", {}).get("metadata_boost", 0.15)
+
     with connect(db, read_only=True) as con:
         meta = dict(con.execute("SELECT key, value FROM meta").fetchall())
         if "dim" not in meta:
             raise UserError(f"{db} has no chunks yet; run `geo-mini-rag ingest`")
         model, dim = meta["embed_model"], meta["dim"]
+
+        total_docs = con.execute("SELECT count(DISTINCT doc_id) FROM doc_meta").fetchone()[0] or 1
+        by_doc: dict[str, list[str]] = {}
+        weights: dict[str, float] = {}
+        for doc_id, key, value, docs in mentioned_metadata(con, question, cfg):
+            by_doc.setdefault(doc_id, []).append(f"{key}={value}")
+            # Rarity is the evidence, the same idea as inverse document frequency
+            # in lexical search: a well name held by one document says far more
+            # than state=WYOMING, which 1,375 documents carry. Scaled to [0, 1]
+            # so a unique value takes the full boost.
+            weights[doc_id] = max(weights.get(doc_id, 0.0), boost * _idf(docs, total_docs))
+
+        filters, params = [], []
+        for key, op, value in _as_clauses(where):
+            if op == "=":
+                filters.append(
+                    "d.doc_id IN (SELECT doc_id FROM doc_meta WHERE key = ? AND lower(value) = lower(?))"
+                )
+                params += [key, value]
+                continue
+            number = _as_number(value)
+            if number is None:
+                raise UserError(f"--where {key}{op}{value}: {value!r} is not a number")
+            filters.append(
+                f"d.doc_id IN (SELECT doc_id FROM doc_meta WHERE key = ? AND num_value {op} ?)"
+            )
+            params += [key, number]
+
         qres = openrouter.embed(model, [question])
-        qvec = qres.vectors[0]
-        rows = con.execute(
-            f"""
-            SELECT array_cosine_similarity(c.embedding, ?::FLOAT[{int(dim)}]) AS score, d.path, c.page, c.text
-            FROM chunks c JOIN documents d USING (doc_id)
-            ORDER BY score DESC LIMIT ?""",
-            [qvec, k],
-        ).fetchall()
-    return [Hit(i + 1, s, p, pg, t) for i, (s, p, pg, t) in enumerate(rows)], qres
+        con.execute("CREATE OR REPLACE TEMP TABLE metadata_boost (doc_id VARCHAR, weight DOUBLE)")
+        if weights:
+            con.executemany("INSERT INTO metadata_boost VALUES (?, ?)", list(weights.items()))
+        sql = f"""
+            SELECT array_cosine_similarity(c.embedding, ?::FLOAT[{int(dim)}])
+                   + coalesce(b.weight, 0) AS score,
+                   d.path, c.page, c.text, d.doc_id
+            FROM chunks c
+            JOIN documents d USING (doc_id)
+            LEFT JOIN metadata_boost b ON b.doc_id = d.doc_id
+            {"WHERE " + " AND ".join(filters) if filters else ""}
+            ORDER BY score DESC LIMIT ?"""
+        rows = con.execute(sql, [qres.vectors[0], *params, k]).fetchall()
+
+    hits = [
+        Hit(i + 1, s, p, pg, t, ", ".join(by_doc.get(doc_id, [])))
+        for i, (s, p, pg, t, doc_id) in enumerate(rows)
+    ]
+    return hits, qres
 
 
 def stats(db: Path = DB_PATH) -> dict:
