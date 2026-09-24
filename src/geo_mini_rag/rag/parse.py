@@ -18,7 +18,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from geo_mini_rag import ep, settings
-from geo_mini_rag.ep import api_number
+from geo_mini_rag.ep import well_ids
 from geo_mini_rag.rag.extract import HEAD_BYTES, Extracted, extract
 from geo_mini_rag.rag.trace import OFF, Tracer
 
@@ -42,13 +42,13 @@ def parse(path: Path, cfg: dict, trace: Tracer = OFF, *, allow_ocr: bool = True)
 
 
 def _enrich(ex: Extracted, cfg: dict, trace: Tracer) -> Extracted:
-    facts, notes = api_number.enrich(
-        ex.metadata, ex.segments, cfg.get("enrich", {}).get("api_numbers")
+    facts, notes = well_ids.enrich(
+        ex.metadata, ex.segments, cfg.get("enrich", {}).get("well_ids")
     )
-    if facts:
-        count = len(facts["api"])
-        trace("enrich", f"{count} well identifier{'s' if count != 1 else ''}: "
-                        f"{', '.join(facts['api'][:5])}{' ...' if count > 5 else ''}")
+    for key, values in facts.items():
+        if key in ("api", "uwi", "well_location"):
+            trace("enrich", f"{len(values)} {key}: {', '.join(values[:5])}"
+                            f"{' ...' if len(values) > 5 else ''}")
     ex.metadata.update(facts)
     ex.notes.extend(notes)
     return ex

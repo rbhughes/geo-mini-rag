@@ -23,6 +23,10 @@ Two rules keep it honest, and the order matters:
 2.  The state and county must exist. `api_codes.csv` is the authority for that
     (see the module's `SOURCE`), so nothing here is inferred from a name or a
     shape. A labelled number whose codes are not in the table is not recorded.
+    The four offshore pseudo-states are the exception: they name no county, so
+    the CSV cannot hold them and `OFFSHORE` does, with the area code accepted
+    unchecked. The well number itself is checked only for 00000, which the
+    numbering does not use.
 
 Canadian UWIs are not handled. Their shapes are well defined -- DLS
 100/04-11-082-04W6/00, NTS 200/a-096-H/094-A-15/00 -- but there is no Canadian
@@ -50,6 +54,18 @@ from pathlib import Path
 
 CODES = Path(__file__).parent / "data" / "api_codes.csv"
 SOURCE = "rbhughes/freezer, cat-rasputin/api_codes.csv"
+
+# Offshore wells are numbered under pseudo-states that name no county, so the
+# CSV's schema cannot hold them and does not. These four are the whole set, from
+# en.wikipedia.org/wiki/API_well_number. Their middle three digits are an area
+# code, and no authoritative list of those is on hand, so any is accepted: for
+# offshore numbers the label is the only evidence, which it mostly is anyway.
+OFFSHORE = {
+    "55": "Alaska Offshore",
+    "56": "Pacific Coast Offshore",
+    "60": "Northern Gulf of Mexico",
+    "61": "Atlantic Coast Offshore",
+}
 
 # The label that has to be there. `well no` is deliberately absent: "Well No. 5"
 # names a well without claiming to be an API number.
@@ -111,7 +127,13 @@ def find(text: str, limits: dict | None = None) -> list[WellId]:
         if not _labelled(text, match.start(), limits["label_window"]):
             continue
         state_code, county_code, well = match.group(1), match.group(2), match.group(3)
-        if state_code not in states or (state_code, county_code) not in counties:
+        if well == "00000":
+            continue                    # well numbers run 00001-99999
+        if state_code in OFFSHORE:
+            state, county_names = OFFSHORE[state_code], ()
+        elif state_code in states and (state_code, county_code) in counties:
+            state, county_names = states[state_code], counties[(state_code, county_code)]
+        else:
             continue
         api = state_code + county_code + well
         if api in seen:
@@ -121,15 +143,15 @@ def find(text: str, limits: dict | None = None) -> list[WellId]:
             WellId(
                 text=match.group(0),
                 api=api,
-                state=states[state_code],
-                counties=counties[(state_code, county_code)],
+                state=state,
+                counties=county_names,
                 suffix="".join(group for group in match.group(4, 5) if group),
             )
         )
     return out
 
 
-def _ten(value: str) -> str:
+def ten(value: str) -> str:
     """An API number as its ten identifying digits, whatever shape it was written in.
 
     Anything with a letter in it is left exactly as found: a Canadian UWI is not
@@ -139,46 +161,6 @@ def _ten(value: str) -> str:
         return value.strip()
     digits = re.sub(r"\D", "", value)
     return digits[:10] if len(digits) in (10, 12, 14) else value.strip()
-
-
-def enrich(metadata: dict, segments: list[tuple[int | None, str]], limits: dict | None = None
-           ) -> tuple[dict, list[str]]:
-    """Add `api`, `api_state` and `api_county` facts. Returns (facts, notes).
-
-    A handler that already lifted an API out of a header keeps it: the two sets
-    are merged, so a LAS whose header declares one number and whose body lists
-    twenty ends up with twenty-one. One well is one fact, in one shape -- a LAS
-    header writing 490251108000 and a report writing 49-025-11080 are the same
-    well, and both are stored as the ten digits that identify it.
-    """
-    limits = {**DEFAULTS, **(limits or {})}
-    found = find("\n".join(text for _, text in segments if text), limits)
-    notes: list[str] = []
-    cap = limits["max_per_document"]
-    if cap and len(found) > cap:
-        notes.append(f"api: kept {cap:,} of {len(found):,} identifiers")
-        found = found[:cap]
-    if not found:
-        return {}, notes
-
-    def merged(key: str, values: list[str], canonical=lambda v: v) -> list[str]:
-        existing = metadata.get(key, [])
-        existing = list(existing) if isinstance(existing, (list, tuple, set)) else [existing]
-        out: list[str] = []
-        for value in [*(str(v).strip() for v in existing), *values]:
-            value = canonical(value)
-            if value and value not in out:
-                out.append(value)
-        return out
-
-    facts = {
-        "api": merged("api", [w.api for w in found], canonical=_ten),
-        # A header that wrote the same number under UWI meant the same well.
-        **({"uwi": merged("uwi", [], canonical=_ten)} if metadata.get("uwi") else {}),
-        "api_state": merged("api_state", sorted({w.state for w in found})),
-        "api_county": merged("api_county", sorted({c for w in found for c in w.counties})),
-    }
-    return facts, notes
 
 
 def main(argv: list[str] | None = None) -> int:

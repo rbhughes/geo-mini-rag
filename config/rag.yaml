@@ -40,8 +40,8 @@ handlers:
 # Facts that any document can carry, whatever its format. These run over the
 # text partitioning produced, so a PDF report and a LAS header are read alike.
 enrich:
-  api_numbers:
-    label_window: 60        # characters before the digits in which API or UWI must appear
+  well_ids:
+    label_window: 60        # characters before an identifier in which its label must appear
     max_per_document: 0     # 0: keep every identifier a document names
 
 retrieve:
