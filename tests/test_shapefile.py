@@ -62,6 +62,11 @@ def write_bundle(directory, name, fields, rows, *, prj=True, xml=True, shape_typ
     return directory / f"{name}.shp"
 
 
+def _features(chunk):
+    """The feature lines of a chunk, without its two heading lines."""
+    return chunk.split("\n")[2:]
+
+
 def _config(**limits):
     """The pipeline config with the shapefile handler's limits overridden."""
     cfg = settings.load_rag_config()
@@ -130,7 +135,8 @@ def test_facts_are_filterable_and_typed(wells):
 def test_features_are_grouped_and_nameless_layers_get_none(wells, tmp_path):
     chunks = feature_chunks(read_layer(wells), DEFAULTS)
     assert len(chunks) == 3, "60 features at 25 per chunk"
-    assert "Features of Teapot_Wells, group 1 of 3:" in chunks[0]
+    assert chunks[0].startswith("Teapot_Wells is a point map layer of 60 features")
+    assert "Feature group 1 of 3:" in chunks[0]
     assert "WELL_NAME: No. 0" in chunks[0]
     assert "NOTE" not in chunks[0], "empty fields are not described"
     assert "FIELD_NAME" not in chunks[0], "TEAPOT DOME on every well is a layer fact"
@@ -183,7 +189,7 @@ def test_no_feature_is_dropped_however_many_chunks_that_takes(tmp_path):
 
     chunks = feature_chunks(layer, DEFAULTS, budget=60)   # one feature per chunk
     assert len(chunks) == 500, "a tight budget buys more chunks, not fewer features"
-    assert sum(chunk.count("\n") for chunk in chunks) == 500
+    assert sum(len(_features(chunk)) for chunk in chunks) == 500
     assert "WELL_NAME: No. 499" in chunks[-1], "the last feature is described too"
 
 
@@ -219,5 +225,21 @@ def test_bare_number_fields_are_not_worth_a_sentence(tmp_path):
     assert [c.name for c in detail_fields(layer, DEFAULTS)] == ["ROUTENAME", "FROM_DESCR"]
     chunks = feature_chunks(layer, DEFAULTS)
     assert "SEGMID" not in chunks[0], "a segment id is not a word"
-    assert chunks[0].count("ROUTENAME") == 15, "thirty segments, fifteen descriptions"
+    assert len(_features(chunks[0])) == 15, "thirty segments, fifteen descriptions"
     assert chunks[0].count("(x2 features)") == 15, "the count says what each stands for"
+
+
+def test_every_feature_chunk_says_what_layer_it_belongs_to(wells):
+    """A list of names reads as "about wells" for any question about wells; the
+    sentence gives the chunk something to be about."""
+    chunk = feature_chunks(read_layer(wells), DEFAULTS)[1]
+    first, second = chunk.split("\n")[:2]
+    assert first == ("Teapot_Wells is a point map layer of 60 features, titled Teapot Wells."
+                     " Wells drilled for oil and gas in the Teapot Dome area.")
+    assert second == "Feature group 2 of 3:"
+
+
+def test_the_heading_is_paid_for_out_of_the_budget(wells):
+    """It repeats on every chunk, so it cannot push one over the chunk size."""
+    for chunk in feature_chunks(read_layer(wells), DEFAULTS, budget=600):
+        assert len(chunk) <= 600

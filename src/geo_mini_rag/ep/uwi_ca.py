@@ -137,7 +137,8 @@ def _labelled(text: str, start: int, window: int) -> bool:
     return not any(character.isdigit() for character in before[labels[-1].end() :])
 
 
-def find(text: str, limits: dict | None = None) -> list[CanadianWell]:
+def find(text: str, limits: dict | None = None, *, require_label: bool = True
+         ) -> list[CanadianWell]:
     """Every Canadian well identifier in the text, in order, once each.
 
     A complete UWI stands on its own: its letters sit in places a phone number
@@ -156,7 +157,8 @@ def find(text: str, limits: dict | None = None) -> list[CanadianWell]:
         for match in pattern.finditer(text):
             if any(start < match.end() and match.start() < end for start, end in taken):
                 continue        # already read as part of a complete UWI
-            if not complete and not _labelled(text, match.start(), limits["label_window"]):
+            if not complete and require_label and not _labelled(
+                    text, match.start(), limits["label_window"]):
                 continue
             well = build(match, complete)
             if well is None:

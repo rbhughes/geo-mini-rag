@@ -74,3 +74,18 @@ def enrich(metadata: dict, segments: list[tuple[int | None, str]], limits: dict 
     if located := [w.location for w in canadian if not w.uwi]:
         facts["well_location"] = _merge(metadata, "well_location", located)
     return facts, notes
+
+
+def in_question(question: str) -> list[tuple[str, str]]:
+    """(key, value) identifier facts a question names, for looking up rather than guessing.
+
+    An identifier is what embeddings are worst at: `well 4902511080` scores 0.324
+    against the log that carries it and 0.729 against a page of unrelated digits,
+    so no boost small enough to be safe can rescue it. Looked up instead, it is
+    exact. No label is required here, because a question is not a document: the
+    code table alone decides.
+    """
+    found = [("api", well.api) for well in api_number.find(question, require_label=False)]
+    for well in uwi_ca.find(question, require_label=False):
+        found.append(("uwi", well.uwi) if well.uwi else ("well_location", well.location))
+    return found

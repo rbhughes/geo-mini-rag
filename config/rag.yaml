@@ -50,6 +50,11 @@ retrieve:
   # is 452 chunks that read alike, and it took ranks 1 to 5 for any question
   # about wells; the answer is then one source dressed as six. 0 turns this off.
   per_document: 2
+  # A well identifier in a question is looked up, not ranked: `well 4902511080`
+  # scores 0.324 against the log that carries it and 0.729 against a page of
+  # unrelated digits. Only identifiers the index holds narrow anything, so a
+  # question naming one we do not have is answered normally.
+  identifier_lookup: true
   # Document metadata a handler extracted (well, api, field, operator...) is part
   # of ranking: when a question names a value that exists in the index, that
   # document's chunks get this added to their cosine score. Identifiers are what

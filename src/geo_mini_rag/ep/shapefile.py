@@ -339,6 +339,23 @@ def layer_text(layer: Layer, limits: dict) -> str:
     return "\n".join(lines)
 
 
+def lead(layer: Layer) -> str:
+    """One sentence saying what this layer is, to head every feature chunk.
+
+    Without it a feature chunk is a list of names and codes, which reads to an
+    embedding as "about wells" for any question mentioning wells, whether or
+    not it answers one. The sentence gives each chunk something to be about.
+    """
+    said = f"{layer.name} is a {layer.geometry} map layer of {layer.feature_count:,} features"
+    where = layer.metadata.get("title", "")
+    if where and where.lower() not in layer.name.lower():
+        said += f", titled {where}"
+    said += "."
+    if abstract := layer.metadata.get("abstract"):
+        said += f" {abstract.rstrip('.')}."
+    return said
+
+
 def detail_fields(layer: Layer, limits: dict) -> list[Field]:
     """The fields that say something about an individual feature.
 
@@ -405,10 +422,11 @@ def feature_chunks(layer: Layer, limits: dict, budget: int | None = None) -> lis
 
     groups: list[list[str]] = []
     current: list[str] = []
+    room = (budget - len(lead(layer)) - 32) if budget else None
     size = 0
     for line in described:
         full = current and len(current) >= limits["features_per_chunk"]
-        if current and (full or (budget and size + len(line) > budget)):
+        if current and (full or (room and size + len(line) > room)):
             groups.append(current)
             current, size = [], 0
         current.append(line)
@@ -416,8 +434,9 @@ def feature_chunks(layer: Layer, limits: dict, budget: int | None = None) -> lis
     if current:
         groups.append(current)
 
+    heading = lead(layer)
     return [
-        f"Features of {layer.name}, group {n} of {len(groups)}:\n" + "\n".join(group)
+        f"{heading}\nFeature group {n} of {len(groups)}:\n" + "\n".join(group)
         for n, group in enumerate(groups, 1)
     ]
 

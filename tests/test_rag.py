@@ -173,3 +173,47 @@ def test_one_document_cannot_take_every_place_in_the_answer(tmp_path, monkeypatc
     assert [h.path for h in hits] == ["layer.shp", "layer.shp", "one.las", "two.las"]
     assert [h.rank for h in hits] == [1, 2, 3, 4]
     assert hits[0].score >= hits[-1].score, "still ordered by score"
+
+
+def test_an_identifier_in_a_question_is_looked_up_not_ranked(tmp_path, monkeypatch):
+    """`well 4902511080` scores 0.324 against the log that carries it and 0.729
+    against a page of unrelated digits. Ranking cannot find it; a lookup can."""
+    import duckdb
+
+    from geo_mini_rag import openrouter
+    from geo_mini_rag.rag import index
+
+    db = tmp_path / "ids.duckdb"
+    _tiny_index(db, [
+        ("noise", "digits.txt", "81374982496e85828 4041 9903", [1.0, 0.0, 0.0]),
+        ("well", "log.las", "Well log header. API number: 490251108000", [0.3, 0.9, 0.0]),
+    ])
+    con = duckdb.connect(str(db))
+    con.execute("INSERT INTO doc_meta VALUES ('well', 'api', '4902511080', NULL)")
+    con.close()
+    monkeypatch.setattr(openrouter, "embed",
+                        lambda *a, **k: openrouter.EmbedResult("m", "m", [[1.0, 0.0, 0.0]]))
+
+    cfg = {"retrieve": {"metadata_boost": 0.1, "identifier_lookup": False}}
+    hits, _ = index.search("well 4902511080", 2, db, cfg=cfg)
+    assert hits[0].path == "digits.txt", "ranked, the digits win"
+
+    cfg["retrieve"]["identifier_lookup"] = True
+    hits, _ = index.search("well 4902511080", 2, db, cfg=cfg)
+    assert [h.path for h in hits] == ["log.las"], "looked up, only the well that carries it"
+    assert "api=4902511080" in hits[0].matched
+
+
+def test_an_identifier_the_index_does_not_hold_changes_nothing(tmp_path, monkeypatch):
+    """Otherwise a question about a well we lack would return nothing at all."""
+    from geo_mini_rag import openrouter
+    from geo_mini_rag.rag import index
+
+    db = tmp_path / "absent.duckdb"
+    _tiny_index(db, [("a", "one.txt", "something", [1.0, 0.0, 0.0])])
+    monkeypatch.setattr(openrouter, "embed",
+                        lambda *a, **k: openrouter.EmbedResult("m", "m", [[1.0, 0.0, 0.0]]))
+
+    hits, _ = index.search("what about well 4902599999", 2, db,
+                           cfg={"retrieve": {"identifier_lookup": True}})
+    assert [h.path for h in hits] == ["one.txt"]

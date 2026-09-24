@@ -119,15 +119,21 @@ def _labelled(text: str, start: int, window: int) -> bool:
     return not any(character.isdigit() for character in before[labels[-1].end() :])
 
 
-def find(text: str, limits: dict | None = None) -> list[WellId]:
-    """Every labelled, code-valid well identifier in the text, in order, once each."""
+def find(text: str, limits: dict | None = None, *, require_label: bool = True) -> list[WellId]:
+    """Every labelled, code-valid well identifier in the text, in order, once each.
+
+    `require_label=False` is for questions, not documents. The label rule was
+    calibrated on 139,629 digit runs across 992 files; a question is a dozen
+    words someone typed on purpose, where a number that validates against the
+    code table is the thing they are asking about.
+    """
     limits = {**DEFAULTS, **(limits or {})}
     states, counties = _tables()
     out: list[WellId] = []
     seen: set[str] = set()
 
     for match in NUMBER.finditer(text):
-        if not _labelled(text, match.start(), limits["label_window"]):
+        if require_label and not _labelled(text, match.start(), limits["label_window"]):
             continue
         state_code, county_code, well = match.group(1), match.group(2), match.group(3)
         if well == "00000":
