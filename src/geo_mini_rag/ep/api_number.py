@@ -25,8 +25,9 @@ Two rules keep it honest, and the order matters:
     shape. A labelled number whose codes are not in the table is not recorded.
     The four offshore pseudo-states are the exception: they name no county, so
     the CSV cannot hold them and `OFFSHORE` does, with the area code accepted
-    unchecked. The well number itself is checked only for 00000, which the
-    numbering does not use.
+    unchecked. `api_codes_local.csv` holds rows the vendor table is missing,
+    each with its citation. The well number itself is checked only for 00000,
+    which the numbering does not use.
 
 Canadian UWIs are not handled. Their shapes are well defined -- DLS
 100/04-11-082-04W6/00, NTS 200/a-096-H/094-A-15/00 -- but there is no Canadian
@@ -54,6 +55,11 @@ from pathlib import Path
 
 CODES = Path(__file__).parent / "data" / "api_codes.csv"
 SOURCE = "rbhughes/freezer, cat-rasputin/api_codes.csv"
+# Rows the vendor table is missing. Kept separate so the copy above stays
+# byte-identical to its upstream and every local addition carries its citation:
+# La Paz, Arizona, split from Yuma in 1983 and given an even code the way New
+# Mexico's Cibola was. Corrections belong upstream; this is what runs meanwhile.
+LOCAL = CODES.with_name("api_codes_local.csv")
 
 # Offshore wells are numbered under pseudo-states that name no county, so the
 # CSV's schema cannot hold them and does not. These four are the whole set, from
@@ -98,12 +104,17 @@ def _tables() -> tuple[dict[str, str], dict[tuple[str, str], tuple[str, ...]]]:
     """(state code -> abbreviation, (state, county) -> names) from the CSV."""
     states: dict[str, str] = {}
     counties: dict[tuple[str, str], list[str]] = {}
-    with CODES.open(newline="", encoding="utf-8-sig") as f:
-        for row in csv.DictReader(f):
-            state = row["STATE_API_CODE"].strip()
-            county = row["COUNTY_API_CODE"].strip()
-            states[state] = row["STATE_ABBR"].strip()
-            counties.setdefault((state, county), []).append(row["COUNTY_NAME"].strip())
+    for path in (CODES, LOCAL):
+        if not path.exists():
+            continue
+        with path.open(newline="", encoding="utf-8-sig") as f:
+            for row in csv.DictReader(f):
+                state = row["STATE_API_CODE"].strip()
+                county = row["COUNTY_API_CODE"].strip()
+                states[state] = row["STATE_ABBR"].strip()
+                names = counties.setdefault((state, county), [])
+                if (name := row["COUNTY_NAME"].strip()) not in names:
+                    names.append(name)
     return states, {key: tuple(names) for key, names in counties.items()}
 
 

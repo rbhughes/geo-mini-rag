@@ -117,3 +117,9 @@ def test_a_well_number_of_all_zeros_is_not_a_well():
 def test_texas_county_codes_run_past_the_fips_range():
     """API county codes are not FIPS: Zavala is 42-507, and the table knows it."""
     assert find("API 42-507-11080")[0].counties == ("Zavala",)
+
+
+def test_the_local_supplement_fills_gaps_in_the_vendor_table():
+    """La Paz was split from Yuma in 1983 and is missing from api_codes.csv."""
+    assert find("API 02-012-11080")[0].counties == ("La Paz",)
+    assert find("API 02-027-11080")[0].counties == ("Yuma",), "the vendor rows still load"
