@@ -48,8 +48,7 @@ DBF_HEADER_BYTES = 32
 # Defaults; `handlers.shapefile` in config/rag.yaml overrides them.
 DEFAULTS = {
     "features_per_chunk": 25,
-    "max_feature_chunks": 200,      # a 54,000-feature layer is summarised, not transcribed
-    "max_features_read": 20_000,
+    "max_features_read": 0,         # 0: read every record. A layer is never part-indexed.
     "categorical_max_ratio": 0.2,   # each value recurs at least five times
     "prose_min_length": 40,         # average characters, above which it is text not a label
     "max_fact_values": 200,
@@ -183,7 +182,7 @@ def read_dbf(path: Path, max_records: int) -> tuple[int, list[Field], bool]:
             raise NotShapefile(f"{path.name} has no attribute fields")
 
         f.seek(header_length)
-        wanted = min(count, max_records)
+        wanted = min(count, max_records) if max_records else count
         for _ in range(wanted):
             record = f.read(record_length)
             if len(record) < record_length:
@@ -342,10 +341,13 @@ def feature_chunks(layer: Layer, limits: dict, budget: int | None = None) -> lis
     A layer of nameless geometry gets none of these: its summary says everything
     there is to say.
 
+    Every feature is described: a layer produces as many chunks as it needs.
+
     `features_per_chunk` is an upper bound, not a target: a group also stops at
     `budget` characters so that chunking never has to cut a feature in half. A
-    well row runs about 200 characters, so a 1,200-character budget holds five
-    or six of them; raise chunk.max_characters to fit more.
+    Teapot well row runs about 310 characters, so a 1,200-character budget holds
+    three of them and 2,111 wells take 625 chunks; raise chunk.max_characters to
+    fit more features into each.
     """
     roles = {column.name: column.role(limits) for column in layer.fields}
     # A field holding one value for every feature says nothing about any of
@@ -357,7 +359,7 @@ def feature_chunks(layer: Layer, limits: dict, budget: int | None = None) -> lis
     if not any(roles[c.name] in ("identifier", "prose") for c in carried):
         return []
 
-    rows = min(len(carried[0].values), limits["max_features_read"])
+    rows = len(carried[0].values)
     per_chunk = limits["features_per_chunk"]
     chunks: list[str] = []
     described: list[str] = []
@@ -372,8 +374,6 @@ def feature_chunks(layer: Layer, limits: dict, budget: int | None = None) -> lis
         described, size, first = [], 0, last
 
     for index in range(rows):
-        if len(chunks) >= limits["max_feature_chunks"]:
-            break
         parts = [
             f"{c.name}: {c.values[index]}"
             for c in carried
@@ -386,8 +386,7 @@ def feature_chunks(layer: Layer, limits: dict, budget: int | None = None) -> lis
             flush(index)
         described.append(line)
         size += len(line) + 1
-    if len(chunks) < limits["max_feature_chunks"]:
-        flush(rows)
+    flush(rows)
     return chunks
 
 

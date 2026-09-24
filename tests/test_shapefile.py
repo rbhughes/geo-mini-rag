@@ -61,6 +61,14 @@ def write_bundle(directory, name, fields, rows, *, prj=True, xml=True, shape_typ
     return directory / f"{name}.shp"
 
 
+def _config(**limits):
+    """The pipeline config with the shapefile handler's limits overridden."""
+    cfg = settings.load_rag_config()
+    cfg["handlers"] = {**cfg.get("handlers", {}),
+                       "shapefile": {**(cfg.get("handlers", {}).get("shapefile") or {}), **limits}}
+    return cfg
+
+
 @pytest.fixture
 def wells(tmp_path):
     fields = [("WELL_NAME", "C", 12), ("COMPANY", "C", 16), ("FIELD_NAME", "C", 12),
@@ -163,3 +171,26 @@ def test_short_files_are_rejected(tmp_path):
 
 def test_empty_field_reports_no_role():
     assert Field("BLANK", "text", 10, ["", "  ", ""]).role(DEFAULTS) == "empty"
+
+
+def test_no_feature_is_dropped_however_many_chunks_that_takes(tmp_path):
+    """A layer is never part-indexed: the handler adds chunks, it does not truncate."""
+    fields = [("WELL_NAME", "C", 12), ("COMPANY", "C", 16)]
+    rows = [(f"No. {n}", "TEAPOT OIL" if n % 2 else "AMERADA HESS") for n in range(500)]
+    layer = read_layer(write_bundle(tmp_path, "Many_Wells", fields, rows))
+
+    chunks = feature_chunks(layer, DEFAULTS, budget=60)   # one feature per chunk
+    assert len(chunks) == 500, "a tight budget buys more chunks, not fewer features"
+    assert sum(chunk.count("\n") for chunk in chunks) == 500
+    assert "WELL_NAME: No. 499" in chunks[-1], "the last feature is described too"
+
+
+def test_a_read_limit_is_off_by_default_and_reported_when_set(tmp_path):
+    fields = [("WELL_NAME", "C", 12), ("COMPANY", "C", 16)]
+    rows = [(f"No. {n}", "TEAPOT OIL") for n in range(60)]
+    path = write_bundle(tmp_path, "Capped_Wells", fields, rows)
+
+    assert len(read_layer(path).fields[0].values) == 60, "max_features_read: 0 reads all"
+
+    ex = ShapefileHandler().parse(path, _config(max_features_read=10), OFF)
+    assert ex.notes == ["attributes read for 10 of 60 features"]
