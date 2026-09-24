@@ -8,6 +8,7 @@ from geo_mini_rag.ep.shapefile import (
     Field,
     NotShapefile,
     ShapefileHandler,
+    detail_fields,
     feature_chunks,
     read_layer,
     read_prj,
@@ -129,9 +130,10 @@ def test_facts_are_filterable_and_typed(wells):
 def test_features_are_grouped_and_nameless_layers_get_none(wells, tmp_path):
     chunks = feature_chunks(read_layer(wells), DEFAULTS)
     assert len(chunks) == 3, "60 features at 25 per chunk"
-    assert "Features 1-25" in chunks[0]
+    assert "Features of Teapot_Wells, group 1 of 3:" in chunks[0]
     assert "WELL_NAME: No. 0" in chunks[0]
     assert "NOTE" not in chunks[0], "empty fields are not described"
+    assert "FIELD_NAME" not in chunks[0], "TEAPOT DOME on every well is a layer fact"
 
     contours = write_bundle(tmp_path, "Structure", [("Id", "N", 4), ("TVDSS", "N", 6)],
                             [(0, 1020 + n) for n in range(40)], prj=False, xml=False)
@@ -194,3 +196,28 @@ def test_a_read_limit_is_off_by_default_and_reported_when_set(tmp_path):
 
     ex = ShapefileHandler().parse(path, _config(max_features_read=10), OFF)
     assert ex.notes == ["attributes read for 10 of 60 features"]
+
+
+def test_a_value_on_nearly_every_feature_is_left_to_the_layer(tmp_path):
+    """SURF_TYPE is 3 on 5,806 Denver road segments: that describes the layer."""
+    fields = [("WELL_NAME", "C", 12), ("SURF_TYPE", "C", 4), ("STATUS", "C", 8)]
+    rows = [(f"No. {n}", "3" if n else "4", "ACTIVE" if n % 3 else "PLUGGED") for n in range(60)]
+    layer = read_layer(write_bundle(tmp_path, "Roads", fields, rows))
+
+    kept = [c.name for c in detail_fields(layer, DEFAULTS)]
+    assert kept == ["WELL_NAME", "STATUS"], "SURF_TYPE varies on one row in sixty"
+
+
+def test_bare_number_fields_are_not_worth_a_sentence(tmp_path):
+    """Retrieval is text. SEGMID 1401 names nothing, and makes two rows look distinct."""
+    fields = [("ROUTENAME", "C", 12), ("FROM_DESCR", "C", 10), ("SEGMID", "C", 6)]
+    names = ["E 14TH AVE", "W 10TH AVE", "N DEXTER ST"]
+    rows = [(names[i % 3], f"MILE {i}", str(1400 + i * 2 + half))
+            for i in range(15) for half in (0, 1)]
+    layer = read_layer(write_bundle(tmp_path, "Segments", fields, rows))
+
+    assert [c.name for c in detail_fields(layer, DEFAULTS)] == ["ROUTENAME", "FROM_DESCR"]
+    chunks = feature_chunks(layer, DEFAULTS)
+    assert "SEGMID" not in chunks[0], "a segment id is not a word"
+    assert chunks[0].count("ROUTENAME") == 15, "thirty segments, fifteen descriptions"
+    assert chunks[0].count("(x2 features)") == 15, "the count says what each stands for"

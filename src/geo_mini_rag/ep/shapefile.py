@@ -35,6 +35,7 @@ from __future__ import annotations
 import re
 import struct
 import xml.etree.ElementTree as ET
+from collections import Counter
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -50,6 +51,7 @@ DEFAULTS = {
     "features_per_chunk": 25,
     "max_features_read": 0,         # 0: read every record. A layer is never part-indexed.
     "categorical_max_ratio": 0.2,   # each value recurs at least five times
+    "dominant_max_share": 0.9,      # a value this common describes the layer, not the feature
     "prose_min_length": 40,         # average characters, above which it is text not a label
     "max_fact_values": 200,
 }
@@ -61,6 +63,8 @@ GEOMETRY_TYPES = {
     31: "multipatch",
 }
 DBF_TYPES = {"C": "text", "N": "number", "F": "number", "D": "date", "L": "boolean", "M": "memo"}
+# A value with no letters in it: 1401, 08031, 0002498.
+BARE_NUMBER = re.compile(r"^[\d.,+-]+$")
 
 WKT_NAME = re.compile(r'^\s*(?:PROJCS|GEOGCS|GEOGCRS|PROJCRS)\s*\[\s*"([^"]+)"')
 WKT_DATUM = re.compile(r'DATUM\s*\[\s*"([^"]+)"')
@@ -335,59 +339,87 @@ def layer_text(layer: Layer, limits: dict) -> str:
     return "\n".join(lines)
 
 
+def detail_fields(layer: Layer, limits: dict) -> list[Field]:
+    """The fields that say something about an individual feature.
+
+    Three kinds are left out, all of them already in the layer's facts. A field
+    with one value for every feature. A field with nearly one -- SURF_TYPE is 3
+    on all 5,806 Denver road segments and FIPS is 20000 on 98% of them, which
+    describes the layer, not the row. And a field of bare numbers: SEGMID 1401,
+    ASR_ID 0002498. Retrieval is text, and a number naming nothing is not
+    something anyone can search for; repeating it per feature only makes two
+    identical rows look distinct.
+    """
+    kept: list[Field] = []
+    for column in layer.fields:
+        if column.role(limits) not in ("identifier", "prose", "categorical"):
+            continue
+        filled = column.filled
+        if not filled or column.distinct <= 1:
+            continue
+        if max(Counter(filled).values()) / len(filled) >= limits["dominant_max_share"]:
+            continue
+        if all(BARE_NUMBER.match(value) for value in filled):
+            continue
+        kept.append(column)
+    return kept
+
+
 def feature_chunks(layer: Layer, limits: dict, budget: int | None = None) -> list[str]:
     """Features in groups, for layers whose attributes name things.
 
     A layer of nameless geometry gets none of these: its summary says everything
-    there is to say.
+    there is to say. Of the 101 layers in data/raw, 74 are in that position --
+    drilling-cell grids holding two coordinates and a symbol, parcels holding
+    nothing but ASR_ID.
 
-    Every feature is described: a layer produces as many chunks as it needs.
+    Nothing is truncated: every feature that has words is described, and a layer
+    produces as many chunks as that takes. Identical descriptions are the one
+    exception -- they are merged and counted, since a second copy of the same
+    sentence adds nothing to a text index.
 
     `features_per_chunk` is an upper bound, not a target: a group also stops at
     `budget` characters so that chunking never has to cut a feature in half. A
-    Teapot well row runs about 310 characters, so a 1,200-character budget holds
-    three of them and 2,111 wells take 625 chunks; raise chunk.max_characters to
+    Teapot well row runs about 230 characters, so a 1,200-character budget holds
+    four or five and 2,111 wells take 452 chunks; raise chunk.max_characters to
     fit more features into each.
     """
-    roles = {column.name: column.role(limits) for column in layer.fields}
-    # A field holding one value for every feature says nothing about any of
-    # them; it is already in the layer summary.
-    carried = [
-        c for c in layer.fields
-        if roles[c.name] in ("identifier", "prose", "categorical") and c.distinct > 1
-    ]
-    if not any(roles[c.name] in ("identifier", "prose") for c in carried):
+    carried = detail_fields(layer, limits)
+    if not any(column.role(limits) in ("identifier", "prose") for column in carried):
         return []
 
-    rows = len(carried[0].values)
-    per_chunk = limits["features_per_chunk"]
-    chunks: list[str] = []
-    described: list[str] = []
-    first = 0
-    size = 0
-
-    def flush(last: int) -> None:
-        nonlocal described, size, first
-        if described:
-            header = f"Features {first + 1}-{last} of {layer.name}:"
-            chunks.append(header + "\n" + "\n".join(described))
-        described, size, first = [], 0, last
-
-    for index in range(rows):
+    # Two features described by the same words are one description: a text
+    # index gains nothing from the second copy, and the count says how many
+    # features it stands for.
+    seen: dict[str, int] = {}
+    for index in range(len(carried[0].values)):
         parts = [
             f"{c.name}: {c.values[index]}"
             for c in carried
             if index < len(c.values) and c.values[index].strip()
         ]
-        if not parts:
-            continue
-        line = "; ".join(parts)
-        if described and (len(described) >= per_chunk or (budget and size + len(line) > budget)):
-            flush(index)
-        described.append(line)
+        if parts:
+            line = "; ".join(parts)
+            seen[line] = seen.get(line, 0) + 1
+    described = [text if n == 1 else f"{text} (x{n} features)" for text, n in seen.items()]
+
+    groups: list[list[str]] = []
+    current: list[str] = []
+    size = 0
+    for line in described:
+        full = current and len(current) >= limits["features_per_chunk"]
+        if current and (full or (budget and size + len(line) > budget)):
+            groups.append(current)
+            current, size = [], 0
+        current.append(line)
         size += len(line) + 1
-    flush(rows)
-    return chunks
+    if current:
+        groups.append(current)
+
+    return [
+        f"Features of {layer.name}, group {n} of {len(groups)}:\n" + "\n".join(group)
+        for n, group in enumerate(groups, 1)
+    ]
 
 
 class ShapefileHandler:
