@@ -37,6 +37,13 @@ handlers:
     prose_min_length: 40            # average characters, above which a field is text not a label
     max_fact_values: 200
 
+# Facts that any document can carry, whatever its format. These run over the
+# text partitioning produced, so a PDF report and a LAS header are read alike.
+enrich:
+  api_numbers:
+    label_window: 60        # characters before the digits in which API or UWI must appear
+    max_per_document: 0     # 0: keep every identifier a document names
+
 retrieve:
   top_k: 6
   # Document metadata a handler extracted (well, api, field, operator...) is part

@@ -8,7 +8,9 @@ stages: "needs OCR" is a routing decision, not a state a file sits in.
 
 Domain handlers registered in `geo_mini_rag.ep` are consulted first, so a
 format whose meaning is not its raw text (LAS, shapefile) never reaches the
-generic path.
+generic path. Whatever produced the text, the result then passes an enricher
+that picks well identifiers out of it, since an API number is worth the same
+in a PDF as in a header and belongs to no one format.
 """
 
 from __future__ import annotations
@@ -16,6 +18,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from geo_mini_rag import ep, settings
+from geo_mini_rag.ep import api_number
 from geo_mini_rag.rag.extract import HEAD_BYTES, Extracted, extract
 from geo_mini_rag.rag.trace import OFF, Tracer
 
@@ -34,6 +37,24 @@ def needs_ocr(ex: Extracted, cfg: dict) -> bool:
 
 
 def parse(path: Path, cfg: dict, trace: Tracer = OFF, *, allow_ocr: bool = True) -> Extracted:
+    """Text, plus the document-level facts anything could find in it."""
+    return _enrich(_partition(path, cfg, trace, allow_ocr=allow_ocr), cfg, trace)
+
+
+def _enrich(ex: Extracted, cfg: dict, trace: Tracer) -> Extracted:
+    facts, notes = api_number.enrich(
+        ex.metadata, ex.segments, cfg.get("enrich", {}).get("api_numbers")
+    )
+    if facts:
+        count = len(facts["api"])
+        trace("enrich", f"{count} well identifier{'s' if count != 1 else ''}: "
+                        f"{', '.join(facts['api'][:5])}{' ...' if count > 5 else ''}")
+    ex.metadata.update(facts)
+    ex.notes.extend(notes)
+    return ex
+
+
+def _partition(path: Path, cfg: dict, trace: Tracer, *, allow_ocr: bool = True) -> Extracted:
     with path.open("rb") as f:
         head = f.read(HEAD_BYTES)
 
