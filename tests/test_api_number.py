@@ -1,6 +1,6 @@
 import pytest
 
-from geo_mini_rag.ep.api_number import OFFSHORE, SOURCE, WellId, find
+from geo_mini_rag.ep.api_number import WellId, find, offshore
 from geo_mini_rag.ep.well_ids import enrich
 
 LAS_HEADER = """~Well Information Block
@@ -75,8 +75,13 @@ def test_a_code_naming_more_than_one_place_reports_both():
     assert find("API 45-003-11080")[0].counties == ("Albemarle", "Charlottesville ( City )")
 
 
-def test_the_table_is_attributed():
-    assert "freezer" in SOURCE and "api_codes.csv" in SOURCE
+def test_the_table_covers_every_state_and_the_offshore_areas():
+    from geo_mini_rag.ep.api_number import _tables
+
+    states, counties = _tables()
+    assert len(states) == 55, "51 states and the District, plus four offshore areas"
+    assert states["49"] == "WY" and states["60"] == "Northern Gulf of Mexico"
+    assert ("49", "025") in counties
 
 
 def test_a_document_with_no_wells_gets_no_facts():
@@ -106,7 +111,7 @@ def test_offshore_wells_are_numbered_under_pseudo_states():
     assert found[0].api == "6081740161"
     assert found[0].state == "Northern Gulf of Mexico"
     assert found[0].counties == (), "an area code is not a county, and is not checked"
-    assert set(OFFSHORE) == {"55", "56", "60", "61"}
+    assert offshore() == {"55", "56", "60", "61"}
 
 
 def test_a_well_number_of_all_zeros_is_not_a_well():
@@ -119,7 +124,16 @@ def test_texas_county_codes_run_past_the_fips_range():
     assert find("API 42-507-11080")[0].counties == ("Zavala",)
 
 
-def test_the_local_supplement_fills_gaps_in_the_vendor_table():
-    """La Paz was split from Yuma in 1983 and is missing from api_codes.csv."""
+def test_counties_added_since_the_table_was_first_written():
+    """La Paz was split from Yuma in 1983 and took an even code, as Cibola did."""
     assert find("API 02-012-11080")[0].counties == ("La Paz",)
-    assert find("API 02-027-11080")[0].counties == ("Yuma",), "the vendor rows still load"
+    assert find("API 02-027-11080")[0].counties == ("Yuma",)
+    assert find("API 30-006-11080")[0].counties == ("Cibola",)
+
+
+def test_counties_the_table_was_missing_or_had_wrong():
+    """Both found from evidence: 122 labelled 05-014 numbers in data/raw, and
+    Kentucky's own alphabetical odd-code sequence with Nicholas absent."""
+    assert find("API 05-014-11080")[0].counties == ("Broomfield",)
+    assert find("API 16-181-11080")[0].counties == ("Nicholas",)
+    assert find("API 16-179-11080")[0].counties == ("Nelson",)

@@ -1,3565 +1,3571 @@
-US_API_CODE,STATE_API_CODE,STATE_ABBR,COUNTY_API_CODE,COUNTY_NAME
-926,01,AL,001,Autauga
-926,01,AL,003,Baldwin
-926,01,AL,005,Barbour
-926,01,AL,007,Bibb
-926,01,AL,009,Blount
-926,01,AL,011,Bullock
-926,01,AL,013,Butler
-926,01,AL,015,Calhoun
-926,01,AL,017,Chambers
-926,01,AL,019,Cherokee
-926,01,AL,021,Chilton
-926,01,AL,023,Choctaw
-926,01,AL,025,Clarke
-926,01,AL,027,Clay
-926,01,AL,029,Cleburne
-926,01,AL,031,Coffee
-926,01,AL,033,Colbert
-926,01,AL,035,Conecuh
-926,01,AL,037,Coosa
-926,01,AL,039,Covington
-926,01,AL,041,Crenshaw
-926,01,AL,043,Cullman
-926,01,AL,045,Dale
-926,01,AL,047,Dallas
-926,01,AL,049,De Kalb
-926,01,AL,051,Elmore
-926,01,AL,053,Escambia
-926,01,AL,055,Etowah
-926,01,AL,057,Fayette
-926,01,AL,059,Franklin
-926,01,AL,061,Geneva
-926,01,AL,063,Greene
-926,01,AL,065,Hale
-926,01,AL,067,Henry
-926,01,AL,069,Houston
-926,01,AL,071,Jackson
-926,01,AL,073,Jefferson
-926,01,AL,075,Lamar
-926,01,AL,077,Lauderdale
-926,01,AL,079,Lawrence
-926,01,AL,081,Lee
-926,01,AL,083,Limestone
-926,01,AL,085,Lowndes
-926,01,AL,087,Macon
-926,01,AL,089,Madison
-926,01,AL,091,Marengo
-926,01,AL,093,Marion
-926,01,AL,095,Marshall
-926,01,AL,097,Mobile
-926,01,AL,099,Monroe
-926,01,AL,101,Montgomery
-926,01,AL,103,Morgan
-926,01,AL,105,Perry
-926,01,AL,107,Pickens
-926,01,AL,109,Pike
-926,01,AL,111,Randolph
-926,01,AL,113,Russell
-926,01,AL,115,St. Clair
-926,01,AL,117,Shelby
-926,01,AL,119,Sumter
-926,01,AL,121,Talladega
-926,01,AL,123,Tallapoosa
-926,01,AL,125,Tuscalloosa
-926,01,AL,127,Walker
-926,01,AL,129,Washington
-926,01,AL,131,Wilcox
-926,01,AL,133,Winston
-926,01,AL,203,State Waters - Baldwin County
-926,01,AL,297,State Waters - Mobile County
-926,02,AZ,001,Apache
-926,02,AZ,003,Cochise
-926,02,AZ,005,Coconino
-926,02,AZ,007,Gila
-926,02,AZ,009,Graham
-926,02,AZ,011,Greenlee
-926,02,AZ,013,Maricopa
-926,02,AZ,015,Mohave
-926,02,AZ,017,Navajo
-926,02,AZ,019,Pima
-926,02,AZ,021,Pinal
-926,02,AZ,023,Santa Cruz
-926,02,AZ,025,Yavapai
-926,02,AZ,027,Yuma
-926,03,AR,001,Arkansas
-926,03,AR,003,Ashley
-926,03,AR,005,Baxter
-926,03,AR,007,Benton
-926,03,AR,009,Boone
-926,03,AR,011,Bradley
-926,03,AR,013,Calhoun
-926,03,AR,015,Carroll
-926,03,AR,017,Chicot
-926,03,AR,019,Clark
-926,03,AR,021,Clay
-926,03,AR,023,Cleburne
-926,03,AR,025,Cleveland
-926,03,AR,027,Columbia
-926,03,AR,029,Conway
-926,03,AR,031,Craighead
-926,03,AR,033,Crawford
-926,03,AR,035,Crittenden
-926,03,AR,037,Cross
-926,03,AR,039,Dallas
-926,03,AR,041,Desha
-926,03,AR,043,Drew
-926,03,AR,045,Faulkner
-926,03,AR,047,Franklin
-926,03,AR,049,Fulton
-926,03,AR,051,Garland
-926,03,AR,053,Grant
-926,03,AR,055,Greene
-926,03,AR,057,Hempstead
-926,03,AR,059,Hot Spring
-926,03,AR,061,Howard
-926,03,AR,063,Independence
-926,03,AR,065,Izard
-926,03,AR,067,Jackson
-926,03,AR,069,Jefferson
-926,03,AR,071,Johnson
-926,03,AR,073,Lafayette
-926,03,AR,075,Lawrence
-926,03,AR,077,Lee
-926,03,AR,079,Lincoln
-926,03,AR,081,Little River
-926,03,AR,083,Logan
-926,03,AR,085,Lonoke
-926,03,AR,087,Madison
-926,03,AR,089,Marion
-926,03,AR,091,Miller
-926,03,AR,093,Mississippi
-926,03,AR,095,Monroe
-926,03,AR,097,Montgomery
-926,03,AR,099,Nevada
-926,03,AR,101,Newton
-926,03,AR,103,Ouachita
-926,03,AR,105,Perry
-926,03,AR,107,Phillips
-926,03,AR,109,Pike
-926,03,AR,111,Poinsett
-926,03,AR,113,Polk
-926,03,AR,115,Pope
-926,03,AR,117,Prairie
-926,03,AR,119,Pulaski
-926,03,AR,121,Randolph
-926,03,AR,123,St. Francis
-926,03,AR,125,Saline
-926,03,AR,127,Scott
-926,03,AR,129,Searcy
-926,03,AR,131,Sebastian
-926,03,AR,133,Sevier
-926,03,AR,135,Sharp
-926,03,AR,137,Stone
-926,03,AR,139,Union
-926,03,AR,141,Van Buren
-926,03,AR,143,Washington
-926,03,AR,145,White
-926,03,AR,147,Woodruff
-926,03,AR,149,Yell
-926,04,CA,001,Alameda
-926,04,CA,003,Alpine
-926,04,CA,005,Amador
-926,04,CA,007,Butte
-926,04,CA,009,Calaveras
-926,04,CA,011,Colusa
-926,04,CA,013,Contra Costa
-926,04,CA,015,Del Norte
-926,04,CA,017,El Dorado
-926,04,CA,019,Fresno
-926,04,CA,021,Glenn
-926,04,CA,023,Humboldt
-926,04,CA,025,Imperial
-926,04,CA,027,Inyo
-926,04,CA,029,Kern
-926,04,CA,031,Kings
-926,04,CA,033,Lake
-926,04,CA,035,Lassen
-926,04,CA,037,Los Angeles
-926,04,CA,039,Madera
-926,04,CA,041,Marin
-926,04,CA,043,Mariposa
-926,04,CA,045,Mendocino
-926,04,CA,047,Merced
-926,04,CA,049,Modoc
-926,04,CA,051,Mono
-926,04,CA,053,Monterey
-926,04,CA,055,Napa
-926,04,CA,057,Nevada
-926,04,CA,059,Orange
-926,04,CA,061,Placer
-926,04,CA,063,Plumas
-926,04,CA,065,Riverside
-926,04,CA,067,Sacramento
-926,04,CA,069,San Benito
-926,04,CA,071,San Bernardino
-926,04,CA,073,San Diego
-926,04,CA,075,San Fransico
-926,04,CA,077,San Joaquin
-926,04,CA,079,San Luis Obispo
-926,04,CA,081,San Mateo
-926,04,CA,083,Santa Barbara
-926,04,CA,085,Santa Clara
-926,04,CA,087,Santa Cruz
-926,04,CA,089,Shasta
-926,04,CA,091,Sierra
-926,04,CA,093,Siskiyou
-926,04,CA,095,Solnao
-926,04,CA,097,Sonoma
-926,04,CA,099,Stanislaus
-926,04,CA,101,Sutter
-926,04,CA,103,Tehama
-926,04,CA,105,Trinity
-926,04,CA,107,Tulare
-926,04,CA,109,Tuolumne
-926,04,CA,111,Ventura
-926,04,CA,113,Yolo
-926,04,CA,115,Yuba
-926,04,CA,116,Anacapa Offshore Islands
-926,04,CA,118,San Clemente Offshore Islands
-926,04,CA,120,San Miguel Offshore Islands
-926,04,CA,122,San Nicolas Offshore Islands
-926,04,CA,124,Santa Barbara Offshore Islands
-926,04,CA,126,Santa Catalina Offshore Islands
-926,04,CA,128,Santa Cruz Offshore Islands
-926,04,CA,130,Santa Rosa Offshore Islands
-926,04,CA,201,State Waters - Alameda County
-926,04,CA,211,State Waters - Ventura County
-926,04,CA,213,State Waters - Contra Costa County
-926,04,CA,215,State Waters - Del Norte County
-926,04,CA,216,State Waters - Anacapa Offshore Islands
-926,04,CA,218,State Waters - San Clemente Offshore Islands
-926,04,CA,220,State Waters - San Miguel Offshore Islands
-926,04,CA,222,State Waters - San Nicolas Offshore Islands
-926,04,CA,223,State Waters - Humboldt County
-926,04,CA,224,State Waters - Santa Barbara Offshore Islands
-926,04,CA,226,State Waters - Santa Catalina Offshore Islands
-926,04,CA,228,State Waters - Santa Cruz Offshore Islands
-926,04,CA,230,State Waters - Santa Rosa Offshore Islands
-926,04,CA,237,State Waters - Los Angeles County
-926,04,CA,241,State Waters - Marin County
-926,04,CA,245,State Waters - Mendocino County
-926,04,CA,253,State Waters - Monterey County
-926,04,CA,255,State Waters - Napa County
-926,04,CA,259,State Waters - Orange County
-926,04,CA,273,State Waters - San Diego County
-926,04,CA,275,State Waters - San Fransico County
-926,04,CA,279,State Waters - San Luis Obispo County
-926,04,CA,281,State Waters - San Mateo County
-926,04,CA,283,State Waters - Santa Barbara County
-926,04,CA,287,State Waters - Santa Cruz County
-926,04,CA,295,State Waters - Solnao County
-926,04,CA,297,State Waters - Sonoma County
-926,04,CA,311,Santa Cruz Channel Islands Area
-926,04,CA,312,Santa Catalina Channel Islands Area
-926,04,CA,313,San Nicolas Channel Islands Area
-926,05,CO,001,Adams
-926,05,CO,003,Alamosa
-926,05,CO,005,Arapahoe
-926,05,CO,007,Archuleta
-926,05,CO,009,Baca
-926,05,CO,011,Bent
-926,05,CO,013,Boulder
-926,05,CO,015,Chaffee
-926,05,CO,017,Cheyenne
-926,05,CO,019,Clear Creek
-926,05,CO,021,Conejos
-926,05,CO,023,Costilla
-926,05,CO,025,Crowley
-926,05,CO,027,Custer
-926,05,CO,029,Delta
-926,05,CO,031,Denver
-926,05,CO,033,Dolores
-926,05,CO,035,Douglas
-926,05,CO,037,Eagle
-926,05,CO,039,Elbert
-926,05,CO,041,El Paso
-926,05,CO,043,Fremont
-926,05,CO,045,Garfield
-926,05,CO,047,Gilpin
-926,05,CO,049,Grand
-926,05,CO,051,Gunnison
-926,05,CO,053,Hinsdale
-926,05,CO,055,Huerfano
-926,05,CO,057,Jackson
-926,05,CO,059,Jefferson
-926,05,CO,061,Kiowa
-926,05,CO,063,Kit Carson
-926,05,CO,065,Lake
-926,05,CO,067,La Plata
-926,05,CO,069,Larimer
-926,05,CO,071,Las Animas
-926,05,CO,073,Lincoln
-926,05,CO,075,Logan
-926,05,CO,077,Mesa
-926,05,CO,079,Mineral
-926,05,CO,081,Moffat
-926,05,CO,083,Montezuma
-926,05,CO,085,Montrose
-926,05,CO,087,Morgan
-926,05,CO,089,Otero
-926,05,CO,091,Ouray
-926,05,CO,093,Park
-926,05,CO,095,Phillips
-926,05,CO,097,Pitkin
-926,05,CO,099,Prowers
-926,05,CO,101,Pueblo
-926,05,CO,103,Rio Blanco
-926,05,CO,105,Rio Grande
-926,05,CO,107,Routt
-926,05,CO,109,Saguache
-926,05,CO,111,San Juan
-926,05,CO,113,San Miguel
-926,05,CO,115,Sedgwick
-926,05,CO,117,Summit
-926,05,CO,119,Teller
-926,05,CO,121,Washington
-926,05,CO,123,Weld
-926,05,CO,125,Yuma
-926,06,CT,001,Fairfield
-926,06,CT,003,Hartford
-926,06,CT,005,Litchfield
-926,06,CT,007,Middlesex
-926,06,CT,009,New Haven
-926,06,CT,011,New London
-926,06,CT,013,Tolland
-926,06,CT,015,Windham
-926,06,CT,201,State Waters - Fairfield County
-926,06,CT,207,State Waters - Middlesex County
-926,06,CT,209,State Waters - New Haven County
-926,06,CT,211,State Waters - New London County
-926,07,DE,001,Kent
-926,07,DE,003,New Castle
-926,07,DE,005,Sussex
-926,07,DE,205,State Waters - Sussex County
-926,08,DC,001,District of Columbia
-926,09,FL,001,Alachua
-926,09,FL,003,Baker
-926,09,FL,005,Bay
-926,09,FL,007,Bradford
-926,09,FL,009,Brevard
-926,09,FL,011,Broward
-926,09,FL,013,Calhoun
-926,09,FL,015,Charlotte
-926,09,FL,017,Citrus
-926,09,FL,019,Clay
-926,09,FL,021,Collier
-926,09,FL,023,Columbia
-926,09,FL,025,Dade
-926,09,FL,027,De Soto
-926,09,FL,029,Dixie
-926,09,FL,031,Duval
-926,09,FL,033,Escambia
-926,09,FL,035,Flagler
-926,09,FL,037,Franklin
-926,09,FL,039,Gadsen
-926,09,FL,041,Gilchrist
-926,09,FL,043,Glades
-926,09,FL,045,Gulf
-926,09,FL,047,Hamilton
-926,09,FL,049,Hardee
-926,09,FL,051,Hendry
-926,09,FL,053,Hernando
-926,09,FL,055,Highlands
-926,09,FL,057,Hillsborough
-926,09,FL,059,Holmes
-926,09,FL,061,Indian River
-926,09,FL,063,Jackson
-926,09,FL,065,Jefferson
-926,09,FL,067,Lafayette
-926,09,FL,069,Lake
-926,09,FL,071,Lee
-926,09,FL,073,Leon
-926,09,FL,075,Levy
-926,09,FL,077,Liberty
-926,09,FL,079,Madison
-926,09,FL,081,Manatee
-926,09,FL,083,Marion
-926,09,FL,085,Martin
-926,09,FL,087,Monroe
-926,09,FL,089,Nassau
-926,09,FL,091,Okaloosa
-926,09,FL,093,Okeechobee
-926,09,FL,095,Orange
-926,09,FL,097,Osceola
-926,09,FL,099,Palm Beach
-926,09,FL,101,Pasco
-926,09,FL,103,Pinellas
-926,09,FL,105,Polk
-926,09,FL,107,Putnam
-926,09,FL,109,St. Johns
-926,09,FL,111,St. Lucie
-926,09,FL,113,Santa Rosa
-926,09,FL,115,Sarasota
-926,09,FL,117,Seminole
-926,09,FL,119,Sumter
-926,09,FL,121,Suwannee
-926,09,FL,123,Taylor
-926,09,FL,125,Union
-926,09,FL,127,Volusia
-926,09,FL,129,Wakulla
-926,09,FL,131,Walton
-926,09,FL,133,Washington
-926,09,FL,205,State Waters - Bay County
-926,09,FL,209,State Waters - Brevard County
-926,09,FL,211,State Waters - Broward County
-926,09,FL,215,State Waters - Charlotte County
-926,09,FL,217,State Waters - Citrus County
-926,09,FL,221,State Waters - Collier County
-926,09,FL,225,State Waters - Dade County
-926,09,FL,229,State Waters - Dixie County
-926,09,FL,231,State Waters - Duval County
-926,09,FL,233,State Waters - Escambia County
-926,09,FL,235,State Waters - Flagler County
-926,09,FL,237,State Waters - Franklin County
-926,09,FL,245,State Waters - Gulf County
-926,09,FL,253,State Waters - Hernando County
-926,09,FL,257,State Waters - Hillsborough County
-926,09,FL,261,State Waters - Indian River County
-926,09,FL,265,State Waters - Jefferson County
-926,09,FL,271,State Waters - Lee County
-926,09,FL,275,State Waters - Levy County
-926,09,FL,281,State Waters - Manatee County
-926,09,FL,285,State Waters - Martin County
-926,09,FL,287,State Waters - Monroe County
-926,09,FL,289,State Waters - Nassau County
-926,09,FL,291,State Waters - Okaloosa County
-926,09,FL,299,State Waters - Palm Beach County
-926,09,FL,301,State Waters - Pasco County
-926,09,FL,303,State Waters - Pinellas County
-926,09,FL,309,State Waters - St. Johns County
-926,09,FL,311,State Waters - St. Lucie County
-926,09,FL,313,State Waters - Santa Rosa County
-926,09,FL,315,State Waters - Sarasota County
-926,09,FL,323,State Waters - Taylor County
-926,09,FL,327,State Waters - Volusia County
-926,09,FL,329,State Waters - Wakulla County
-926,09,FL,331,State Waters - Walton County
-926,10,GA,001,Appling
-926,10,GA,003,Atkinson
-926,10,GA,005,Bacon
-926,10,GA,007,Baker
-926,10,GA,009,Baldwin
-926,10,GA,011,Banks
-926,10,GA,013,Barrow
-926,10,GA,015,Bartow
-926,10,GA,017,Ben Hill
-926,10,GA,019,Berrien
-926,10,GA,021,Bibb
-926,10,GA,023,Bleckley
-926,10,GA,025,Brantley
-926,10,GA,027,Brooks
-926,10,GA,029,Bryan
-926,10,GA,031,Bulloch
-926,10,GA,033,Burke
-926,10,GA,035,Butts
-926,10,GA,037,Calhoun
-926,10,GA,039,Camden
-926,10,GA,043,Candler
-926,10,GA,045,Carroll
-926,10,GA,047,Catoosa
-926,10,GA,049,Charlton
-926,10,GA,051,Chatham
-926,10,GA,053,Chattahoochee
-926,10,GA,055,Chattooga
-926,10,GA,057,Cherokee
-926,10,GA,059,Clarke
-926,10,GA,061,Clay
-926,10,GA,063,Clayton
-926,10,GA,065,Clinch
-926,10,GA,067,Cobb
-926,10,GA,069,Coffee
-926,10,GA,071,Colquitt
-926,10,GA,073,Columbia
-926,10,GA,075,Cook
-926,10,GA,077,Coweta
-926,10,GA,079,Crawford
-926,10,GA,081,Crisp
-926,10,GA,083,Dade
-926,10,GA,085,Dawson
-926,10,GA,087,Decatur
-926,10,GA,089,De Kalb
-926,10,GA,091,Dodge
-926,10,GA,093,Dooly
-926,10,GA,095,Dougherty
-926,10,GA,097,Douglas
-926,10,GA,099,Early
-926,10,GA,101,Echols
-926,10,GA,103,Effingham
-926,10,GA,105,Elbert
-926,10,GA,107,Emanuel
-926,10,GA,109,Evans
-926,10,GA,111,Fannin
-926,10,GA,113,Fayette
-926,10,GA,115,Floyd
-926,10,GA,117,Forsyth
-926,10,GA,119,Franklin
-926,10,GA,121,Fulton
-926,10,GA,123,Gilmer
-926,10,GA,125,Glascock
-926,10,GA,127,Glynn
-926,10,GA,129,Gordon
-926,10,GA,131,Grady
-926,10,GA,133,Greene
-926,10,GA,135,Gwinnett
-926,10,GA,137,Habersham
-926,10,GA,139,Hall
-926,10,GA,141,Hancock
-926,10,GA,143,Haralson
-926,10,GA,145,Harris
-926,10,GA,147,Hart
-926,10,GA,149,Heard
-926,10,GA,151,Henry
-926,10,GA,153,Houston
-926,10,GA,155,Irwin
-926,10,GA,157,Jackson
-926,10,GA,159,Jasper
-926,10,GA,161,Jeff Davis
-926,10,GA,163,Jefferson
-926,10,GA,165,Jenkins
-926,10,GA,167,Johnson
-926,10,GA,169,Jones
-926,10,GA,171,Lamar
-926,10,GA,173,Lanier
-926,10,GA,175,Laurens
-926,10,GA,177,Lee
-926,10,GA,179,Liberty
-926,10,GA,181,Lincoln
-926,10,GA,183,Long
-926,10,GA,185,Lowndes
-926,10,GA,187,Lumpkin
-926,10,GA,189,Mc Duffie
-926,10,GA,191,Mc Intosh
-926,10,GA,193,Macon
-926,10,GA,195,Madison
-926,10,GA,197,Marion
-926,10,GA,199,Meriwether
-926,10,GA,201,Miller
-926,10,GA,205,Mitchell
-926,10,GA,207,Monroe
-926,10,GA,209,Montgomery
-926,10,GA,211,Morgan
-926,10,GA,213,Murray
-926,10,GA,215,Muscogee
-926,10,GA,217,Newton
-926,10,GA,219,Oconee
-926,10,GA,221,Oglethorpe
-926,10,GA,223,Paulding
-926,10,GA,225,Peach
-926,10,GA,227,Pickens
-926,10,GA,229,Pierce
-926,10,GA,231,Pike
-926,10,GA,233,Polk
-926,10,GA,235,Pulaski
-926,10,GA,237,Putnam
-926,10,GA,239,Quitman
-926,10,GA,241,Rabun
-926,10,GA,243,Randolph
-926,10,GA,245,Richmond
-926,10,GA,247,Rockdale
-926,10,GA,249,Schley
-926,10,GA,251,Screven
-926,10,GA,253,Seminole
-926,10,GA,255,Spalding
-926,10,GA,257,Stephens
-926,10,GA,259,Stewart
-926,10,GA,261,Sumter
-926,10,GA,263,Talbot
-926,10,GA,265,Taliaferro
-926,10,GA,267,Tattnall
-926,10,GA,269,Taylor
-926,10,GA,271,Telfair
-926,10,GA,273,Terrell
-926,10,GA,275,Thomas
-926,10,GA,277,Tift
-926,10,GA,279,Toombs
-926,10,GA,281,Towns
-926,10,GA,283,Treutlen
-926,10,GA,285,Troup
-926,10,GA,287,Turner
-926,10,GA,289,Twiggs
-926,10,GA,291,Union
-926,10,GA,293,Upson
-926,10,GA,295,Walker
-926,10,GA,297,Walton
-926,10,GA,299,Ware
-926,10,GA,301,Warren
-926,10,GA,303,Washington
-926,10,GA,305,Wayne
-926,10,GA,307,Webster
-926,10,GA,309,Wheller
-926,10,GA,311,White
-926,10,GA,313,Whitfield
-926,10,GA,315,Wilcox
-926,10,GA,317,Wilkes
-926,10,GA,319,Wilkinson
-926,10,GA,321,Worth
-926,10,GA,329,State Waters - Bryan County
-926,10,GA,339,State Waters - Camden County
-926,10,GA,351,State Waters - Chatham County
-926,10,GA,427,State Waters - Glynn County
-926,10,GA,479,State Waters - Liberty County
-926,10,GA,491,State Waters - Mc Intosh County
-926,11,ID,001,Ada
-926,11,ID,003,Adams
-926,11,ID,005,Bannock
-926,11,ID,007,Bear Lake
-926,11,ID,009,Benewah
-926,11,ID,011,Bingham
-926,11,ID,013,Blaine
-926,11,ID,015,Boise
-926,11,ID,017,Bonner
-926,11,ID,019,Bonneville
-926,11,ID,021,Boundary
-926,11,ID,023,Butte
-926,11,ID,025,Camas
-926,11,ID,027,Canyon
-926,11,ID,029,Caribou
-926,11,ID,031,Cassia
-926,11,ID,033,Clark
-926,11,ID,035,Clearwater
-926,11,ID,037,Custer
-926,11,ID,039,Elmore
-926,11,ID,041,Franklin
-926,11,ID,043,Fremont
-926,11,ID,045,Gem
-926,11,ID,047,Gooding
-926,11,ID,049,Idaho
-926,11,ID,051,Jefferson
-926,11,ID,053,Jerome
-926,11,ID,055,Kootenai
-926,11,ID,057,Latah
-926,11,ID,059,Lemhi
-926,11,ID,061,Lewis
-926,11,ID,063,Lincoln
-926,11,ID,065,Madison
-926,11,ID,067,Minidoka
-926,11,ID,069,Nez Perce
-926,11,ID,071,Oneida
-926,11,ID,073,Owyhee
-926,11,ID,075,Payette
-926,11,ID,077,Power
-926,11,ID,079,Shoshone
-926,11,ID,081,Teton
-926,11,ID,083,Twin Falls
-926,11,ID,085,Valley
-926,11,ID,087,Washington
-926,12,IL,001,Adams
-926,12,IL,003,Alexander
-926,12,IL,005,Bond
-926,12,IL,007,Boone
-926,12,IL,009,Brown
-926,12,IL,011,Bureau
-926,12,IL,013,Calhoun
-926,12,IL,015,Carroll
-926,12,IL,017,Cass
-926,12,IL,019,Champaign
-926,12,IL,021,Christian
-926,12,IL,023,Clark
-926,12,IL,025,Clay
-926,12,IL,027,Clinton
-926,12,IL,029,Coles
-926,12,IL,031,Cook
-926,12,IL,033,Crawford
-926,12,IL,035,Cumberland
-926,12,IL,037,De Kalb
-926,12,IL,039,De Witt
-926,12,IL,041,Douglas
-926,12,IL,043,Du Page
-926,12,IL,045,Edgar
-926,12,IL,047,Edwards
-926,12,IL,049,Effingham
-926,12,IL,051,Fayette
-926,12,IL,053,Ford
-926,12,IL,055,Franklin
-926,12,IL,057,Fulton
-926,12,IL,059,Gallatin
-926,12,IL,061,Greene
-926,12,IL,063,Grundy
-926,12,IL,065,Hamilton
-926,12,IL,067,Hancock
-926,12,IL,069,Hardin
-926,12,IL,071,Henderson
-926,12,IL,073,Henry
-926,12,IL,075,Iroquois
-926,12,IL,077,Jackson
-926,12,IL,079,Jasper
-926,12,IL,081,Jefferson
-926,12,IL,083,Jersey
-926,12,IL,085,Jo Daviess
-926,12,IL,087,Johnson
-926,12,IL,089,Kane
-926,12,IL,091,Kankakee
-926,12,IL,093,Kendall
-926,12,IL,095,Knox
-926,12,IL,097,Lake
-926,12,IL,099,La Salle
-926,12,IL,101,Lawrence
-926,12,IL,103,Lee
-926,12,IL,105,Livingston
-926,12,IL,107,Logan
-926,12,IL,109,Mc Donough
-926,12,IL,111,Mc Henry
-926,12,IL,113,Mc Lean
-926,12,IL,115,Macon
-926,12,IL,117,Macoupin
-926,12,IL,119,Madison
-926,12,IL,121,Marion
-926,12,IL,123,Marshall
-926,12,IL,125,Mason
-926,12,IL,127,Massac
-926,12,IL,129,Menard
-926,12,IL,131,Mercer
-926,12,IL,133,Monroe
-926,12,IL,135,Montgomery
-926,12,IL,137,Morgan
-926,12,IL,139,Moultrie
-926,12,IL,141,Ogle
-926,12,IL,143,Peoria
-926,12,IL,145,Perry
-926,12,IL,147,Piatt
-926,12,IL,149,Pike
-926,12,IL,151,Pope
-926,12,IL,153,Pulaski
-926,12,IL,155,Putnam
-926,12,IL,157,Randolph
-926,12,IL,159,Richland
-926,12,IL,161,Rock Island
-926,12,IL,163,St. Clair
-926,12,IL,165,Saline
-926,12,IL,167,Sangamon
-926,12,IL,169,Schuyler
-926,12,IL,171,Scott
-926,12,IL,173,Shelby
-926,12,IL,175,Stark
-926,12,IL,177,Stephenson
-926,12,IL,179,Tazewell
-926,12,IL,181,Union
-926,12,IL,183,Vermilion
-926,12,IL,185,Wabash
-926,12,IL,187,Warren
-926,12,IL,189,Washington
-926,12,IL,191,Wayne
-926,12,IL,193,White
-926,12,IL,195,Whiteside
-926,12,IL,197,Will
-926,12,IL,199,Williamson
-926,12,IL,201,Winnebago
-926,12,IL,203,Woodford
-926,13,IN,001,Adams
-926,13,IN,003,Allen
-926,13,IN,005,Bartholomew
-926,13,IN,007,Benton
-926,13,IN,009,Blackford
-926,13,IN,011,Boone
-926,13,IN,013,Brown
-926,13,IN,015,Carroll
-926,13,IN,017,Cass
-926,13,IN,019,Clark
-926,13,IN,021,Clay
-926,13,IN,023,Clinton
-926,13,IN,025,Crawford
-926,13,IN,027,Daviess
-926,13,IN,029,Dearborn
-926,13,IN,031,Decatur
-926,13,IN,033,De Kalb
-926,13,IN,035,Delaware
-926,13,IN,037,Dubois
-926,13,IN,039,Elkhart
-926,13,IN,041,Fayette
-926,13,IN,043,Floyd
-926,13,IN,045,Fountain
-926,13,IN,047,Franklin
-926,13,IN,049,Fulton
-926,13,IN,051,Gibson
-926,13,IN,053,Grant
-926,13,IN,055,Greene
-926,13,IN,057,Hamilton
-926,13,IN,059,Hancock
-926,13,IN,061,Harrison
-926,13,IN,063,Hendricks
-926,13,IN,065,Henry
-926,13,IN,067,Howard
-926,13,IN,069,Huntington
-926,13,IN,071,Jackson
-926,13,IN,073,Jasper
-926,13,IN,075,Jay
-926,13,IN,077,Jefferson
-926,13,IN,079,Jennings
-926,13,IN,081,Johnson
-926,13,IN,083,Knox
-926,13,IN,085,Kosciusko
-926,13,IN,087,Lagrange
-926,13,IN,089,Lake
-926,13,IN,091,La Porte
-926,13,IN,093,Lawrence
-926,13,IN,095,Madison
-926,13,IN,097,Marion
-926,13,IN,099,Marshall
-926,13,IN,101,Martin
-926,13,IN,103,Miami
-926,13,IN,105,Monroe
-926,13,IN,107,Montgomery
-926,13,IN,109,Morgan
-926,13,IN,111,Newton
-926,13,IN,113,Noble
-926,13,IN,115,Ohio
-926,13,IN,117,Orange
-926,13,IN,119,Owen
-926,13,IN,121,Parke
-926,13,IN,123,Perry
-926,13,IN,125,Pike
-926,13,IN,127,Porter
-926,13,IN,129,Posley
-926,13,IN,131,Pulaski
-926,13,IN,133,Putnam
-926,13,IN,135,Randolph
-926,13,IN,137,Ripley
-926,13,IN,139,Rush
-926,13,IN,141,St. Joseph
-926,13,IN,143,Scott
-926,13,IN,145,Shelby
-926,13,IN,147,Spencer
-926,13,IN,149,Starke
-926,13,IN,151,Steuben
-926,13,IN,153,Sullivan
-926,13,IN,155,Switzerland
-926,13,IN,157,Tippecanoe
-926,13,IN,159,Tipton
-926,13,IN,161,Union
-926,13,IN,163,Vanderburgh
-926,13,IN,165,Vermillion
-926,13,IN,167,Vigo
-926,13,IN,169,Wabash
-926,13,IN,171,Warren
-926,13,IN,173,Warrick
-926,13,IN,175,Washington
-926,13,IN,177,Wayne
-926,13,IN,179,Wells
-926,13,IN,181,White
-926,13,IN,183,Whitley
-926,14,IA,001,Adair
-926,14,IA,003,Adams
-926,14,IA,005,Allamakee
-926,14,IA,007,Appanoose
-926,14,IA,009,Audubon
-926,14,IA,011,Benton
-926,14,IA,013,Black Hawk
-926,14,IA,015,Boone
-926,14,IA,017,Bremer
-926,14,IA,019,Buchanan
-926,14,IA,021,Buena Vista
-926,14,IA,023,Butler
-926,14,IA,025,Calhoun
-926,14,IA,027,Carroll
-926,14,IA,029,Cass
-926,14,IA,031,Cedar
-926,14,IA,033,Cerro Gordo
-926,14,IA,035,Cherokee
-926,14,IA,037,Chickasaw
-926,14,IA,039,Clarke
-926,14,IA,041,Clay
-926,14,IA,043,Clayton
-926,14,IA,045,Clinton
-926,14,IA,047,Crawford
-926,14,IA,049,Dallas
-926,14,IA,051,Davis
-926,14,IA,053,Decatur
-926,14,IA,055,Delaware
-926,14,IA,057,Des Moines
-926,14,IA,059,Dickinson
-926,14,IA,061,Dubuque
-926,14,IA,063,Emmet
-926,14,IA,065,Fayette
-926,14,IA,067,Floyd
-926,14,IA,069,Franklin
-926,14,IA,071,Fremont
-926,14,IA,073,Greene
-926,14,IA,075,Grundy
-926,14,IA,077,Guthrie
-926,14,IA,079,Hamilton
-926,14,IA,081,Hancock
-926,14,IA,083,Hardin
-926,14,IA,085,Harrison
-926,14,IA,087,Henry
-926,14,IA,089,Howard
-926,14,IA,091,Humboldt
-926,14,IA,093,Ida
-926,14,IA,095,Iowa
-926,14,IA,097,Jackson
-926,14,IA,099,Jasper
-926,14,IA,101,Jefferson
-926,14,IA,103,Johnson
-926,14,IA,105,Jones
-926,14,IA,107,Keokuk
-926,14,IA,109,Kossuth
-926,14,IA,111,Lee
-926,14,IA,113,Linn
-926,14,IA,115,Louisa
-926,14,IA,117,Lucas
-926,14,IA,119,Lyon
-926,14,IA,121,Madison
-926,14,IA,123,Mahaska
-926,14,IA,125,Marion
-926,14,IA,127,Marshall
-926,14,IA,129,Mills
-926,14,IA,131,Mitchell
-926,14,IA,133,Monona
-926,14,IA,135,Monroe
-926,14,IA,137,Montgomery
-926,14,IA,139,Muscatine
-926,14,IA,141,O Brien
-926,14,IA,143,Osceola
-926,14,IA,145,Page
-926,14,IA,147,Palo Alto
-926,14,IA,149,Plymouth
-926,14,IA,151,Pocahontas
-926,14,IA,153,Polk
-926,14,IA,155,Pottawattamie
-926,14,IA,157,Poweshiek
-926,14,IA,159,Ringgold
-926,14,IA,161,Sac
-926,14,IA,163,Scott
-926,14,IA,165,Shelby
-926,14,IA,167,Sioux
-926,14,IA,169,Story
-926,14,IA,171,Tama
-926,14,IA,173,Taylor
-926,14,IA,175,Union
-926,14,IA,177,Van Buren
-926,14,IA,179,Wapello
-926,14,IA,181,Warren
-926,14,IA,183,Washington
-926,14,IA,185,Wayne
-926,14,IA,187,Webster
-926,14,IA,189,Winnebago
-926,14,IA,191,Winneshiek
-926,14,IA,193,Woodbury
-926,14,IA,195,Worth
-926,14,IA,197,Wright
-926,15,KS,001,Allen
-926,15,KS,003,Anderson
-926,15,KS,005,Atchison
-926,15,KS,007,Barber
-926,15,KS,009,Barton
-926,15,KS,011,Bourbon
-926,15,KS,013,Brown
-926,15,KS,015,Butler
-926,15,KS,017,Chase
-926,15,KS,019,Cahutauqua
-926,15,KS,021,Cherokee
-926,15,KS,023,Cheyenne
-926,15,KS,025,Clark
-926,15,KS,027,Clay
-926,15,KS,029,Cloud
-926,15,KS,031,Coffey
-926,15,KS,033,Comanche
-926,15,KS,035,Cowley
-926,15,KS,037,Crawford
-926,15,KS,039,Decatur
-926,15,KS,041,Dickinson
-926,15,KS,043,Doniphan
-926,15,KS,045,Douglas
-926,15,KS,047,Edwards
-926,15,KS,049,Elk
-926,15,KS,051,Ellis
-926,15,KS,053,Ellsworth
-926,15,KS,055,Finney
-926,15,KS,057,Ford
-926,15,KS,059,Franklin
-926,15,KS,061,Geary
-926,15,KS,063,Gove
-926,15,KS,065,Graham
-926,15,KS,067,Grant
-926,15,KS,069,Gray
-926,15,KS,071,Greeley
-926,15,KS,073,Greenwood
-926,15,KS,075,Hamilton
-926,15,KS,077,Harper
-926,15,KS,079,Harvey
-926,15,KS,081,Haskell
-926,15,KS,083,Hodgeman
-926,15,KS,085,Jackson
-926,15,KS,087,Jefferson
-926,15,KS,089,Jewell
-926,15,KS,091,Johnson
-926,15,KS,093,Kearny
-926,15,KS,095,Kingman
-926,15,KS,097,Kiowa
-926,15,KS,099,Labette
-926,15,KS,101,Lane
-926,15,KS,103,Leavenworth
-926,15,KS,105,Lincoln
-926,15,KS,107,Linn
-926,15,KS,109,Logan
-926,15,KS,111,Lyon
-926,15,KS,113,Mc Pherson
-926,15,KS,115,Marion
-926,15,KS,117,Marshall
-926,15,KS,119,Meade
-926,15,KS,121,Miami
-926,15,KS,123,Mitchell
-926,15,KS,125,Montgomery
-926,15,KS,127,Morris
-926,15,KS,129,Morton
-926,15,KS,131,Nemaha
-926,15,KS,133,Neosho
-926,15,KS,135,Ness
-926,15,KS,137,Norton
-926,15,KS,139,Osage
-926,15,KS,141,Osborne
-926,15,KS,143,Ottawa
-926,15,KS,145,Pawnee
-926,15,KS,147,Phillips
-926,15,KS,149,Pottawatomie
-926,15,KS,151,Pratt
-926,15,KS,153,Rawlins
-926,15,KS,155,Reno
-926,15,KS,157,Republic
-926,15,KS,159,Rice
-926,15,KS,161,Riley
-926,15,KS,163,Rooks
-926,15,KS,165,Rush
-926,15,KS,167,Russell
-926,15,KS,169,Saline
-926,15,KS,171,Scott
-926,15,KS,173,Sedgwick
-926,15,KS,175,Seward
-926,15,KS,177,Shawnee
-926,15,KS,179,Sheridan
-926,15,KS,181,Sherman
-926,15,KS,183,Smith
-926,15,KS,185,Stafford
-926,15,KS,187,Stanton
-926,15,KS,189,Stevens
-926,15,KS,191,Sumner
-926,15,KS,193,Thomas
-926,15,KS,195,Trego
-926,15,KS,197,Wabaunsee
-926,15,KS,199,Wallace
-926,15,KS,201,Washington
-926,15,KS,203,Wichita
-926,15,KS,205,Wilson
-926,15,KS,207,Woodson
-926,15,KS,209,Wyandotte
-926,16,KY,001,Adair
-926,16,KY,003,Allen
-926,16,KY,005,Anderson
-926,16,KY,007,Ballard
-926,16,KY,009,Barren
-926,16,KY,011,Bath
-926,16,KY,013,Bell
-926,16,KY,015,Boone
-926,16,KY,017,Bourbon
-926,16,KY,019,Boyd
-926,16,KY,021,Boyle
-926,16,KY,023,Bracken
-926,16,KY,025,Breathitt
-926,16,KY,027,Breckinridge
-926,16,KY,029,Bullitt
-926,16,KY,031,Butler
-926,16,KY,033,Caldwell
-926,16,KY,035,Calloway
-926,16,KY,037,Campbell
-926,16,KY,039,Carlisle
-926,16,KY,041,Carroll
-926,16,KY,043,Carter
-926,16,KY,045,Casey
-926,16,KY,047,Christian
-926,16,KY,049,Clark
-926,16,KY,051,Clay
-926,16,KY,053,Clinton
-926,16,KY,055,Crittenden
-926,16,KY,057,Cumberland
-926,16,KY,059,Daviess
-926,16,KY,061,Edmonson
-926,16,KY,063,Elliott
-926,16,KY,065,Estill
-926,16,KY,067,Fayette
-926,16,KY,069,Fleming
-926,16,KY,071,Floyd
-926,16,KY,073,Franklin
-926,16,KY,075,Fulton
-926,16,KY,077,Gallatin
-926,16,KY,079,Garrard
-926,16,KY,081,Grant
-926,16,KY,083,Graves
-926,16,KY,085,Grayson
-926,16,KY,087,Green
-926,16,KY,089,Greenup
-926,16,KY,091,Hancock
-926,16,KY,093,Hardin
-926,16,KY,095,Harlan
-926,16,KY,097,Harrison
-926,16,KY,099,Hart
-926,16,KY,101,Henderson
-926,16,KY,103,Henry
-926,16,KY,105,Hickman
-926,16,KY,107,Hopkins
-926,16,KY,109,Jackson
-926,16,KY,111,Jefferson
-926,16,KY,113,Jessamine
-926,16,KY,115,Johnson
-926,16,KY,117,Kenton
-926,16,KY,119,Knott
-926,16,KY,121,Knox
-926,16,KY,123,Larue
-926,16,KY,125,Laurel
-926,16,KY,127,Lawrence
-926,16,KY,129,Lee
-926,16,KY,131,Leslie
-926,16,KY,133,Letcher
-926,16,KY,135,Lewis
-926,16,KY,137,Lincoln
-926,16,KY,139,Livingston
-926,16,KY,141,Logan
-926,16,KY,143,Lyon
-926,16,KY,145,Mc Cracken
-926,16,KY,147,Mc Creary
-926,16,KY,149,Mc Lean
-926,16,KY,151,Madison
-926,16,KY,153,Magoffin
-926,16,KY,155,Marion
-926,16,KY,157,Marshall
-926,16,KY,159,Martin
-926,16,KY,161,Mason
-926,16,KY,163,Meade
-926,16,KY,165,Menifee
-926,16,KY,167,Mercer
-926,16,KY,169,Metcalfe
-926,16,KY,171,Monroe
-926,16,KY,173,Montgomery
-926,16,KY,175,Morgan
-926,16,KY,177,Muhlenberg
-926,16,KY,179,Nelson
-926,16,KY,181,Nelson
-926,16,KY,183,Ohio
-926,16,KY,185,Oldham
-926,16,KY,187,Owen
-926,16,KY,189,Owsley
-926,16,KY,191,Pendleton
-926,16,KY,193,Perry
-926,16,KY,195,Pike
-926,16,KY,197,Powell
-926,16,KY,199,Pulaski
-926,16,KY,201,Robertson
-926,16,KY,203,Rockcastle
-926,16,KY,205,Rowan
-926,16,KY,207,Russell
-926,16,KY,209,Scott
-926,16,KY,211,Shelby
-926,16,KY,213,Simpson
-926,16,KY,215,Spencer
-926,16,KY,217,Taylor
-926,16,KY,219,Todd
-926,16,KY,221,Trigg
-926,16,KY,223,Trimble
-926,16,KY,225,Union
-926,16,KY,227,Warren
-926,16,KY,229,Washington
-926,16,KY,231,Wayne
-926,16,KY,233,Webster
-926,16,KY,235,Whitley
-926,16,KY,237,Wolfe
-926,16,KY,239,Woodford
-926,17,LA,001,Acadia
-926,17,LA,003,Allen
-926,17,LA,005,Ascension
-926,17,LA,007,Assumption
-926,17,LA,009,Avoyelles
-926,17,LA,011,Beauregard
-926,17,LA,013,Bienville
-926,17,LA,015,Bossier
-926,17,LA,017,Caddo
-926,17,LA,019,Calcasieu
-926,17,LA,021,Caldwell
-926,17,LA,023,Cameron
-926,17,LA,025,Catahoula
-926,17,LA,027,Claiborne
-926,17,LA,029,Concordia
-926,17,LA,031,De Soto
-926,17,LA,033,East Baton Rouge
-926,17,LA,035,East Carroll
-926,17,LA,037,East Feliciana
-926,17,LA,039,Evangeline
-926,17,LA,041,Franklin
-926,17,LA,043,Grant
-926,17,LA,045,Iberia
-926,17,LA,047,Iberville
-926,17,LA,049,Jackson
-926,17,LA,051,Jefferson
-926,17,LA,053,Jefferson Davis
-926,17,LA,055,Lafayette
-926,17,LA,057,Lafourche
-926,17,LA,059,La Salle
-926,17,LA,061,Lincoln
-926,17,LA,063,Livingston
-926,17,LA,065,Madison
-926,17,LA,067,Morehouse
-926,17,LA,069,Natchitoches
-926,17,LA,071,Orleans
-926,17,LA,073,Ouachita
-926,17,LA,075,Plaquemines
-926,17,LA,077,Pointe Coupee
-926,17,LA,079,Rapides
-926,17,LA,081,Red River
-926,17,LA,083,Richland
-926,17,LA,085,Sabine
-926,17,LA,087,St. Bernard
-926,17,LA,089,St. Charles
-926,17,LA,091,St. Helena
-926,17,LA,093,St. James
-926,17,LA,095,St. John the Baptist
-926,17,LA,097,St. Landry
-926,17,LA,099,St. Martin
-926,17,LA,101,St. Mary
-926,17,LA,103,St. Tammany
-926,17,LA,105,Tangipahoa
-926,17,LA,107,Rensas
-926,17,LA,109,Terrebone
-926,17,LA,111,Union
-926,17,LA,113,Vermilion
-926,17,LA,115,Vernon
-926,17,LA,117,Washington
-926,17,LA,119,Webster
-926,17,LA,121,West Baton Rouge
-926,17,LA,123,West Carroll
-926,17,LA,125,West Feliciana
-926,17,LA,127,Winn
-926,17,LA,700,B.L.M. Area Name = West Cameron
-926,17,LA,701,B.L.M. Area Name = West Cameron - West
-926,17,LA,702,B.L.M. Area Name = West Cameron - South
-926,17,LA,703,B.L.M. Area Name = East Cameron
-926,17,LA,704,B.L.M. Area Name = East Cameron - South
-926,17,LA,705,B.L.M. Area Name = Vermilion
-926,17,LA,706,B.L.M. Area Name = Vermilion - South
-926,17,LA,707,B.L.M. Area Name = South Marsh Island and South Marsh Island - North
-926,17,LA,708,B.L.M. Area Name = South Marsh Island - South
-926,17,LA,709,B.L.M. Area Name = Eugene Island
-926,17,LA,710,B.L.M. Area Name = Eugene Island - South
-926,17,LA,711,B.L.M. Area Name = Ship Shoal
-926,17,LA,712,B.L.M. Area Name = Ship Shoal - South
-926,17,LA,713,B.L.M. Area Name = South Pelto
-926,17,LA,714,B.L.M. Area Name = Bay Marchand
-926,17,LA,715,B.L.M. Area Name = South Timbalier
-926,17,LA,716,B.L.M. Area Name = South Timbalier - South
-926,17,LA,717,B.L.M. Area Name = Grand Island
-926,17,LA,718,B.L.M. Area Name = Grand Island - South
-926,17,LA,719,B.L.M. Area Name = West Delta
-926,17,LA,720,B.L.M. Area Name = West Delta - South
-926,17,LA,721,B.L.M. Area Name = South Pass
-926,17,LA,722,B.L.M. Area Name = South Pass - South
-926,17,LA,723,B.L.M. Area Name = South Pass - East
-926,17,LA,724,B.L.M. Area Name = Main Pass - South and East
-926,17,LA,725,B.L.M. Area Name = Main Pass
-926,17,LA,726,B.L.M. Area Name = Breton South
-926,17,LA,727,B.L.M. Area Name = Chandeleur Sound
-926,17,LA,728,B.L.M. Area Name = Chandeleur
-926,17,LA,729,B.L.M. Area Name = Chandeleur - East
-926,17,LA,730,B.L.M. Area Name = Chandeleur Sound Addition
-926,17,LA,731,B.L.M. Area Name = Sabine Pass
-926,18,ME,001,Androscoggin
-926,18,ME,003,Aroostook
-926,18,ME,005,Cumberland
-926,18,ME,007,Franklin
-926,18,ME,009,Hancock
-926,18,ME,011,Kennebec
-926,18,ME,013,Knox
-926,18,ME,015,Lincoln
-926,18,ME,017,Oxford
-926,18,ME,019,Penobscot
-926,18,ME,021,Piscataquis
-926,18,ME,023,Sagadahoc
-926,18,ME,025,Somerset
-926,18,ME,027,Waldo
-926,18,ME,029,Washington
-926,18,ME,031,York
-926,18,ME,205,State Waters - Cumberland County
-926,18,ME,209,State Waters - Hancock County
-926,18,ME,213,State Waters - Knox County
-926,18,ME,215,State Waters - Lincoln County
-926,18,ME,223,State Waters - Sagadahoc County
-926,18,ME,229,State Waters - Washington County
-926,18,ME,231,State Waters - York County
-926,19,MD,001,Allegany
-926,19,MD,003,Anne Arundel
-926,19,MD,005,Baltimore
-926,19,MD,007,Baltimore City
-926,19,MD,009,Calvert
-926,19,MD,011,Caroline
-926,19,MD,013,Carroll
-926,19,MD,015,Cecil
-926,19,MD,017,Charles
-926,19,MD,019,Dorchester
-926,19,MD,021,Frederick
-926,19,MD,023,Garrett
-926,19,MD,025,Harford
-926,19,MD,027,Howard
-926,19,MD,029,Kent
-926,19,MD,031,Montgomery
-926,19,MD,033,Prince Georges
-926,19,MD,035,Queen Annes
-926,19,MD,037,St. Marys
-926,19,MD,039,Somerset
-926,19,MD,041,Talbot
-926,19,MD,043,Washington
-926,19,MD,045,Wicomico
-926,19,MD,047,Worcester
-926,19,MD,247,State Waters - Worcester County
-926,20,MA,001,Barnstable
-926,20,MA,003,Berkshire
-926,20,MA,005,Bristol
-926,20,MA,007,Dukes
-926,20,MA,009,Essex
-926,20,MA,011,Franklin
-926,20,MA,013,Hampden
-926,20,MA,015,Hampshire
-926,20,MA,017,Middlesex
-926,20,MA,019,Nantucket
-926,20,MA,021,Norfolk
-926,20,MA,023,Plymouth
-926,20,MA,025,Suffolk
-926,20,MA,027,Worcester
-926,20,MA,201,State Waters - Barnstable County
-926,20,MA,205,State Waters - Bristol County
-926,20,MA,207,State Waters - Dukes County
-926,20,MA,209,State Waters - Essex County
-926,20,MA,219,State Waters - Nantucket County
-926,20,MA,221,State Waters - Norfolk County
-926,20,MA,223,State Waters - Plymouth County
-926,20,MA,225,State Waters - Suffolk County
-926,21,MI,001,Alcona
-926,21,MI,003,Alger
-926,21,MI,005,Allegan
-926,21,MI,007,Alpena
-926,21,MI,009,Antrim
-926,21,MI,011,Arenac
-926,21,MI,013,Baraga
-926,21,MI,015,Barry
-926,21,MI,017,Bay
-926,21,MI,019,Benzie
-926,21,MI,021,Berrien
-926,21,MI,023,Branch
-926,21,MI,025,Calhoun
-926,21,MI,027,Cass
-926,21,MI,029,Charlevoix
-926,21,MI,031,Cheboygan
-926,21,MI,033,Chippewa
-926,21,MI,035,Clare
-926,21,MI,037,Clinton
-926,21,MI,039,Crawford
-926,21,MI,041,Delta
-926,21,MI,043,Dickinson
-926,21,MI,045,Eaton
-926,21,MI,047,Emmet
-926,21,MI,049,Genesee
-926,21,MI,051,Gladwin
-926,21,MI,053,Gogebic
-926,21,MI,055,Grand Traverse
-926,21,MI,057,Gratiot
-926,21,MI,059,Hillsdale
-926,21,MI,061,Houghton
-926,21,MI,063,Huron
-926,21,MI,065,Ingham
-926,21,MI,067,Ionia
-926,21,MI,069,Iosco
-926,21,MI,071,Iron
-926,21,MI,073,Isabella
-926,21,MI,075,Jackson
-926,21,MI,077,Kalamazoo
-926,21,MI,079,Kalkaska
-926,21,MI,081,Kent
-926,21,MI,083,Keweenaw
-926,21,MI,085,Lake
-926,21,MI,087,Lapeer
-926,21,MI,089,Leelanau
-926,21,MI,091,Lenawee
-926,21,MI,093,Livingston
-926,21,MI,095,Luce
-926,21,MI,097,Mackinac
-926,21,MI,099,Macomb
-926,21,MI,101,Manistee
-926,21,MI,103,Marquette
-926,21,MI,105,Mason
-926,21,MI,107,Mecosta
-926,21,MI,109,Menominee
-926,21,MI,111,Midland
-926,21,MI,113,Missaukee
-926,21,MI,115,Monroe
-926,21,MI,117,Montcalm
-926,21,MI,119,Montmorency
-926,21,MI,121,Muskegon
-926,21,MI,123,Newaygo
-926,21,MI,125,Oakland
-926,21,MI,127,Oceana
-926,21,MI,129,Ogemaw
-926,21,MI,131,Ontonagon
-926,21,MI,133,Osceola
-926,21,MI,135,Oscoda
-926,21,MI,137,Otsego
-926,21,MI,139,Ottawa
-926,21,MI,141,Presque Isle
-926,21,MI,143,Roscommon
-926,21,MI,145,Saginaw
-926,21,MI,147,St. Clair
-926,21,MI,149,St. Joseph
-926,21,MI,151,Sanilac
-926,21,MI,153,Schoolcraft
-926,21,MI,155,Shiawassee
-926,21,MI,157,Tuscola
-926,21,MI,159,Van Buren
-926,21,MI,161,Washtenaw
-926,21,MI,163,Wayne
-926,21,MI,165,Wexford
-926,22,MN,001,Aitkin
-926,22,MN,003,Anoka
-926,22,MN,005,Becker
-926,22,MN,007,Beltrami
-926,22,MN,009,Benton
-926,22,MN,011,Big Stone
-926,22,MN,013,Blue Earth
-926,22,MN,015,Brown
-926,22,MN,017,Carlton
-926,22,MN,019,Carver
-926,22,MN,021,Cass
-926,22,MN,023,Chippewa
-926,22,MN,025,Chisago
-926,22,MN,027,Clay
-926,22,MN,029,Clearwater
-926,22,MN,031,Cook
-926,22,MN,033,Cottonwood
-926,22,MN,035,Crow Wing
-926,22,MN,037,Dakota
-926,22,MN,039,Dodge
-926,22,MN,041,Douglas
-926,22,MN,043,Faribault
-926,22,MN,045,Fillmore
-926,22,MN,047,Freeborn
-926,22,MN,049,Goodhue
-926,22,MN,051,Grant
-926,22,MN,053,Hennepin
-926,22,MN,055,Houston
-926,22,MN,057,Hubbard
-926,22,MN,059,Isanti
-926,22,MN,061,Itasca
-926,22,MN,063,Jackson
-926,22,MN,065,Kanabec
-926,22,MN,067,Kandiyohi
-926,22,MN,069,Kittson
-926,22,MN,071,Koochiching
-926,22,MN,073,Lac Qui Parle
-926,22,MN,075,Lake
-926,22,MN,077,Lake of the Woods
-926,22,MN,079,Le Sueur
-926,22,MN,081,Lincoln
-926,22,MN,083,Lyon
-926,22,MN,085,Mc Leod
-926,22,MN,087,Mahnomen
-926,22,MN,089,Marshall
-926,22,MN,091,Martin
-926,22,MN,093,Meeker
-926,22,MN,095,Mille Lacs
-926,22,MN,097,Morrison
-926,22,MN,099,Mower
-926,22,MN,101,Murray
-926,22,MN,103,Nicollet
-926,22,MN,105,Nobles
-926,22,MN,107,Norman
-926,22,MN,109,Olmsted
-926,22,MN,111,Otter Tail
-926,22,MN,113,Pennington
-926,22,MN,115,Pine
-926,22,MN,117,Pipestone
-926,22,MN,119,Polk
-926,22,MN,121,Pope
-926,22,MN,123,Ramsey
-926,22,MN,125,Red Lake
-926,22,MN,127,Redwood
-926,22,MN,129,Renville
-926,22,MN,131,Rice
-926,22,MN,133,Rock
-926,22,MN,135,Roseau
-926,22,MN,137,St. Louis
-926,22,MN,139,Scott
-926,22,MN,141,Sherburne
-926,22,MN,143,Sibley
-926,22,MN,145,Stearns
-926,22,MN,147,Steele
-926,22,MN,149,Stevens
-926,22,MN,151,Swift
-926,22,MN,153,Todd
-926,22,MN,155,Traverse
-926,22,MN,157,Wabasha
-926,22,MN,159,Wadena
-926,22,MN,161,Waseca
-926,22,MN,163,Washington
-926,22,MN,165,Watonwan
-926,22,MN,167,Wilkin
-926,22,MN,169,Winona
-926,22,MN,171,Wright
-926,22,MN,173,Yellow Medicine
-926,23,MS,001,Adams
-926,23,MS,003,Alcorn
-926,23,MS,005,Amite
-926,23,MS,007,Attala
-926,23,MS,009,Benton
-926,23,MS,011,Bolivar
-926,23,MS,013,Calhoun
-926,23,MS,015,Carroll
-926,23,MS,017,Chickasaw
-926,23,MS,019,Choctaw
-926,23,MS,021,Claiborne
-926,23,MS,023,Clarke
-926,23,MS,025,Clay
-926,23,MS,027,Coahoma
-926,23,MS,029,Copiah
-926,23,MS,031,Covington
-926,23,MS,033,De Soto
-926,23,MS,035,Forrest
-926,23,MS,037,Franklin
-926,23,MS,039,George
-926,23,MS,041,Greene
-926,23,MS,043,Grenada
-926,23,MS,045,Hancock
-926,23,MS,047,Harrison
-926,23,MS,049,Hinds
-926,23,MS,051,Holmes
-926,23,MS,053,Humphreys
-926,23,MS,055,Issaquena
-926,23,MS,057,Itawamba
-926,23,MS,059,Jackson
-926,23,MS,061,Jasper
-926,23,MS,063,Jefferson
-926,23,MS,065,Jefferson Davis
-926,23,MS,067,Jones
-926,23,MS,069,Kemper
-926,23,MS,071,Lafayette
-926,23,MS,073,Lamar
-926,23,MS,075,Lauderdale
-926,23,MS,077,Lawrence
-926,23,MS,079,Leake
-926,23,MS,081,Lee
-926,23,MS,083,Leflore
-926,23,MS,085,Lincoln
-926,23,MS,087,Lowndes
-926,23,MS,089,Madison
-926,23,MS,091,Marion
-926,23,MS,093,Marshall
-926,23,MS,095,Monroe
-926,23,MS,097,Montgomery
-926,23,MS,099,Neshoba
-926,23,MS,101,Newton
-926,23,MS,103,Noxubee
-926,23,MS,105,Oktibbeha
-926,23,MS,107,Panola
-926,23,MS,109,Pearl River
-926,23,MS,111,Perry
-926,23,MS,113,Pike
-926,23,MS,115,Pontotoc
-926,23,MS,117,Prentiss
-926,23,MS,119,Quitman
-926,23,MS,121,Rankin
-926,23,MS,123,Scott
-926,23,MS,125,Sharkey
-926,23,MS,127,Simpson
-926,23,MS,129,Smith
-926,23,MS,131,Stone
-926,23,MS,133,Sunflower
-926,23,MS,135,Tallahatchie
-926,23,MS,137,Tate
-926,23,MS,139,Tippah
-926,23,MS,141,Tishomingo
-926,23,MS,143,Tunica
-926,23,MS,145,Union
-926,23,MS,147,Walthall
-926,23,MS,149,Warren
-926,23,MS,151,Washington
-926,23,MS,153,Wayne
-926,23,MS,155,Webster
-926,23,MS,157,Wilkinson
-926,23,MS,159,Winston
-926,23,MS,161,Yalobusha
-926,23,MS,163,Yazoo
-926,23,MS,247,State Waters - Harrison County
-926,23,MS,259,State Waters - Jackson County
-926,24,MO,001,Adair
-926,24,MO,003,Andrew
-926,24,MO,005,Atchison
-926,24,MO,007,Audrain
-926,24,MO,009,Barry
-926,24,MO,011,Barton
-926,24,MO,013,Bates
-926,24,MO,015,Benton
-926,24,MO,017,Bollinger
-926,24,MO,019,Boone
-926,24,MO,021,Buchanan
-926,24,MO,023,Butler
-926,24,MO,025,Caldwell
-926,24,MO,027,Callaway
-926,24,MO,029,Camden
-926,24,MO,031,Cape Girardeau
-926,24,MO,033,Carroll
-926,24,MO,035,Carter
-926,24,MO,037,Cass
-926,24,MO,039,Cedar
-926,24,MO,041,Chariton
-926,24,MO,043,Christian
-926,24,MO,045,Clark
-926,24,MO,047,Clay
-926,24,MO,049,Clinton
-926,24,MO,051,Cole
-926,24,MO,053,Cooper
-926,24,MO,055,Crawford
-926,24,MO,057,Dade
-926,24,MO,059,Dallas
-926,24,MO,061,Daviess
-926,24,MO,063,De Kalb
-926,24,MO,065,Dent
-926,24,MO,067,Douglas
-926,24,MO,069,Dunklin
-926,24,MO,071,Franklin
-926,24,MO,073,Gasconade
-926,24,MO,075,Gentry
-926,24,MO,077,Greene
-926,24,MO,079,Grundy
-926,24,MO,081,Harrison
-926,24,MO,083,Henry
-926,24,MO,085,Hickory
-926,24,MO,087,Holt
-926,24,MO,089,Howard
-926,24,MO,091,Howell
-926,24,MO,093,Iron
-926,24,MO,095,Jackson
-926,24,MO,097,Jasper
-926,24,MO,099,Jefferson
-926,24,MO,101,Johnson
-926,24,MO,103,Knox
-926,24,MO,105,Laclede
-926,24,MO,107,Lafayette
-926,24,MO,109,Lawrence
-926,24,MO,111,Lewis
-926,24,MO,113,Lincoln
-926,24,MO,115,Linn
-926,24,MO,117,Livingston
-926,24,MO,119,Mc Donald
-926,24,MO,121,Macon
-926,24,MO,123,Madison
-926,24,MO,125,Maries
-926,24,MO,127,Marion
-926,24,MO,129,Mercer
-926,24,MO,131,Miller
-926,24,MO,133,Mississippi
-926,24,MO,135,Moniteau
-926,24,MO,137,Monroe
-926,24,MO,139,Montgomery
-926,24,MO,141,Morgan
-926,24,MO,143,New Madrid
-926,24,MO,145,Newton
-926,24,MO,147,Nodaway
-926,24,MO,149,Oregon
-926,24,MO,151,Osage
-926,24,MO,153,Ozark
-926,24,MO,155,Pemiscot
-926,24,MO,157,Perry
-926,24,MO,159,Pettis
-926,24,MO,161,Phelps
-926,24,MO,163,Pike
-926,24,MO,165,Platte
-926,24,MO,167,Polk
-926,24,MO,169,Pulaski
-926,24,MO,171,Putnam
-926,24,MO,173,Ralls
-926,24,MO,175,Randolph
-926,24,MO,177,Ray
-926,24,MO,179,Reynolds
-926,24,MO,181,Ripley
-926,24,MO,183,St. Charles
-926,24,MO,185,St. Clair
-926,24,MO,187,St. Francois
-926,24,MO,189,St. Louis
-926,24,MO,191,St. Louis City
-926,24,MO,193,Ste. Genevieve
-926,24,MO,195,Saline
-926,24,MO,197,Schuyler
-926,24,MO,199,Scotland
-926,24,MO,201,Scott
-926,24,MO,203,Shannon
-926,24,MO,205,Shelby
-926,24,MO,207,Stoddard
-926,24,MO,209,Stone
-926,24,MO,211,Sullivan
-926,24,MO,213,Taney
-926,24,MO,215,Texas
-926,24,MO,217,Vernon
-926,24,MO,219,Warren
-926,24,MO,221,Washington
-926,24,MO,223,Wayne
-926,24,MO,225,Webster
-926,24,MO,227,Worth
-926,24,MO,229,Wright
-926,25,MT,001,Beaverhead
-926,25,MT,003,Big Horn
-926,25,MT,005,Blaine
-926,25,MT,007,Broadwater
-926,25,MT,009,Carbon
-926,25,MT,011,Carter
-926,25,MT,013,Cascade
-926,25,MT,015,Chouteau
-926,25,MT,017,Custer
-926,25,MT,019,Daniels
-926,25,MT,021,Dawson
-926,25,MT,023,Deer Lodge
-926,25,MT,025,Fallon
-926,25,MT,027,Fergus
-926,25,MT,029,Flathead
-926,25,MT,031,Gallatin
-926,25,MT,033,Garfield
-926,25,MT,035,Glacier
-926,25,MT,037,Golden Valley
-926,25,MT,039,Granite
-926,25,MT,041,Hill
-926,25,MT,043,Jefferson
-926,25,MT,045,Judith Basin
-926,25,MT,047,Lake
-926,25,MT,049,Lewis and Clark
-926,25,MT,051,Liberty
-926,25,MT,053,Lincoln
-926,25,MT,055,McCone
-926,25,MT,057,Madison
-926,25,MT,059,Meagher
-926,25,MT,061,Mineral
-926,25,MT,063,Missoula
-926,25,MT,065,Musselshell
-926,25,MT,067,Park
-926,25,MT,069,Petroleum
-926,25,MT,071,Phillips
-926,25,MT,073,Pondera
-926,25,MT,075,Powder River
-926,25,MT,077,Powell
-926,25,MT,079,Prairie
-926,25,MT,081,Ravalli
-926,25,MT,083,Richland
-926,25,MT,085,Roosevelt
-926,25,MT,087,Rosebud
-926,25,MT,089,Sanders
-926,25,MT,091,Sheridan
-926,25,MT,093,Silver Bow
-926,25,MT,095,Stillwater
-926,25,MT,097,Sweet Grass
-926,25,MT,099,Teton
-926,25,MT,101,Toole
-926,25,MT,103,Treasure
-926,25,MT,105,Valley
-926,25,MT,107,Wheatland
-926,25,MT,109,Wibaux
-926,25,MT,111,Yellowstone
-926,25,MT,113,Yellowstone National Park
-926,26,NE,001,Adams
-926,26,NE,003,Antelope
-926,26,NE,005,Arthur
-926,26,NE,007,Banner
-926,26,NE,009,Blaine
-926,26,NE,011,Boone
-926,26,NE,013,Box Butte
-926,26,NE,015,Boyd
-926,26,NE,017,Brown
-926,26,NE,019,Buffalo
-926,26,NE,021,Burt
-926,26,NE,023,Butler
-926,26,NE,025,Cass
-926,26,NE,027,Cedar
-926,26,NE,029,Chase
-926,26,NE,031,Cherry
-926,26,NE,033,Cheyenne
-926,26,NE,035,Clay
-926,26,NE,037,Colfax
-926,26,NE,039,Cuming
-926,26,NE,041,Custer
-926,26,NE,043,Dakota
-926,26,NE,045,Dawes
-926,26,NE,047,Dawson
-926,26,NE,049,Deuel
-926,26,NE,051,Dixon
-926,26,NE,053,Dodge
-926,26,NE,055,Douglas
-926,26,NE,057,Dundy
-926,26,NE,059,Fillmore
-926,26,NE,061,Franklin
-926,26,NE,063,Frontier
-926,26,NE,065,Furnas
-926,26,NE,067,Gage
-926,26,NE,069,Garden
-926,26,NE,071,Garfield
-926,26,NE,073,Gosper
-926,26,NE,075,Grant
-926,26,NE,077,Greeley
-926,26,NE,079,Hall
-926,26,NE,081,Hamilton
-926,26,NE,083,Harlan
-926,26,NE,085,Hayes
-926,26,NE,087,Hitchcock
-926,26,NE,089,Holt
-926,26,NE,091,Hooker
-926,26,NE,093,Howard
-926,26,NE,095,Jefferson
-926,26,NE,097,Johnson
-926,26,NE,099,Kearney
-926,26,NE,101,Keith
-926,26,NE,103,Keya Paha
-926,26,NE,105,Kimball
-926,26,NE,107,Knox
-926,26,NE,109,Lancaster
-926,26,NE,111,Lincoln
-926,26,NE,113,Logan
-926,26,NE,115,Loup
-926,26,NE,117,Mc Pherson
-926,26,NE,119,Madison
-926,26,NE,121,Merrick
-926,26,NE,123,Morrill
-926,26,NE,125,Nance
-926,26,NE,127,Nemaha
-926,26,NE,129,Nuckolls
-926,26,NE,131,Otoe
-926,26,NE,133,Pawnee
-926,26,NE,135,Perkins
-926,26,NE,137,Phelps
-926,26,NE,139,Pierce
-926,26,NE,141,Platte
-926,26,NE,143,Polk
-926,26,NE,145,Red Willow
-926,26,NE,147,Richardson
-926,26,NE,149,Rock
-926,26,NE,151,Saline
-926,26,NE,153,Sarpy
-926,26,NE,155,Saunders
-926,26,NE,157,Scotts Bluff
-926,26,NE,159,Seward
-926,26,NE,161,Sheridan
-926,26,NE,163,Sherman
-926,26,NE,165,Sioux
-926,26,NE,167,Stanton
-926,26,NE,169,Thayer
-926,26,NE,171,Thomas
-926,26,NE,173,Thurston
-926,26,NE,175,Valley
-926,26,NE,177,Washington
-926,26,NE,179,Wayne
-926,26,NE,181,Webster
-926,26,NE,183,Wheeler
-926,26,NE,185,York
-926,27,NV,001,Churchill
-926,27,NV,003,Clark
-926,27,NV,005,Douglas
-926,27,NV,007,Elko
-926,27,NV,009,Esmeralda
-926,27,NV,011,Eureka
-926,27,NV,013,Humboldt
-926,27,NV,015,Lander
-926,27,NV,017,Lincoln
-926,27,NV,019,Lyon
-926,27,NV,021,Mineral
-926,27,NV,023,Nye
-926,27,NV,025,Carson City ( Ormsby )
-926,27,NV,027,Pershing
-926,27,NV,029,Storey
-926,27,NV,031,Washoe
-926,27,NV,033,White Pine
-926,28,NH,001,Belknap
-926,28,NH,003,Carroll
-926,28,NH,005,Cheshire
-926,28,NH,007,Coos
-926,28,NH,009,Grafton
-926,28,NH,011,Hillsborough
-926,28,NH,013,Merrimack
-926,28,NH,015,Rockingham
-926,28,NH,017,Strafford
-926,28,NH,019,Sullivan
-926,28,NH,215,State Waters - Rockingham County
-926,29,NJ,001,Atlantic
-926,29,NJ,003,Bergen
-926,29,NJ,005,Burlington
-926,29,NJ,007,Camden
-926,29,NJ,009,Cape May
-926,29,NJ,011,Cumberland
-926,29,NJ,013,Essex
-926,29,NJ,015,Gloucester
-926,29,NJ,017,Hudson
-926,29,NJ,019,Hunterdon
-926,29,NJ,021,Mercer
-926,29,NJ,023,Middlesex
-926,29,NJ,025,Monmouth
-926,29,NJ,027,Morris
-926,29,NJ,029,Ocean
-926,29,NJ,031,Passaic
-926,29,NJ,033,Salem
-926,29,NJ,035,Somerset
-926,29,NJ,037,Sussex
-926,29,NJ,039,Union
-926,29,NJ,041,Warren
-926,29,NJ,201,State Waters - Atlantic County
-926,29,NJ,209,State Waters - Cape May County
-926,29,NJ,225,State Waters - Monmouth County
-926,29,NJ,229,State Waters - Ocean County
-926,30,NM,001,Bernalillo
-926,30,NM,003,Catron
-926,30,NM,005,Chaves
-926,30,NM,006,Cibola
-926,30,NM,007,Colfax
-926,30,NM,009,Curry
-926,30,NM,011,De Baca
-926,30,NM,013,Dona Ana
-926,30,NM,015,Eddy
-926,30,NM,017,Grant
-926,30,NM,019,Guadalupe
-926,30,NM,021,Harding
-926,30,NM,023,Hidalgo
-926,30,NM,025,Lea
-926,30,NM,027,Lincoln
-926,30,NM,028,Los Alamos
-926,30,NM,029,Luna
-926,30,NM,031,McKinley
-926,30,NM,033,Mora
-926,30,NM,035,Otero
-926,30,NM,037,Quay
-926,30,NM,039,Rio Arriba
-926,30,NM,041,Roosevelt
-926,30,NM,043,Sandoval
-926,30,NM,045,San Juan
-926,30,NM,047,San Miguel
-926,30,NM,049,Santa Fe
-926,30,NM,051,Sierra
-926,30,NM,053,Socorro
-926,30,NM,055,Taos
-926,30,NM,057,Torrance
-926,30,NM,059,Union
-926,30,NM,061,Valencia
-926,31,NY,001,Albany
-926,31,NY,003,Allegany
-926,31,NY,005,Bronx
-926,31,NY,007,Broome
-926,31,NY,009,Cattaraugus
-926,31,NY,011,Cayuga
-926,31,NY,013,Chautauqua
-926,31,NY,015,Chemung
-926,31,NY,017,Chanango
-926,31,NY,019,Clinton
-926,31,NY,021,Columbia
-926,31,NY,023,Cortland
-926,31,NY,025,Delaware
-926,31,NY,027,Dutchess
-926,31,NY,029,Erie
-926,31,NY,031,Essex
-926,31,NY,033,Franklin
-926,31,NY,035,Fulton
-926,31,NY,037,Genesee
-926,31,NY,039,Greene
-926,31,NY,041,Hamilton
-926,31,NY,043,Herkimer
-926,31,NY,045,Jefferson
-926,31,NY,047,Kings
-926,31,NY,049,Lewis
-926,31,NY,051,Livingston
-926,31,NY,053,Madison
-926,31,NY,055,Monroe
-926,31,NY,057,Montgomery
-926,31,NY,059,Nassau
-926,31,NY,061,New York
-926,31,NY,063,Niagara
-926,31,NY,065,Oneida
-926,31,NY,067,Onondaga
-926,31,NY,069,Ontario
-926,31,NY,071,Orange
-926,31,NY,073,Orleans
-926,31,NY,075,Oswego
-926,31,NY,077,Otsego
-926,31,NY,079,Putnam
-926,31,NY,081,Queens
-926,31,NY,083,Rensselaer
-926,31,NY,085,Richmond
-926,31,NY,087,Rockland
-926,31,NY,089,St. Lawrence
-926,31,NY,091,Saratoga
-926,31,NY,093,Schenectady
-926,31,NY,095,Schoharie
-926,31,NY,097,Schuyler
-926,31,NY,099,Seneca
-926,31,NY,101,Steuben
-926,31,NY,103,Suffolk
-926,31,NY,105,Sullivan
-926,31,NY,107,Tioga
-926,31,NY,109,Tompkins
-926,31,NY,111,Ulster
-926,31,NY,113,Warren
-926,31,NY,115,Washington
-926,31,NY,117,Wayne
-926,31,NY,119,Westchester
-926,31,NY,121,Wyoming
-926,31,NY,123,Yates
-926,31,NY,247,State Waters - Kings County
-926,31,NY,259,State Waters - Nassau County
-926,31,NY,281,State Waters - Queens County
-926,31,NY,285,State Waters - Richmond County
-926,31,NY,303,State Waters - Suffolk County
-926,32,NC,001,Alamance
-926,32,NC,003,Alexander
-926,32,NC,005,Alleghany
-926,32,NC,007,Anson
-926,32,NC,009,Ashe
-926,32,NC,011,Avery
-926,32,NC,013,Beaufort
-926,32,NC,015,Bertie
-926,32,NC,017,Bladen
-926,32,NC,019,Brunswick
-926,32,NC,021,Buncombe
-926,32,NC,023,Burke
-926,32,NC,025,Cabarrus
-926,32,NC,027,Caldwell
-926,32,NC,029,Camden
-926,32,NC,031,Carteret
-926,32,NC,033,Caswell
-926,32,NC,035,Catawba
-926,32,NC,037,Chatham
-926,32,NC,039,Cherokee
-926,32,NC,041,Chowan
-926,32,NC,043,Clay
-926,32,NC,045,Cleveland
-926,32,NC,047,Columbus
-926,32,NC,049,Craven
-926,32,NC,051,Cumberland
-926,32,NC,053,Currituck
-926,32,NC,055,Dare
-926,32,NC,057,Davidson
-926,32,NC,059,Davie
-926,32,NC,061,Duplin
-926,32,NC,063,Durham
-926,32,NC,065,Edgecombe
-926,32,NC,067,Forsyth
-926,32,NC,069,Franklin
-926,32,NC,071,Gaston
-926,32,NC,073,Gates
-926,32,NC,075,Graham
-926,32,NC,077,Granville
-926,32,NC,079,Greene
-926,32,NC,081,Guilford
-926,32,NC,083,Halifax
-926,32,NC,085,Harnett
-926,32,NC,087,Haywood
-926,32,NC,089,Henderson
-926,32,NC,091,Hertford
-926,32,NC,093,Hoke
-926,32,NC,095,Hyde
-926,32,NC,097,Iredell
-926,32,NC,099,Jackson
-926,32,NC,101,Johnson
-926,32,NC,103,Jones
-926,32,NC,105,Lee
-926,32,NC,107,Lenoir
-926,32,NC,109,Lincoln
-926,32,NC,111,Mc Dowell
-926,32,NC,113,Macon
-926,32,NC,115,Madison
-926,32,NC,117,Martin
-926,32,NC,119,Mecklenburg
-926,32,NC,121,Mitchell
-926,32,NC,123,Montgomery
-926,32,NC,125,Moore
-926,32,NC,127,Nash
-926,32,NC,129,New Hanover
-926,32,NC,131,Northhampton
-926,32,NC,133,Onslow
-926,32,NC,135,Orange
-926,32,NC,137,Pamlico
-926,32,NC,139,Pasquotank
-926,32,NC,141,Pender
-926,32,NC,143,Perquimans
-926,32,NC,145,Person
-926,32,NC,147,Pitt
-926,32,NC,149,Polk
-926,32,NC,151,Randolph
-926,32,NC,153,Richmond
-926,32,NC,155,Robeson
-926,32,NC,157,Rockingham
-926,32,NC,159,Rowan
-926,32,NC,161,Rutherford
-926,32,NC,163,Sampson
-926,32,NC,165,Scotland
-926,32,NC,167,Stanly
-926,32,NC,169,Stokes
-926,32,NC,171,Surry
-926,32,NC,173,Swain
-926,32,NC,175,Transylvania
-926,32,NC,177,Tyrrell
-926,32,NC,179,Union
-926,32,NC,181,Vance
-926,32,NC,183,Wake
-926,32,NC,185,Warren
-926,32,NC,187,Washington
-926,32,NC,189,Watauga
-926,32,NC,191,Wayne
-926,32,NC,193,Wilkes
-926,32,NC,195,Wilson
-926,32,NC,197,Yadkin
-926,32,NC,199,Yancey
-926,32,NC,219,State Waters - Brunswick County
-926,32,NC,231,State Waters - Carteret County
-926,32,NC,253,State Waters - Currituck County
-926,32,NC,255,State Waters - Dare County
-926,32,NC,295,State Waters - Hyde County
-926,32,NC,329,State Waters - New Hanover County
-926,32,NC,333,State Waters - Onslow County
-926,32,NC,341,State Waters - Pender County
-926,33,ND,001,Adams
-926,33,ND,003,Barnes
-926,33,ND,005,Benson
-926,33,ND,007,Billings
-926,33,ND,009,Bottineau
-926,33,ND,011,Bowman
-926,33,ND,013,Burke
-926,33,ND,015,Burleigh
-926,33,ND,017,Cass
-926,33,ND,019,Cavalier
-926,33,ND,021,Dickey
-926,33,ND,023,Divide
-926,33,ND,025,Dunn
-926,33,ND,027,Eddy
-926,33,ND,029,Emmons
-926,33,ND,031,Foster
-926,33,ND,033,Golden Valley
-926,33,ND,035,Grand Forks
-926,33,ND,037,Grant
-926,33,ND,039,Griggs
-926,33,ND,041,Hettinger
-926,33,ND,043,Kidder
-926,33,ND,045,La Moure
-926,33,ND,047,Logan
-926,33,ND,049,Mc Henry
-926,33,ND,051,Mc Intosh
-926,33,ND,053,Mc Kenzie
-926,33,ND,055,McLean
-926,33,ND,057,Mercer
-926,33,ND,059,Morton
-926,33,ND,061,Mountrail
-926,33,ND,063,Nelson
-926,33,ND,065,Oliver
-926,33,ND,067,Pembina
-926,33,ND,069,Pierce
-926,33,ND,071,Ramsey
-926,33,ND,073,Ransom
-926,33,ND,075,Renville
-926,33,ND,077,Richland
-926,33,ND,079,Rolette
-926,33,ND,081,Sargent
-926,33,ND,083,Sheridan
-926,33,ND,085,Sioux
-926,33,ND,087,Slope
-926,33,ND,089,Stark
-926,33,ND,091,Steele
-926,33,ND,093,Stutsman
-926,33,ND,095,Towner
-926,33,ND,097,Traill
-926,33,ND,099,Walsh
-926,33,ND,101,Ward
-926,33,ND,103,Wells
-926,33,ND,105,Williams
-926,34,OH,001,Adams
-926,34,OH,003,Allen
-926,34,OH,005,Ashland
-926,34,OH,007,Ashtabula
-926,34,OH,009,Athens
-926,34,OH,011,Auglaize
-926,34,OH,013,Belmont
-926,34,OH,015,Brown
-926,34,OH,017,Butler
-926,34,OH,019,Carroll
-926,34,OH,021,Champaign
-926,34,OH,023,Clark
-926,34,OH,025,Clermont
-926,34,OH,027,Clinton
-926,34,OH,029,Columbiana
-926,34,OH,031,Coshocton
-926,34,OH,033,Crawford
-926,34,OH,035,Cuyahoga
-926,34,OH,037,Darke
-926,34,OH,039,Defiance
-926,34,OH,041,Delaware
-926,34,OH,043,Erie
-926,34,OH,045,Fairfield
-926,34,OH,047,Fayette
-926,34,OH,049,Franklin
-926,34,OH,051,Fulton
-926,34,OH,053,Gallia
-926,34,OH,055,Geauga
-926,34,OH,057,Greene
-926,34,OH,059,Guernsey
-926,34,OH,061,Hamilton
-926,34,OH,063,Hancock
-926,34,OH,065,Hardin
-926,34,OH,067,Harrison
-926,34,OH,069,Henry
-926,34,OH,071,Highland
-926,34,OH,073,Hocking
-926,34,OH,075,Holmes
-926,34,OH,077,Huron
-926,34,OH,079,Jackson
-926,34,OH,081,Jefferson
-926,34,OH,083,Knox
-926,34,OH,085,Lake
-926,34,OH,087,Lawrence
-926,34,OH,089,Licking
-926,34,OH,091,Logan
-926,34,OH,093,Lorian
-926,34,OH,095,Lucas
-926,34,OH,097,Madison
-926,34,OH,099,Mahoning
-926,34,OH,101,Marion
-926,34,OH,103,Medina
-926,34,OH,105,Meigs
-926,34,OH,107,Mercer
-926,34,OH,109,Miami
-926,34,OH,111,Monroe
-926,34,OH,113,Montgomery
-926,34,OH,115,Morgan
-926,34,OH,117,Morrow
-926,34,OH,119,Muskingum
-926,34,OH,121,Noble
-926,34,OH,123,Ottawa
-926,34,OH,125,Paulding
-926,34,OH,127,Perry
-926,34,OH,129,Pickaway
-926,34,OH,131,Pike
-926,34,OH,133,Portage
-926,34,OH,135,Preble
-926,34,OH,137,Putnam
-926,34,OH,139,Richland
-926,34,OH,141,Ross
-926,34,OH,143,Sandusky
-926,34,OH,145,Scioto
-926,34,OH,147,Seneca
-926,34,OH,149,Shelby
-926,34,OH,151,Stark
-926,34,OH,153,Summit
-926,34,OH,155,Trumbull
-926,34,OH,157,Tuscarawas
-926,34,OH,159,Union
-926,34,OH,161,Van Wert
-926,34,OH,163,Vinton
-926,34,OH,165,Warren
-926,34,OH,167,Washington
-926,34,OH,169,Wayne
-926,34,OH,171,Williams
-926,34,OH,173,Wood
-926,34,OH,175,Wyandot
-926,35,OK,001,Adair
-926,35,OK,003,Alfalfa
-926,35,OK,005,Atoka
-926,35,OK,007,Beaver
-926,35,OK,009,Beckham
-926,35,OK,011,Blaine
-926,35,OK,013,Bryan
-926,35,OK,015,Caddo
-926,35,OK,017,Canadian
-926,35,OK,019,Carter
-926,35,OK,021,Cherokee
-926,35,OK,023,Choctaw
-926,35,OK,025,Cimarron
-926,35,OK,027,Cleveland
-926,35,OK,029,Coal
-926,35,OK,031,Comanche
-926,35,OK,033,Cotton
-926,35,OK,035,Craig
-926,35,OK,037,Creek
-926,35,OK,039,Custer
-926,35,OK,041,Delaware
-926,35,OK,043,Dewey
-926,35,OK,045,Ellis
-926,35,OK,047,Garfield
-926,35,OK,049,Garvin
-926,35,OK,051,Grady
-926,35,OK,053,Grant
-926,35,OK,055,Greer
-926,35,OK,057,Harmon
-926,35,OK,059,Harper
-926,35,OK,061,Haskell
-926,35,OK,063,Hughes
-926,35,OK,065,Jackson
-926,35,OK,067,Jefferson
-926,35,OK,069,Johnston
-926,35,OK,071,Kay
-926,35,OK,073,Kingfisher
-926,35,OK,075,Kiowa
-926,35,OK,077,Latimer
-926,35,OK,079,Le Flore
-926,35,OK,081,Lincoln
-926,35,OK,083,Logan
-926,35,OK,085,Love
-926,35,OK,087,Mc Clain
-926,35,OK,089,Mc Curtain
-926,35,OK,091,Mc Intosh
-926,35,OK,093,Major
-926,35,OK,095,Marshall
-926,35,OK,097,Mayes
-926,35,OK,099,Murray
-926,35,OK,101,Muskogee
-926,35,OK,103,Noble
-926,35,OK,105,Nowata
-926,35,OK,107,Okfuskee
-926,35,OK,109,Oklahoma
-926,35,OK,111,Okmulgee
-926,35,OK,113,Osage
-926,35,OK,115,Ottawa
-926,35,OK,117,Pawnee
-926,35,OK,119,Payne
-926,35,OK,121,Pittsburg
-926,35,OK,123,Pontotoc
-926,35,OK,125,Pottawatomie
-926,35,OK,127,Pushmataha
-926,35,OK,129,Roger Mills
-926,35,OK,131,Rogers
-926,35,OK,133,Seminole
-926,35,OK,135,Sequoyah
-926,35,OK,137,Stephens
-926,35,OK,139,Texas
-926,35,OK,141,Tillman
-926,35,OK,143,Tulsa
-926,35,OK,145,Wagoner
-926,35,OK,147,Washington
-926,35,OK,149,Washita
-926,35,OK,151,Woods
-926,35,OK,153,Woodward
-926,36,OR,001,Baker
-926,36,OR,003,Benton
-926,36,OR,005,Clackamas
-926,36,OR,007,Clatsop
-926,36,OR,009,Columbia
-926,36,OR,011,Coos
-926,36,OR,013,Crook
-926,36,OR,015,Curry
-926,36,OR,017,Deschutes
-926,36,OR,019,Douglas
-926,36,OR,021,Glliam
-926,36,OR,023,Grant
-926,36,OR,025,Harney
-926,36,OR,027,Hood River
-926,36,OR,029,Jackson
-926,36,OR,031,Jefferson
-926,36,OR,033,Josephine
-926,36,OR,035,Klamath
-926,36,OR,037,Lake
-926,36,OR,039,Lane
-926,36,OR,041,Lincoln
-926,36,OR,043,Linn
-926,36,OR,045,Malheur
-926,36,OR,047,Marion
-926,36,OR,049,Morrow
-926,36,OR,051,Multnomah
-926,36,OR,053,Polk
-926,36,OR,055,Sherman
-926,36,OR,057,Tillamook
-926,36,OR,059,Umatilla
-926,36,OR,061,Union
-926,36,OR,063,Wallowa
-926,36,OR,065,Wasco
-926,36,OR,067,Washington
-926,36,OR,069,Wheeler
-926,36,OR,071,Yamhill
-926,36,OR,207,State Waters - Clatsop County
-926,36,OR,211,State Waters - Coos County
-926,36,OR,215,State Waters - Curry County
-926,36,OR,219,State Waters - Douglas County
-926,36,OR,239,State Waters - Lane County
-926,36,OR,241,State Waters - Lincoln County
-926,36,OR,257,State Waters - Tillamook County
-926,37,PA,001,Adams
-926,37,PA,003,Allegheny
-926,37,PA,005,Armstrong
-926,37,PA,007,Beaver
-926,37,PA,009,Bedford
-926,37,PA,011,Berks
-926,37,PA,013,Blair
-926,37,PA,015,Bradford
-926,37,PA,017,Bucks
-926,37,PA,019,Butler
-926,37,PA,021,Cambria
-926,37,PA,023,Cameron
-926,37,PA,025,Carbon
-926,37,PA,027,Centre
-926,37,PA,029,Chester
-926,37,PA,031,Clarion
-926,37,PA,033,Clearfield
-926,37,PA,035,Clinton
-926,37,PA,037,Columbia
-926,37,PA,039,Crawford
-926,37,PA,041,Cumberland
-926,37,PA,043,Dauphin
-926,37,PA,045,Delaware
-926,37,PA,047,Elk
-926,37,PA,049,Erie
-926,37,PA,051,Fayette
-926,37,PA,053,Forest
-926,37,PA,055,Franklin
-926,37,PA,057,Fulton
-926,37,PA,059,Greene
-926,37,PA,061,Huntingdon
-926,37,PA,063,Indiana
-926,37,PA,065,Jefferson
-926,37,PA,067,Juniata
-926,37,PA,069,Lackawanna
-926,37,PA,071,Lancaster
-926,37,PA,073,Lawrence
-926,37,PA,075,Lebanon
-926,37,PA,077,Lehigh
-926,37,PA,079,Luzerne
-926,37,PA,081,Lycoming
-926,37,PA,083,Mc Kean
-926,37,PA,085,Mercer
-926,37,PA,087,Mifflin
-926,37,PA,089,Monroe
-926,37,PA,091,Montgomery
-926,37,PA,093,Montour
-926,37,PA,095,Northampton
-926,37,PA,097,Northumberland
-926,37,PA,099,Perry
-926,37,PA,101,Philadelphia
-926,37,PA,103,Pike
-926,37,PA,105,Potter
-926,37,PA,107,Schuylkill
-926,37,PA,109,Snyder
-926,37,PA,111,Somerset
-926,37,PA,113,Sullivan
-926,37,PA,115,Susquehanna
-926,37,PA,117,Tioga
-926,37,PA,119,Union
-926,37,PA,121,Venango
-926,37,PA,123,Warren
-926,37,PA,125,Washington
-926,37,PA,127,Wayne
-926,37,PA,129,Westmoreland
-926,37,PA,131,Wyoming
-926,37,PA,133,York
-926,38,RI,001,Bristol
-926,38,RI,003,Kent
-926,38,RI,005,Newport
-926,38,RI,007,Providence
-926,38,RI,009,Washington
-926,38,RI,205,State Waters - Newport County
-926,38,RI,209,State Waters - Washington County
-926,39,SC,001,Abbeville
-926,39,SC,003,Aiken
-926,39,SC,005,Allendale
-926,39,SC,007,Anderson
-926,39,SC,009,Bamberg
-926,39,SC,011,Barnwell
-926,39,SC,013,Beaufort
-926,39,SC,015,Berkeley
-926,39,SC,017,Calhoun
-926,39,SC,019,Charleston
-926,39,SC,021,Cherokee
-926,39,SC,023,Chester
-926,39,SC,025,Chesterfield
-926,39,SC,027,Clarendon
-926,39,SC,029,Colleton
-926,39,SC,031,Darlington
-926,39,SC,033,Dillon
-926,39,SC,035,Dorchester
-926,39,SC,037,Edgefield
-926,39,SC,039,Fairfield
-926,39,SC,041,Florence
-926,39,SC,043,Georgetown
-926,39,SC,045,Greenville
-926,39,SC,047,Greenwood
-926,39,SC,049,Hampton
-926,39,SC,051,Horry
-926,39,SC,053,Jasper
-926,39,SC,055,Kershaw
-926,39,SC,057,Lancaster
-926,39,SC,059,Laurens
-926,39,SC,061,Lee
-926,39,SC,063,Lexington
-926,39,SC,065,Mc Cormick
-926,39,SC,067,Marion
-926,39,SC,069,Marlboro
-926,39,SC,071,Newberry
-926,39,SC,073,Oconee
-926,39,SC,075,Orangeburg
-926,39,SC,077,Pickens
-926,39,SC,079,Richland
-926,39,SC,081,Saluda
-926,39,SC,083,Spartanburg
-926,39,SC,085,Sumter
-926,39,SC,087,Union
-926,39,SC,089,Williamsburg
-926,39,SC,091,York
-926,39,SC,213,State Waters - Beaufort County
-926,39,SC,219,State Waters - Charleston County
-926,39,SC,229,State Waters - Colleton County
-926,39,SC,243,State Waters - Georgetown County
-926,39,SC,251,State Waters - Horry County
-926,40,SD,001,Aurora
-926,40,SD,003,Beadle
-926,40,SD,005,Bennett
-926,40,SD,009,Bon Homme
-926,40,SD,011,Brookings
-926,40,SD,013,Brown
-926,40,SD,015,Brule
-926,40,SD,017,Buffalo
-926,40,SD,019,Butte
-926,40,SD,021,Campbell
-926,40,SD,023,Charles Mix
-926,40,SD,025,Clark
-926,40,SD,027,Clay
-926,40,SD,029,Codington
-926,40,SD,031,Corson
-926,40,SD,033,Custer
-926,40,SD,035,Davison
-926,40,SD,037,Day
-926,40,SD,039,Deuel
-926,40,SD,041,Dewey
-926,40,SD,043,Douglas
-926,40,SD,045,Edmunds
-926,40,SD,047,Fall River
-926,40,SD,049,Faulk
-926,40,SD,051,Grant
-926,40,SD,053,Gregory
-926,40,SD,055,Haakon
-926,40,SD,057,Hamlin
-926,40,SD,059,Hand
-926,40,SD,061,Hanson
-926,40,SD,063,Harding
-926,40,SD,065,Hughes
-926,40,SD,067,Hutchinson
-926,40,SD,069,Hyde
-926,40,SD,071,Jackson
-926,40,SD,073,Jerauld
-926,40,SD,075,Jones
-926,40,SD,077,Kingsbury
-926,40,SD,079,Lake
-926,40,SD,081,Lawrence
-926,40,SD,083,Lincoln
-926,40,SD,085,Lyman
-926,40,SD,087,Mc Cook
-926,40,SD,089,Mc Pherson
-926,40,SD,091,Marshall
-926,40,SD,093,Meade
-926,40,SD,095,Mellette
-926,40,SD,097,Miner
-926,40,SD,099,Minnehaha
-926,40,SD,101,Moody
-926,40,SD,103,Pennington
-926,40,SD,105,Perkins
-926,40,SD,107,Potter
-926,40,SD,109,Roberts
-926,40,SD,111,Sanborn
-926,40,SD,113,Shannon
-926,40,SD,115,Spink
-926,40,SD,117,Stanley
-926,40,SD,119,Sully
-926,40,SD,121,Todd
-926,40,SD,123,Tripp
-926,40,SD,125,Turner
-926,40,SD,127,Union
-926,40,SD,129,Walworth
-926,40,SD,131,Washabaugh
-926,40,SD,135,Yankton
-926,40,SD,137,Ziebach
-926,41,TN,001,Anderson
-926,41,TN,003,Bedford
-926,41,TN,005,Benton
-926,41,TN,007,Bledsoe
-926,41,TN,009,Blount
-926,41,TN,011,Bradley
-926,41,TN,013,Campbell
-926,41,TN,015,Cannon
-926,41,TN,017,Carroll
-926,41,TN,019,Carter
-926,41,TN,021,Cheatham
-926,41,TN,023,Chester
-926,41,TN,025,Claiborne
-926,41,TN,027,Clay
-926,41,TN,029,Cocke
-926,41,TN,031,Coffee
-926,41,TN,033,Crockett
-926,41,TN,035,Cumberland
-926,41,TN,037,Davidson
-926,41,TN,039,Decatur
-926,41,TN,041,Da Kalb
-926,41,TN,043,Dickson
-926,41,TN,045,Dyer
-926,41,TN,047,Fayette
-926,41,TN,049,Fentress
-926,41,TN,051,Franklin
-926,41,TN,053,Gibson
-926,41,TN,055,Giles
-926,41,TN,057,Grainger
-926,41,TN,059,Greene
-926,41,TN,061,Grundy
-926,41,TN,063,Hamblen
-926,41,TN,065,Hamilton
-926,41,TN,067,Hancock
-926,41,TN,069,Hardeman
-926,41,TN,071,Hardin
-926,41,TN,073,Hawkins
-926,41,TN,075,Haywood
-926,41,TN,077,Henderson
-926,41,TN,079,Henry
-926,41,TN,081,Hickman
-926,41,TN,083,Houston
-926,41,TN,085,Humphreys
-926,41,TN,087,Jackson
-926,41,TN,089,Jefferson
-926,41,TN,091,Johnson
-926,41,TN,093,Knox
-926,41,TN,095,Lake
-926,41,TN,097,Lauderdale
-926,41,TN,099,Lawrence
-926,41,TN,101,Lewis
-926,41,TN,103,Lincoln
-926,41,TN,105,Loudon
-926,41,TN,107,Mc Minn
-926,41,TN,109,Mc Nairy
-926,41,TN,111,Macon
-926,41,TN,113,Madison
-926,41,TN,115,Marion
-926,41,TN,117,Marshall
-926,41,TN,119,Maury
-926,41,TN,121,Meigs
-926,41,TN,123,Monroe
-926,41,TN,125,Montgomery
-926,41,TN,127,Moore
-926,41,TN,129,Morgan
-926,41,TN,131,Obion
-926,41,TN,133,Overton
-926,41,TN,135,Perry
-926,41,TN,137,Pickett
-926,41,TN,139,Polk
-926,41,TN,141,Putnam
-926,41,TN,143,Rhea
-926,41,TN,145,Roane
-926,41,TN,147,Robertson
-926,41,TN,149,Rutherford
-926,41,TN,151,Scott
-926,41,TN,153,Sequatchie
-926,41,TN,155,Sevier
-926,41,TN,157,Shelby
-926,41,TN,159,Smith
-926,41,TN,161,Stewart
-926,41,TN,163,Sullivan
-926,41,TN,165,Sumner
-926,41,TN,167,Tipton
-926,41,TN,169,Trousdale
-926,41,TN,171,Unicoi
-926,41,TN,173,Union
-926,41,TN,175,Van Buren
-926,41,TN,177,Warren
-926,41,TN,179,Washington
-926,41,TN,181,Wayne
-926,41,TN,183,Weakley
-926,41,TN,185,White
-926,41,TN,187,Williamson
-926,41,TN,189,Wilson
-926,42,TX,001,Anderson
-926,42,TX,003,Andrews
-926,42,TX,005,Angelina
-926,42,TX,007,Aransas
-926,42,TX,009,Archer
-926,42,TX,011,Armstrong
-926,42,TX,013,Atascosa
-926,42,TX,015,Austin
-926,42,TX,017,Bailey
-926,42,TX,019,Bandera
-926,42,TX,021,Bastrop
-926,42,TX,023,Baylor
-926,42,TX,025,Bee
-926,42,TX,027,Bell
-926,42,TX,029,Bexar
-926,42,TX,031,Blanco
-926,42,TX,033,Borden
-926,42,TX,035,Bosque
-926,42,TX,037,Bowie
-926,42,TX,039,Brazoria
-926,42,TX,041,Brazos
-926,42,TX,043,Brewster
-926,42,TX,045,Briscoe
-926,42,TX,047,Brooks
-926,42,TX,049,Brown
-926,42,TX,051,Burleson
-926,42,TX,053,Burnet
-926,42,TX,055,Caldwell
-926,42,TX,057,Calhoun
-926,42,TX,059,Callahan
-926,42,TX,061,Cameron
-926,42,TX,063,Camp
-926,42,TX,065,Carson
-926,42,TX,067,Cass
-926,42,TX,069,Castro
-926,42,TX,071,Chambers
-926,42,TX,073,Cherokee
-926,42,TX,075,Childress
-926,42,TX,077,Clay
-926,42,TX,079,Cochran
-926,42,TX,081,Coke
-926,42,TX,083,Coleman
-926,42,TX,085,Collin
-926,42,TX,087,Collingsworth
-926,42,TX,089,Colorado
-926,42,TX,091,Comal
-926,42,TX,093,Comanche
-926,42,TX,095,Concho
-926,42,TX,097,Cooke
-926,42,TX,099,Coryell
-926,42,TX,101,Cottle
-926,42,TX,103,Crane
-926,42,TX,105,Crockett
-926,42,TX,107,Crosby
-926,42,TX,109,Culberson
-926,42,TX,111,Dallam
-926,42,TX,113,Dallas
-926,42,TX,115,Dawson
-926,42,TX,117,Deaf Smith
-926,42,TX,119,Delta
-926,42,TX,121,Denton
-926,42,TX,123,De Witt
-926,42,TX,125,Dickens
-926,42,TX,127,Dimmit
-926,42,TX,129,Donley
-926,42,TX,131,Duval
-926,42,TX,133,Eastland
-926,42,TX,135,Ector
-926,42,TX,137,Edwards
-926,42,TX,139,Ellis
-926,42,TX,141,El Paso
-926,42,TX,143,Erath
-926,42,TX,145,Falls
-926,42,TX,147,Fannin
-926,42,TX,149,Fayette
-926,42,TX,151,Fisher
-926,42,TX,153,Floyd
-926,42,TX,155,Foard
-926,42,TX,157,Fort Bend
-926,42,TX,159,Franklin
-926,42,TX,161,Freestone
-926,42,TX,163,Frio
-926,42,TX,165,Gaines
-926,42,TX,167,Galveston
-926,42,TX,169,Garza
-926,42,TX,171,Gillespie
-926,42,TX,173,Glasscock
-926,42,TX,175,Goliad
-926,42,TX,177,Gonzales
-926,42,TX,179,Gray
-926,42,TX,181,Grayson
-926,42,TX,183,Gregg
-926,42,TX,185,Grimes
-926,42,TX,187,Guadalupe
-926,42,TX,189,Hale
-926,42,TX,191,Hall
-926,42,TX,193,Hamilton
-926,42,TX,195,Hansford
-926,42,TX,197,Hardeman
-926,42,TX,199,Hardin
-926,42,TX,201,Harris
-926,42,TX,203,Harrison
-926,42,TX,205,Hartley
-926,42,TX,207,Haskell
-926,42,TX,209,Hays
-926,42,TX,211,Hemphill
-926,42,TX,213,Henderson
-926,42,TX,215,Hidalgo
-926,42,TX,217,Hill
-926,42,TX,219,Hockley
-926,42,TX,221,Hood
-926,42,TX,223,Hopkins
-926,42,TX,225,Houston
-926,42,TX,227,Howard
-926,42,TX,229,Hudspeth
-926,42,TX,231,Hunt
-926,42,TX,233,Hutchinson
-926,42,TX,235,Irion
-926,42,TX,237,Jack
-926,42,TX,239,Jackson
-926,42,TX,241,Jasper
-926,42,TX,243,Jeff Davis
-926,42,TX,245,Jefferson
-926,42,TX,247,Jim Hogg
-926,42,TX,249,Jim Wells
-926,42,TX,251,Johnson
-926,42,TX,253,Jones
-926,42,TX,255,Karnes
-926,42,TX,257,Kaufman
-926,42,TX,259,Kendall
-926,42,TX,261,Kenedy
-926,42,TX,263,Kent
-926,42,TX,265,Kerr
-926,42,TX,267,Kimble
-926,42,TX,269,King
-926,42,TX,271,Kinney
-926,42,TX,273,Kleberg
-926,42,TX,275,Knox
-926,42,TX,277,Lamar
-926,42,TX,279,Lamb
-926,42,TX,281,Lampasas
-926,42,TX,283,La Salle
-926,42,TX,285,Lavaca
-926,42,TX,287,Lee
-926,42,TX,289,Leon
-926,42,TX,291,Liberty
-926,42,TX,293,Limestone
-926,42,TX,295,Lipscomb
-926,42,TX,297,Live Oak
-926,42,TX,299,Llano
-926,42,TX,301,Loving
-926,42,TX,303,Lubbock
-926,42,TX,305,Lynn
-926,42,TX,307,Mc Culloch
-926,42,TX,309,Mc Lennan
-926,42,TX,311,Mc Mullen
-926,42,TX,313,Madison
-926,42,TX,315,Marion
-926,42,TX,317,Martin
-926,42,TX,319,Mason
-926,42,TX,321,Matagorda
-926,42,TX,323,Maverick
-926,42,TX,325,Medina
-926,42,TX,327,Menard
-926,42,TX,329,Midland
-926,42,TX,331,Milam
-926,42,TX,333,Mills
-926,42,TX,335,Mitchell
-926,42,TX,337,Montague
-926,42,TX,339,Montgomery
-926,42,TX,341,Moore
-926,42,TX,343,Morris
-926,42,TX,345,Motley
-926,42,TX,347,Nacogdoches
-926,42,TX,349,Navarro
-926,42,TX,351,Newton
-926,42,TX,353,Nolan
-926,42,TX,355,Nueces
-926,42,TX,357,Ochiltree
-926,42,TX,359,Oldham
-926,42,TX,361,Orange
-926,42,TX,363,Palo Pinto
-926,42,TX,365,Panola
-926,42,TX,367,Parker
-926,42,TX,369,Parmer
-926,42,TX,371,Pecos
-926,42,TX,373,Polk
-926,42,TX,375,Potter
-926,42,TX,377,Presidio
-926,42,TX,379,Rains
-926,42,TX,381,Randall
-926,42,TX,383,Reagan
-926,42,TX,385,Real
-926,42,TX,387,Red River
-926,42,TX,389,Reeves
-926,42,TX,391,Refugio
-926,42,TX,393,Roberts
-926,42,TX,395,Robertson
-926,42,TX,397,Rockwall
-926,42,TX,399,Runnels
-926,42,TX,401,Rusk
-926,42,TX,403,Sabine
-926,42,TX,405,San Augustine
-926,42,TX,407,San Jacinto
-926,42,TX,409,San Patricio
-926,42,TX,411,San Saba
-926,42,TX,413,Schleicher
-926,42,TX,415,Scurry
-926,42,TX,417,Shackelford
-926,42,TX,419,Shelby
-926,42,TX,421,Sherman
-926,42,TX,423,Smith
-926,42,TX,425,Somervell
-926,42,TX,427,Starr
-926,42,TX,429,Stephens
-926,42,TX,431,Sterling
-926,42,TX,433,Stonewall
-926,42,TX,435,Sutton
-926,42,TX,437,Swisher
-926,42,TX,439,Tarrant
-926,42,TX,441,Taylor
-926,42,TX,443,Terrell
-926,42,TX,445,Terry
-926,42,TX,447,Throckmorton
-926,42,TX,449,Titus
-926,42,TX,451,Tom Green
-926,42,TX,453,Travis
-926,42,TX,455,Trinity
-926,42,TX,457,Tyler
-926,42,TX,459,Upshur
-926,42,TX,461,Upton
-926,42,TX,463,Uvalde
-926,42,TX,465,Val Verde
-926,42,TX,467,Van Zandt
-926,42,TX,469,Victoria
-926,42,TX,471,Walker
-926,42,TX,473,Waller
-926,42,TX,475,Ward
-926,42,TX,477,Washington
-926,42,TX,479,Webb
-926,42,TX,481,Wharton
-926,42,TX,483,Wheeler
-926,42,TX,485,Wichita
-926,42,TX,487,Wilbarger
-926,42,TX,489,Willacy
-926,42,TX,491,Williamson
-926,42,TX,493,Wilson
-926,42,TX,495,Winkler
-926,42,TX,497,Wise
-926,42,TX,499,Wood
-926,42,TX,501,Yoakum
-926,42,TX,503,Young
-926,42,TX,505,Zapata
-926,42,TX,507,Zavala
-926,42,TX,600,B.L.M. Area Name = South Padre Island ( smaller water-bottom tracts )
-926,42,TX,601,B.L.M. Area Name = North Padre Island ( smaller water-bottom tracts )
-926,42,TX,602,B.L.M. Area Name = Mustang Island ( smaller water-bottom tracts )
-926,42,TX,603,B.L.M. Area Name = Matagorda Island ( smaller water-bottom tracts )
-926,42,TX,604,B.L.M. Area Name = Brazos  ( smaller water-bottom tracts )
-926,42,TX,605,B.L.M. Area Name = Galveston ( smaller water-bottom tracts )
-926,42,TX,606,B.L.M. Area Name = High Island ( smaller water-bottom tracts )
-926,42,TX,700,B.L.M. Area Name = South Padre Island ( larger water-bottom tracts )
-926,42,TX,701,B.L.M. Area Name = North Padre Island ( larger water-bottom tracts )
-926,42,TX,702,B.L.M. Area Name = Mustang Island ( larger water-bottom tracts )
-926,42,TX,703,B.L.M. Area Name = Matagorda Island ( larger water-bottom tracts )
-926,42,TX,704,B.L.M. Area Name = Brazos  ( larger water-bottom tracts )
-926,42,TX,705,B.L.M. Area Name = Brazos - South
-926,42,TX,706,B.L.M. Area Name = Galveston ( larger water-bottom tracts )
-926,42,TX,707,B.L.M. Area Name = Galveston - South
-926,42,TX,708,B.L.M. Area Name = High Island ( larger water-bottom tracts )
-926,42,TX,709,B.L.M. Area Name = High Island - South
-926,42,TX,710,B.L.M. Area Name = High Island - East
-926,42,TX,711,"B.L.M. Area Name = High Island - East,  South"
-926,42,TX,712,B.L.M. Area Name = Mustang Island - East
-926,42,TX,713,B.L.M. Area Bane = North Padre Island - East
-926,42,TX,714,B.L.M. Area Name = South Padre Island - East
-926,42,TX,715,B.L.M. Area Name = Sabine Pass
-926,43,UT,001,Beaver
-926,43,UT,003,Box Elder
-926,43,UT,005,Cache
-926,43,UT,007,Carbon
-926,43,UT,009,Daggett
-926,43,UT,011,Davis
-926,43,UT,013,Duchesne
-926,43,UT,015,Emery
-926,43,UT,017,Garfield
-926,43,UT,019,Grand
-926,43,UT,021,Iron
-926,43,UT,023,Juab
-926,43,UT,025,Kane
-926,43,UT,027,Millard
-926,43,UT,029,Morgan
-926,43,UT,031,Piute
-926,43,UT,033,Rich
-926,43,UT,035,Salt Lake
-926,43,UT,037,San Juan
-926,43,UT,039,Sanpete
-926,43,UT,041,Sevier
-926,43,UT,043,Summit
-926,43,UT,045,Tooele
-926,43,UT,047,Uintah
-926,43,UT,049,Utah
-926,43,UT,051,Wasatch
-926,43,UT,053,Washington
-926,43,UT,055,Wayne
-926,43,UT,057,Weber
-926,44,VT,001,Addison
-926,44,VT,003,Bennington
-926,44,VT,005,Caledonia
-926,44,VT,007,Chittenden
-926,44,VT,009,Essex
-926,44,VT,011,Franklin
-926,44,VT,013,Grand Isle
-926,44,VT,015,Lamoille
-926,44,VT,017,Orange
-926,44,VT,019,Orleans
-926,44,VT,021,Rutland
-926,44,VT,023,Washington
-926,44,VT,025,Windham
-926,44,VT,027,Windsor
-926,45,VA,001,Accomack
-926,45,VA,003,Albemarle
-926,45,VA,003,Charlottesville ( City )
-926,45,VA,005,Alleghany
-926,45,VA,005,Clifton Forge ( City )
-926,45,VA,005,Covington ( City )
-926,45,VA,007,Amelia
-926,45,VA,009,Amherst
-926,45,VA,011,Appomattox
-926,45,VA,013,Alexandria ( City )
-926,45,VA,013,Arlington
-926,45,VA,015,Augusta
-926,45,VA,015,Staunton ( City )
-926,45,VA,015,Waynesboro ( City )
-926,45,VA,017,Bath
-926,45,VA,019,Bedford
-926,45,VA,019,Bedford ( City )
-926,45,VA,021,Bland
-926,45,VA,023,Botetourt
-926,45,VA,025,Brunswick
-926,45,VA,027,Buchanan
-926,45,VA,029,Buckingham
-926,45,VA,031,Campbell
-926,45,VA,031,Lynchburg ( City )
-926,45,VA,033,Caroline
-926,45,VA,035,Carroll
-926,45,VA,035,Galax ( City )
-926,45,VA,037,Charles City
-926,45,VA,039,Charoltte
-926,45,VA,041,Chesterfield
-926,45,VA,041,Colonial Heights ( City )
-926,45,VA,043,Clarke
-926,45,VA,045,Craig
-926,45,VA,047,Culpeper
-926,45,VA,049,Cumberland
-926,45,VA,051,Dickenson
-926,45,VA,053,Dinwiddie
-926,45,VA,053,Petersburg ( City )
-926,45,VA,057,Essex
-926,45,VA,059,Fairfax
-926,45,VA,059,Fairfax ( City )
-926,45,VA,059,Falls Church ( City )
-926,45,VA,061,Fauquier
-926,45,VA,063,Floyd
-926,45,VA,065,Fluvanna
-926,45,VA,067,Franklin
-926,45,VA,069,Frederick
-926,45,VA,069,Winchester ( City )
-926,45,VA,071,Giles
-926,45,VA,073,Gloucester
-926,45,VA,075,Goochland
-926,45,VA,077,Grayson
-926,45,VA,079,Greene
-926,45,VA,081,Emporia ( City )
-926,45,VA,081,Greensville
-926,45,VA,083,Halifax
-926,45,VA,083,South Boston ( City )
-926,45,VA,085,Hanover
-926,45,VA,087,Henrico
-926,45,VA,087,Richmond ( City )
-926,45,VA,089,Henry 
-926,45,VA,089,Martinsville ( City )
-926,45,VA,091,Highland
-926,45,VA,093,Isle of Wight
-926,45,VA,095,James City
-926,45,VA,095,Williamsburg ( City )
-926,45,VA,097,King and Queen
-926,45,VA,099,King George
-926,45,VA,101,King William
-926,45,VA,103,Lancaster
-926,45,VA,105,Lee
-926,45,VA,107,Loudoun
-926,45,VA,109,Louisa
-926,45,VA,111,Lunenburg
-926,45,VA,113,Madison
-926,45,VA,115,Mathews
-926,45,VA,117,Mecklenburg
-926,45,VA,119,Middlesex
-926,45,VA,121,Montgomery
-926,45,VA,121,Radford ( City )
-926,45,VA,123,Nansemond
-926,45,VA,123,Suffolk ( City )
-926,45,VA,125,Nelson
-926,45,VA,127,New Kent
-926,45,VA,129,Chesapeake
-926,45,VA,129,Norfolk ( City )
-926,45,VA,129,Portsmouth ( City )
-926,45,VA,131,Northhampton
-926,45,VA,133,Northumberland
-926,45,VA,135,Nottoway
-926,45,VA,137,Orange
-926,45,VA,139,Page
-926,45,VA,141,Patrick
-926,45,VA,143,Danville ( City )
-926,45,VA,143,Pittsylvania
-926,45,VA,145,Powhatan
-926,45,VA,147,Prince Edward
-926,45,VA,149,Hopewell ( City )
-926,45,VA,149,Prince George
-926,45,VA,151,Virgina Beach
-926,45,VA,153,Prince William
-926,45,VA,155,Pulaski
-926,45,VA,157,Rappahannock
-926,45,VA,159,Richmond
-926,45,VA,161,Roanoke
-926,45,VA,161,Roanoke ( City )
-926,45,VA,161,Salem ( City )
-926,45,VA,163,Buena Vista ( City )
-926,45,VA,163,Lexington ( City )
-926,45,VA,163,Rockbridge
-926,45,VA,165,Harrisonburg ( City )
-926,45,VA,165,Rockingham
-926,45,VA,167,Russell
-926,45,VA,169,Scott
-926,45,VA,171,Shenandoah
-926,45,VA,173,Smyth
-926,45,VA,175,Franklin ( City )
-926,45,VA,175,Southampton
-926,45,VA,177,Fredericksburg ( City )
-926,45,VA,177,Spotsylvania
-926,45,VA,179,Stafford
-926,45,VA,181,Surry
-926,45,VA,183,Sussex
-926,45,VA,185,Tazewell
-926,45,VA,187,Warren
-926,45,VA,191,Bristol ( City )
-926,45,VA,191,Washington
-926,45,VA,193,Westmoreland
-926,45,VA,195,Norton ( City )
-926,45,VA,195,Wise
-926,45,VA,197,Wythe
-926,45,VA,199,Hampton ( City )
-926,45,VA,199,Newport News ( City )
-926,45,VA,199,York
-926,45,VA,201,State Waters - Accomack County
-926,45,VA,331,State Waters - Northhampton County
-926,45,VA,351,State Waters - Virgina Beach County
-926,45,VA,399,State Waters - York County
-926,46,WA,001,Adams
-926,46,WA,003,Asotin
-926,46,WA,005,Benton
-926,46,WA,007,Chelan
-926,46,WA,009,Clallam
-926,46,WA,011,Clark
-926,46,WA,013,Columbia
-926,46,WA,015,Cowlitz
-926,46,WA,017,Douglas
-926,46,WA,019,Ferry
-926,46,WA,021,Franklin
-926,46,WA,023,Garfield
-926,46,WA,025,Grant
-926,46,WA,027,Grays Harbor
-926,46,WA,029,Island
-926,46,WA,031,Jefferson
-926,46,WA,033,King
-926,46,WA,035,Kitsap
-926,46,WA,037,Kittitas
-926,46,WA,039,Klickitat
-926,46,WA,041,Lewis
-926,46,WA,043,Lincoln
-926,46,WA,045,Mason
-926,46,WA,047,Okanogan
-926,46,WA,049,Pacific
-926,46,WA,051,Pend Oreille
-926,46,WA,053,Pierce
-926,46,WA,055,San Juan
-926,46,WA,057,Skagit
-926,46,WA,059,Skamania
-926,46,WA,061,Snohomish
-926,46,WA,063,Spokane
-926,46,WA,065,Stevens
-926,46,WA,067,Thurston
-926,46,WA,069,Wahkiakum
-926,46,WA,071,Walla Walla
-926,46,WA,073,Whatcom
-926,46,WA,075,Whitman
-926,46,WA,077,Yakima
-926,46,WA,209,State Waters - Clallam County
-926,46,WA,227,State Waters - Grays Harbor County
-926,46,WA,231,State Waters - Jefferson County
-926,46,WA,249,State Waters - Pacific County
-926,47,WV,001,Barbour
-926,47,WV,003,Berkeley
-926,47,WV,005,Boone
-926,47,WV,007,Braxton
-926,47,WV,009,Brooke
-926,47,WV,011,Cabell
-926,47,WV,013,Calhoun
-926,47,WV,015,Clay
-926,47,WV,017,Doddridge
-926,47,WV,019,Fayette
-926,47,WV,021,Gilmer
-926,47,WV,023,Grant
-926,47,WV,025,Greenbrier
-926,47,WV,027,Hampshire
-926,47,WV,029,Hancock
-926,47,WV,031,Hardy
-926,47,WV,033,Harrison
-926,47,WV,035,Jackson
-926,47,WV,037,Jefferson
-926,47,WV,039,Kanawha
-926,47,WV,041,Lewis
-926,47,WV,043,Lincoln
-926,47,WV,045,Logan
-926,47,WV,047,Mc Dowell
-926,47,WV,049,Marion
-926,47,WV,051,Marshall
-926,47,WV,053,Mason
-926,47,WV,055,Mercer
-926,47,WV,057,Mineral
-926,47,WV,059,Mingo
-926,47,WV,061,Monongalia
-926,47,WV,063,Monroe
-926,47,WV,065,Morgan
-926,47,WV,067,Nicholas
-926,47,WV,069,Ohio
-926,47,WV,071,Pendleton
-926,47,WV,073,Pleasants
-926,47,WV,075,Pocahontas
-926,47,WV,077,Preston
-926,47,WV,079,Putnam
-926,47,WV,081,Raleigh
-926,47,WV,083,Randolph
-926,47,WV,085,Ritchie
-926,47,WV,087,Roane
-926,47,WV,089,Summers
-926,47,WV,091,Taylor
-926,47,WV,093,Tucker
-926,47,WV,095,Tyler
-926,47,WV,097,Upshur
-926,47,WV,099,Wayne
-926,47,WV,101,Webster
-926,47,WV,103,Wetzel
-926,47,WV,105,Wirt
-926,47,WV,107,Wood
-926,47,WV,109,Wyoming
-926,48,WI,001,Adams
-926,48,WI,003,Ashland
-926,48,WI,005,Barron
-926,48,WI,007,Bayfield
-926,48,WI,009,Brown
-926,48,WI,011,Buffalo
-926,48,WI,013,Burnett
-926,48,WI,015,Calumet
-926,48,WI,017,Chippewa
-926,48,WI,019,Clark
-926,48,WI,021,Columbia
-926,48,WI,023,Crawford
-926,48,WI,025,Dane
-926,48,WI,027,Dodge
-926,48,WI,029,Door
-926,48,WI,031,Douglas
-926,48,WI,033,Dunn
-926,48,WI,035,Eau Claire
-926,48,WI,037,Florence
-926,48,WI,039,Fond Du Lac
-926,48,WI,041,Forest
-926,48,WI,043,Grant
-926,48,WI,045,Green
-926,48,WI,047,Green Lake
-926,48,WI,049,Iowa
-926,48,WI,051,Iron
-926,48,WI,053,Jackson
-926,48,WI,055,Jefferson
-926,48,WI,057,Juneau
-926,48,WI,059,Kenosha
-926,48,WI,061,Kewaunee
-926,48,WI,063,La Crosse
-926,48,WI,065,Lafayette
-926,48,WI,067,Langlade
-926,48,WI,069,Lincoln
-926,48,WI,071,Manitowoc
-926,48,WI,073,Marathon
-926,48,WI,075,Marinette
-926,48,WI,077,Marquette
-926,48,WI,078,Menominee
-926,48,WI,079,Milwaukee
-926,48,WI,081,Monroe
-926,48,WI,083,Oconto
-926,48,WI,085,Oneida
-926,48,WI,087,Outagamie
-926,48,WI,089,Ozaukee
-926,48,WI,091,Pepin
-926,48,WI,093,Pierce
-926,48,WI,095,Polk
-926,48,WI,097,Portage
-926,48,WI,099,Price
-926,48,WI,101,Racine
-926,48,WI,103,Richland
-926,48,WI,105,Rock
-926,48,WI,107,Rusk
-926,48,WI,109,St. Croix
-926,48,WI,111,Sauk
-926,48,WI,113,Sawyer
-926,48,WI,115,Shawano
-926,48,WI,117,Sheboygan
-926,48,WI,119,Taylor
-926,48,WI,121,Trempealeau
-926,48,WI,123,Vernon
-926,48,WI,125,Vilas
-926,48,WI,127,Walworth
-926,48,WI,129,Washburn
-926,48,WI,131,Washington
-926,48,WI,133,Waukesha
-926,48,WI,135,Waupaca
-926,48,WI,137,Waushara
-926,48,WI,139,Winnebago
-926,48,WI,141,Wood
-926,49,WY,001,Albany
-926,49,WY,003,Big Horn
-926,49,WY,005,Campbell
-926,49,WY,007,Carbon
-926,49,WY,009,Converse
-926,49,WY,011,Crook
-926,49,WY,013,Fremont
-926,49,WY,015,Goshen
-926,49,WY,017,Hot Springs
-926,49,WY,019,Johnson
-926,49,WY,021,Laramie
-926,49,WY,023,Lincoln
-926,49,WY,025,Natrona
-926,49,WY,027,Niobrara
-926,49,WY,029,Park
-926,49,WY,031,Platte
-926,49,WY,033,Sheridan
-926,49,WY,035,Sublette
-926,49,WY,037,Sweetwater
-926,49,WY,039,Teton
-926,49,WY,041,Uinta
-926,49,WY,043,Washakie
-926,49,WY,045,Weston
-926,49,WY,047,Yellowstone National Park
-926,50,AK,001,Adak
-926,50,AK,003,Afognak
-926,50,AK,005,Ambler River
-926,50,AK,007,Amukta
-926,50,AK,009,Anchorage
-926,50,AK,011,Artic
-926,50,AK,013,Atka
-926,50,AK,015,Atlin
-926,50,AK,017,Attu
-926,50,AK,019,Baird Inlet
-926,50,AK,021,Baird Mountains
-926,50,AK,023,Barrow
-926,50,AK,025,Barter Island
-926,50,AK,027,Beaver
-926,50,AK,029,Beechey Point
-926,50,AK,031,Bendeleben
-926,50,AK,033,Bering Glacier
-926,50,AK,035,Bethel
-926,50,AK,037,Bettles
-926,50,AK,039,Big Delta
-926,50,AK,041,Black
-926,50,AK,043,Black River
-926,50,AK,045,Blying Sound
-926,50,AK,047,Bradfield Channel
-926,50,AK,049,Bristol Bay
-926,50,AK,051,Candle
-926,50,AK,053,Cape Mendenhall
-926,50,AK,055,Chandalar
-926,50,AK,057,Chandler Lake
-926,50,AK,059,Charley River
-926,50,AK,061,Chignik
-926,50,AK,063,Christian
-926,50,AK,065,Circle
-926,50,AK,067,Coleen
-926,50,AK,069,Cordova
-926,50,AK,071,Craig
-926,50,AK,073,De Long Mountains
-926,50,AK,075,Demarcation Point
-926,50,AK,077,Dillingham
-926,50,AK,079,Dixon Entrance
-926,50,AK,081,Eagel
-926,50,AK,083,Fairbanks
-926,50,AK,085,Fairweather
-926,50,AK,087,False Pass
-926,50,AK,089,Flaxman
-926,50,AK,091,Fort Yukon
-926,50,AK,093,Cold Bay
-926,50,AK,093,Fort Randall
-926,50,AK,095,Gareloi Island
-926,50,AK,097,Goodnews
-926,50,AK,099,Gulkana
-926,50,AK,101,Hagemeister Island
-926,50,AK,103,Harrison Bay
-926,50,AK,105,Healy
-926,50,AK,107,Holy Cross
-926,50,AK,109,Hooper Bay
-926,50,AK,111,Howard Pass
-926,50,AK,113,Hughes
-926,50,AK,115,Icy Bay
-926,50,AK,117,Iditarod
-926,50,AK,119,Ikpikpuk River
-926,50,AK,121,Iliamna
-926,50,AK,123,Juneau
-926,50,AK,125,Kagyuak
-926,50,AK,127,Kantishna River
-926,50,AK,129,Karluk
-926,50,AK,131,Kateel River
-926,50,AK,133,Kenai
-926,50,AK,135,Ketchikan
-926,50,AK,137,Killik River
-926,50,AK,139,Kiska
-926,50,AK,141,Kodiak
-926,50,AK,143,Kotzebue
-926,50,AK,145,Kuskokwim Bay
-926,50,AK,147,Kwiguk
-926,50,AK,149,Lake Clark
-926,50,AK,151,Lime Hills
-926,50,AK,153,Livengood
-926,50,AK,155,Lookout Ridge
-926,50,AK,157,Marshall
-926,50,AK,159,McCarthy
-926,50,AK,161,McGrath
-926,50,AK,163,Meade River
-926,50,AK,165,Medfra
-926,50,AK,167,Melozitna
-926,50,AK,169,Middleton Island
-926,50,AK,171,Misheguk Mountain
-926,50,AK,173,Mt. Hayes
-926,50,AK,175,Mt. Katmai
-926,50,AK,177,Mt. McKinley
-926,50,AK,179,Mt. Michelson
-926,50,AK,181,Mt. St. Elias
-926,50,AK,183,Nabesna
-926,50,AK,185,Naknek
-926,50,AK,187,Noatak
-926,50,AK,189,Nome
-926,50,AK,191,Norton Bay
-926,50,AK,193,Nulato
-926,50,AK,195,Nunivak Island
-926,50,AK,197,Nushagak Bay
-926,50,AK,199,Ophir
-926,50,AK,201,Petersburg
-926,50,AK,203,Phil Smith Mountain
-926,50,AK,205,Point Hope
-926,50,AK,207,Point Lay
-926,50,AK,209,Port Alexander
-926,50,AK,211,Port Moller
-926,50,AK,213,Pribilof Island
-926,50,AK,215,Prince Rupert
-926,50,AK,217,Rat Islands
-926,50,AK,219,Ruby
-926,50,AK,221,Russian Mission
-926,50,AK,223,Sagavanirktok
-926,50,AK,225,Samalga Island
-926,50,AK,227,Seguam
-926,50,AK,229,Selawik
-926,50,AK,231,Seldovia
-926,50,AK,233,Seward
-926,50,AK,235,Shismaref
-926,50,AK,237,Shungnak
-926,50,AK,239,Simeonof Island
-926,50,AK,241,Sitka
-926,50,AK,243,Skagway
-926,50,AK,245,Sleetmute
-926,50,AK,247,Solomon
-926,50,AK,249,St. Matthew
-926,50,AK,251,Stepovak Bay
-926,50,AK,253,St. Lawrence
-926,50,AK,255,St. Michael
-926,50,AK,257,Sumdum
-926,50,AK,259,Survey Pass
-926,50,AK,261,Sutwik Island
-926,50,AK,263,Table Mountain
-926,50,AK,265,Taku River
-926,50,AK,267,Talkeetna
-926,50,AK,269,Talkeetna Mountains
-926,50,AK,271,Tanacross
-926,50,AK,273,Tanana
-926,50,AK,275,Taylor Mountains
-926,50,AK,277,Teller
-926,50,AK,279,Teshekpuk
-926,50,AK,281,Trinity Island
-926,50,AK,283,Tyonek
-926,50,AK,285,Ugashik
-926,50,AK,287,Umiat
-926,50,AK,289,Umnak
-926,50,AK,291,Unalakleet
-926,50,AK,293,Unalaska
-926,50,AK,295,Unimak
-926,50,AK,297,Utukok River
-926,50,AK,299,Valdez
-926,50,AK,301,Wainwright
-926,50,AK,303,Wiseman
-926,50,AK,305,Yakutat
-926,50,AK,601,State Waters - Adak Quadrangle
-926,50,AK,603,State Waters - Afognak Quadrangle
-926,50,AK,607,State Waters - Amukta Quadrangle
-926,50,AK,609,State Waters - Anchorage Quadrangle
-926,50,AK,613,State Waters - Atka Quadrangle
-926,50,AK,617,State Waters - Attu Quadrangle
-926,50,AK,619,State Waters - Baird Inlet Quadrangle
-926,50,AK,623,State Waters - Barrow Quadrangle
-926,50,AK,625,State Waters - Barter Island Quadrangle
-926,50,AK,629,State Waters - Beechey Point Quadrangle
-926,50,AK,633,State Waters - Bering Glacier Quadrangle
-926,50,AK,641,State Waters - Black Quadrangle
-926,50,AK,645,State Waters - Blying Sound Quadrangle
-926,50,AK,647,State Waters - Bradfield Channel Quadrangle
-926,50,AK,649,State Waters - Bristol Bay Quadrangle
-926,50,AK,653,State Waters - Cape Mendenhall Quadrangle
-926,50,AK,661,State Waters - Chignik Quadrangle
-926,50,AK,669,State Waters - Cordova Quadrangle
-926,50,AK,671,State Waters - Craig Quadrangle
-926,50,AK,673,State Waters - De Long Mountains Quadrangle
-926,50,AK,675,State Waters - Demarcation Point Quadrangle
-926,50,AK,679,State Waters - Dixon Entrance Quadrangle
-926,50,AK,685,State Waters - Fairweather Quadrangle
-926,50,AK,687,State Waters - False Pass Quadrangle
-926,50,AK,689,State Waters - Flaxman Quadrangle
-926,50,AK,693,State Waters - Cold Bay Quadrangle
-926,50,AK,693,State Waters - Fort Randall Quadrangle
-926,50,AK,695,State Waters - Gareloi Island Quadrangle
-926,50,AK,697,State Waters - Goodnews Quadrangle
-926,50,AK,701,State Waters - Hagemeister Island Quadrangle
-926,50,AK,703,State Waters - Harrison Bay Quadrangle
-926,50,AK,709,State Waters - Hooper Bay Quadrangle
-926,50,AK,715,State Waters - Icy Bay Quadrangle
-926,50,AK,721,State Waters - Iliamna Quadrangle
-926,50,AK,723,State Waters - Juneau Quadrangle
-926,50,AK,725,State Waters - Kagyuak Quadrangle
-926,50,AK,729,State Waters - Karluk Quadrangle
-926,50,AK,733,State Waters - Kenai Quadrangle
-926,50,AK,735,State Waters - Ketchikan Quadrangle
-926,50,AK,737,State Waters - Killik River Quadrangle
-926,50,AK,739,State Waters - Kiska Quadrangle
-926,50,AK,741,State Waters - Kodiak Quadrangle
-926,50,AK,743,State Waters - Kotzebue Quadrangle
-926,50,AK,745,State Waters - Kuskokwim Bay Quadrangle
-926,50,AK,747,State Waters - Kwiguk Quadrangle
-926,50,AK,763,State Waters - Meade River Quadrangle
-926,50,AK,769,State Waters - Middleton Island Quadrangle
-926,50,AK,775,State Waters - Mt. Katmai Quadrangle
-926,50,AK,779,State Waters - Mt. Michelson Quadrangle
-926,50,AK,781,State Waters - Mt. St. Elias Quadrangle
-926,50,AK,785,State Waters - Naknek Quadrangle
-926,50,AK,787,State Waters - Noatak Quadrangle
-926,50,AK,789,State Waters - Nome Quadrangle
-926,50,AK,791,State Waters - Norton Bay Quadrangle
-926,50,AK,795,State Waters - Nunivak Island Quadrangle
-926,50,AK,797,State Waters - Nushagak Bay Quadrangle
-926,50,AK,801,State Waters - Petersburg Quadrangle
-926,50,AK,805,State Waters - Point Hope Quadrangle
-926,50,AK,807,State Waters - Point Lay Quadrangle
-926,50,AK,809,State Waters - Port Alexander Quadrangle
-926,50,AK,811,State Waters - Port Moller Quadrangle
-926,50,AK,813,State Waters - Pribilof Island Quadrangle
-926,50,AK,815,State Waters - Prince Rupert Quadrangle
-926,50,AK,817,State Waters - Rat Islands Quadrangle
-926,50,AK,825,State Waters - Samalga Island Quadrangle
-926,50,AK,827,State Waters - Seguam Quadrangle
-926,50,AK,829,State Waters - Selawik Quadrangle
-926,50,AK,831,State Waters - Seldovia Quadrangle
-926,50,AK,833,State Waters - Seward Quadrangle
-926,50,AK,835,State Waters - Shismaref Quadrangle
-926,50,AK,839,State Waters - Simeonof Island Quadrangle
-926,50,AK,841,State Waters - Sitka Quadrangle
-926,50,AK,843,State Waters - Skagway Quadrangle
-926,50,AK,847,State Waters - Solomon Quadrangle
-926,50,AK,849,State Waters - St. Matthew Quadrangle
-926,50,AK,851,State Waters - Stepovak Bay Quadrangle
-926,50,AK,853,State Waters - St. Lawrence Quadrangle
-926,50,AK,855,State Waters - St. Michael Quadrangle
-926,50,AK,857,State Waters - Sumdum Quadrangle
-926,50,AK,859,State Waters - Survey Pass Quadrangle
-926,50,AK,861,State Waters - Sutwik Island Quadrangle
-926,50,AK,865,State Waters - Taku River Quadrangle
-926,50,AK,869,State Waters - Talkeetna Mountains Quadrangle
-926,50,AK,877,State Waters - Teller Quadrangle
-926,50,AK,879,State Waters - Teshekpuk Quadrangle
-926,50,AK,881,State Waters - Trinity Island Quadrangle
-926,50,AK,883,State Waters - Tyonek Quadrangle
-926,50,AK,885,State Waters - Ugashik Quadrangle
-926,50,AK,887,State Waters - Umiat Quadrangle
-926,50,AK,889,State Waters - Umnak Quadrangle
-926,50,AK,891,State Waters - Unalakleet Quadrangle
-926,50,AK,893,State Waters - Unalaska Quadrangle
-926,50,AK,895,State Waters - Unimak Quadrangle
-926,50,AK,899,State Waters - Valdez Quadrangle
-926,50,AK,901,State Waters - Wainwright Quadrangle
-926,50,AK,905,State Waters - Yakutat Quadrangle
-926,51,HI,001,Hawaii
-926,51,HI,001,Honolulu
-926,51,HI,002,Kalawao
-926,51,HI,002,Kauai
-926,51,HI,003,Maui
+state_code,state,county_code,county
+01,AL,001,Autauga
+01,AL,003,Baldwin
+01,AL,005,Barbour
+01,AL,007,Bibb
+01,AL,009,Blount
+01,AL,011,Bullock
+01,AL,013,Butler
+01,AL,015,Calhoun
+01,AL,017,Chambers
+01,AL,019,Cherokee
+01,AL,021,Chilton
+01,AL,023,Choctaw
+01,AL,025,Clarke
+01,AL,027,Clay
+01,AL,029,Cleburne
+01,AL,031,Coffee
+01,AL,033,Colbert
+01,AL,035,Conecuh
+01,AL,037,Coosa
+01,AL,039,Covington
+01,AL,041,Crenshaw
+01,AL,043,Cullman
+01,AL,045,Dale
+01,AL,047,Dallas
+01,AL,049,De Kalb
+01,AL,051,Elmore
+01,AL,053,Escambia
+01,AL,055,Etowah
+01,AL,057,Fayette
+01,AL,059,Franklin
+01,AL,061,Geneva
+01,AL,063,Greene
+01,AL,065,Hale
+01,AL,067,Henry
+01,AL,069,Houston
+01,AL,071,Jackson
+01,AL,073,Jefferson
+01,AL,075,Lamar
+01,AL,077,Lauderdale
+01,AL,079,Lawrence
+01,AL,081,Lee
+01,AL,083,Limestone
+01,AL,085,Lowndes
+01,AL,087,Macon
+01,AL,089,Madison
+01,AL,091,Marengo
+01,AL,093,Marion
+01,AL,095,Marshall
+01,AL,097,Mobile
+01,AL,099,Monroe
+01,AL,101,Montgomery
+01,AL,103,Morgan
+01,AL,105,Perry
+01,AL,107,Pickens
+01,AL,109,Pike
+01,AL,111,Randolph
+01,AL,113,Russell
+01,AL,115,St. Clair
+01,AL,117,Shelby
+01,AL,119,Sumter
+01,AL,121,Talladega
+01,AL,123,Tallapoosa
+01,AL,125,Tuscalloosa
+01,AL,127,Walker
+01,AL,129,Washington
+01,AL,131,Wilcox
+01,AL,133,Winston
+01,AL,203,State Waters - Baldwin County
+01,AL,297,State Waters - Mobile County
+02,AZ,001,Apache
+02,AZ,003,Cochise
+02,AZ,005,Coconino
+02,AZ,007,Gila
+02,AZ,009,Graham
+02,AZ,011,Greenlee
+02,AZ,012,La Paz
+02,AZ,013,Maricopa
+02,AZ,015,Mohave
+02,AZ,017,Navajo
+02,AZ,019,Pima
+02,AZ,021,Pinal
+02,AZ,023,Santa Cruz
+02,AZ,025,Yavapai
+02,AZ,027,Yuma
+03,AR,001,Arkansas
+03,AR,003,Ashley
+03,AR,005,Baxter
+03,AR,007,Benton
+03,AR,009,Boone
+03,AR,011,Bradley
+03,AR,013,Calhoun
+03,AR,015,Carroll
+03,AR,017,Chicot
+03,AR,019,Clark
+03,AR,021,Clay
+03,AR,023,Cleburne
+03,AR,025,Cleveland
+03,AR,027,Columbia
+03,AR,029,Conway
+03,AR,031,Craighead
+03,AR,033,Crawford
+03,AR,035,Crittenden
+03,AR,037,Cross
+03,AR,039,Dallas
+03,AR,041,Desha
+03,AR,043,Drew
+03,AR,045,Faulkner
+03,AR,047,Franklin
+03,AR,049,Fulton
+03,AR,051,Garland
+03,AR,053,Grant
+03,AR,055,Greene
+03,AR,057,Hempstead
+03,AR,059,Hot Spring
+03,AR,061,Howard
+03,AR,063,Independence
+03,AR,065,Izard
+03,AR,067,Jackson
+03,AR,069,Jefferson
+03,AR,071,Johnson
+03,AR,073,Lafayette
+03,AR,075,Lawrence
+03,AR,077,Lee
+03,AR,079,Lincoln
+03,AR,081,Little River
+03,AR,083,Logan
+03,AR,085,Lonoke
+03,AR,087,Madison
+03,AR,089,Marion
+03,AR,091,Miller
+03,AR,093,Mississippi
+03,AR,095,Monroe
+03,AR,097,Montgomery
+03,AR,099,Nevada
+03,AR,101,Newton
+03,AR,103,Ouachita
+03,AR,105,Perry
+03,AR,107,Phillips
+03,AR,109,Pike
+03,AR,111,Poinsett
+03,AR,113,Polk
+03,AR,115,Pope
+03,AR,117,Prairie
+03,AR,119,Pulaski
+03,AR,121,Randolph
+03,AR,123,St. Francis
+03,AR,125,Saline
+03,AR,127,Scott
+03,AR,129,Searcy
+03,AR,131,Sebastian
+03,AR,133,Sevier
+03,AR,135,Sharp
+03,AR,137,Stone
+03,AR,139,Union
+03,AR,141,Van Buren
+03,AR,143,Washington
+03,AR,145,White
+03,AR,147,Woodruff
+03,AR,149,Yell
+04,CA,001,Alameda
+04,CA,003,Alpine
+04,CA,005,Amador
+04,CA,007,Butte
+04,CA,009,Calaveras
+04,CA,011,Colusa
+04,CA,013,Contra Costa
+04,CA,015,Del Norte
+04,CA,017,El Dorado
+04,CA,019,Fresno
+04,CA,021,Glenn
+04,CA,023,Humboldt
+04,CA,025,Imperial
+04,CA,027,Inyo
+04,CA,029,Kern
+04,CA,031,Kings
+04,CA,033,Lake
+04,CA,035,Lassen
+04,CA,037,Los Angeles
+04,CA,039,Madera
+04,CA,041,Marin
+04,CA,043,Mariposa
+04,CA,045,Mendocino
+04,CA,047,Merced
+04,CA,049,Modoc
+04,CA,051,Mono
+04,CA,053,Monterey
+04,CA,055,Napa
+04,CA,057,Nevada
+04,CA,059,Orange
+04,CA,061,Placer
+04,CA,063,Plumas
+04,CA,065,Riverside
+04,CA,067,Sacramento
+04,CA,069,San Benito
+04,CA,071,San Bernardino
+04,CA,073,San Diego
+04,CA,075,San Fransico
+04,CA,077,San Joaquin
+04,CA,079,San Luis Obispo
+04,CA,081,San Mateo
+04,CA,083,Santa Barbara
+04,CA,085,Santa Clara
+04,CA,087,Santa Cruz
+04,CA,089,Shasta
+04,CA,091,Sierra
+04,CA,093,Siskiyou
+04,CA,095,Solnao
+04,CA,097,Sonoma
+04,CA,099,Stanislaus
+04,CA,101,Sutter
+04,CA,103,Tehama
+04,CA,105,Trinity
+04,CA,107,Tulare
+04,CA,109,Tuolumne
+04,CA,111,Ventura
+04,CA,113,Yolo
+04,CA,115,Yuba
+04,CA,116,Anacapa Offshore Islands
+04,CA,118,San Clemente Offshore Islands
+04,CA,120,San Miguel Offshore Islands
+04,CA,122,San Nicolas Offshore Islands
+04,CA,124,Santa Barbara Offshore Islands
+04,CA,126,Santa Catalina Offshore Islands
+04,CA,128,Santa Cruz Offshore Islands
+04,CA,130,Santa Rosa Offshore Islands
+04,CA,201,State Waters - Alameda County
+04,CA,211,State Waters - Ventura County
+04,CA,213,State Waters - Contra Costa County
+04,CA,215,State Waters - Del Norte County
+04,CA,216,State Waters - Anacapa Offshore Islands
+04,CA,218,State Waters - San Clemente Offshore Islands
+04,CA,220,State Waters - San Miguel Offshore Islands
+04,CA,222,State Waters - San Nicolas Offshore Islands
+04,CA,223,State Waters - Humboldt County
+04,CA,224,State Waters - Santa Barbara Offshore Islands
+04,CA,226,State Waters - Santa Catalina Offshore Islands
+04,CA,228,State Waters - Santa Cruz Offshore Islands
+04,CA,230,State Waters - Santa Rosa Offshore Islands
+04,CA,237,State Waters - Los Angeles County
+04,CA,241,State Waters - Marin County
+04,CA,245,State Waters - Mendocino County
+04,CA,253,State Waters - Monterey County
+04,CA,255,State Waters - Napa County
+04,CA,259,State Waters - Orange County
+04,CA,273,State Waters - San Diego County
+04,CA,275,State Waters - San Fransico County
+04,CA,279,State Waters - San Luis Obispo County
+04,CA,281,State Waters - San Mateo County
+04,CA,283,State Waters - Santa Barbara County
+04,CA,287,State Waters - Santa Cruz County
+04,CA,295,State Waters - Solnao County
+04,CA,297,State Waters - Sonoma County
+04,CA,311,Santa Cruz Channel Islands Area
+04,CA,312,Santa Catalina Channel Islands Area
+04,CA,313,San Nicolas Channel Islands Area
+05,CO,001,Adams
+05,CO,003,Alamosa
+05,CO,005,Arapahoe
+05,CO,007,Archuleta
+05,CO,009,Baca
+05,CO,011,Bent
+05,CO,013,Boulder
+05,CO,014,Broomfield
+05,CO,015,Chaffee
+05,CO,017,Cheyenne
+05,CO,019,Clear Creek
+05,CO,021,Conejos
+05,CO,023,Costilla
+05,CO,025,Crowley
+05,CO,027,Custer
+05,CO,029,Delta
+05,CO,031,Denver
+05,CO,033,Dolores
+05,CO,035,Douglas
+05,CO,037,Eagle
+05,CO,039,Elbert
+05,CO,041,El Paso
+05,CO,043,Fremont
+05,CO,045,Garfield
+05,CO,047,Gilpin
+05,CO,049,Grand
+05,CO,051,Gunnison
+05,CO,053,Hinsdale
+05,CO,055,Huerfano
+05,CO,057,Jackson
+05,CO,059,Jefferson
+05,CO,061,Kiowa
+05,CO,063,Kit Carson
+05,CO,065,Lake
+05,CO,067,La Plata
+05,CO,069,Larimer
+05,CO,071,Las Animas
+05,CO,073,Lincoln
+05,CO,075,Logan
+05,CO,077,Mesa
+05,CO,079,Mineral
+05,CO,081,Moffat
+05,CO,083,Montezuma
+05,CO,085,Montrose
+05,CO,087,Morgan
+05,CO,089,Otero
+05,CO,091,Ouray
+05,CO,093,Park
+05,CO,095,Phillips
+05,CO,097,Pitkin
+05,CO,099,Prowers
+05,CO,101,Pueblo
+05,CO,103,Rio Blanco
+05,CO,105,Rio Grande
+05,CO,107,Routt
+05,CO,109,Saguache
+05,CO,111,San Juan
+05,CO,113,San Miguel
+05,CO,115,Sedgwick
+05,CO,117,Summit
+05,CO,119,Teller
+05,CO,121,Washington
+05,CO,123,Weld
+05,CO,125,Yuma
+06,CT,001,Fairfield
+06,CT,003,Hartford
+06,CT,005,Litchfield
+06,CT,007,Middlesex
+06,CT,009,New Haven
+06,CT,011,New London
+06,CT,013,Tolland
+06,CT,015,Windham
+06,CT,201,State Waters - Fairfield County
+06,CT,207,State Waters - Middlesex County
+06,CT,209,State Waters - New Haven County
+06,CT,211,State Waters - New London County
+07,DE,001,Kent
+07,DE,003,New Castle
+07,DE,005,Sussex
+07,DE,205,State Waters - Sussex County
+08,DC,001,District of Columbia
+09,FL,001,Alachua
+09,FL,003,Baker
+09,FL,005,Bay
+09,FL,007,Bradford
+09,FL,009,Brevard
+09,FL,011,Broward
+09,FL,013,Calhoun
+09,FL,015,Charlotte
+09,FL,017,Citrus
+09,FL,019,Clay
+09,FL,021,Collier
+09,FL,023,Columbia
+09,FL,025,Dade
+09,FL,027,De Soto
+09,FL,029,Dixie
+09,FL,031,Duval
+09,FL,033,Escambia
+09,FL,035,Flagler
+09,FL,037,Franklin
+09,FL,039,Gadsen
+09,FL,041,Gilchrist
+09,FL,043,Glades
+09,FL,045,Gulf
+09,FL,047,Hamilton
+09,FL,049,Hardee
+09,FL,051,Hendry
+09,FL,053,Hernando
+09,FL,055,Highlands
+09,FL,057,Hillsborough
+09,FL,059,Holmes
+09,FL,061,Indian River
+09,FL,063,Jackson
+09,FL,065,Jefferson
+09,FL,067,Lafayette
+09,FL,069,Lake
+09,FL,071,Lee
+09,FL,073,Leon
+09,FL,075,Levy
+09,FL,077,Liberty
+09,FL,079,Madison
+09,FL,081,Manatee
+09,FL,083,Marion
+09,FL,085,Martin
+09,FL,087,Monroe
+09,FL,089,Nassau
+09,FL,091,Okaloosa
+09,FL,093,Okeechobee
+09,FL,095,Orange
+09,FL,097,Osceola
+09,FL,099,Palm Beach
+09,FL,101,Pasco
+09,FL,103,Pinellas
+09,FL,105,Polk
+09,FL,107,Putnam
+09,FL,109,St. Johns
+09,FL,111,St. Lucie
+09,FL,113,Santa Rosa
+09,FL,115,Sarasota
+09,FL,117,Seminole
+09,FL,119,Sumter
+09,FL,121,Suwannee
+09,FL,123,Taylor
+09,FL,125,Union
+09,FL,127,Volusia
+09,FL,129,Wakulla
+09,FL,131,Walton
+09,FL,133,Washington
+09,FL,205,State Waters - Bay County
+09,FL,209,State Waters - Brevard County
+09,FL,211,State Waters - Broward County
+09,FL,215,State Waters - Charlotte County
+09,FL,217,State Waters - Citrus County
+09,FL,221,State Waters - Collier County
+09,FL,225,State Waters - Dade County
+09,FL,229,State Waters - Dixie County
+09,FL,231,State Waters - Duval County
+09,FL,233,State Waters - Escambia County
+09,FL,235,State Waters - Flagler County
+09,FL,237,State Waters - Franklin County
+09,FL,245,State Waters - Gulf County
+09,FL,253,State Waters - Hernando County
+09,FL,257,State Waters - Hillsborough County
+09,FL,261,State Waters - Indian River County
+09,FL,265,State Waters - Jefferson County
+09,FL,271,State Waters - Lee County
+09,FL,275,State Waters - Levy County
+09,FL,281,State Waters - Manatee County
+09,FL,285,State Waters - Martin County
+09,FL,287,State Waters - Monroe County
+09,FL,289,State Waters - Nassau County
+09,FL,291,State Waters - Okaloosa County
+09,FL,299,State Waters - Palm Beach County
+09,FL,301,State Waters - Pasco County
+09,FL,303,State Waters - Pinellas County
+09,FL,309,State Waters - St. Johns County
+09,FL,311,State Waters - St. Lucie County
+09,FL,313,State Waters - Santa Rosa County
+09,FL,315,State Waters - Sarasota County
+09,FL,323,State Waters - Taylor County
+09,FL,327,State Waters - Volusia County
+09,FL,329,State Waters - Wakulla County
+09,FL,331,State Waters - Walton County
+10,GA,001,Appling
+10,GA,003,Atkinson
+10,GA,005,Bacon
+10,GA,007,Baker
+10,GA,009,Baldwin
+10,GA,011,Banks
+10,GA,013,Barrow
+10,GA,015,Bartow
+10,GA,017,Ben Hill
+10,GA,019,Berrien
+10,GA,021,Bibb
+10,GA,023,Bleckley
+10,GA,025,Brantley
+10,GA,027,Brooks
+10,GA,029,Bryan
+10,GA,031,Bulloch
+10,GA,033,Burke
+10,GA,035,Butts
+10,GA,037,Calhoun
+10,GA,039,Camden
+10,GA,043,Candler
+10,GA,045,Carroll
+10,GA,047,Catoosa
+10,GA,049,Charlton
+10,GA,051,Chatham
+10,GA,053,Chattahoochee
+10,GA,055,Chattooga
+10,GA,057,Cherokee
+10,GA,059,Clarke
+10,GA,061,Clay
+10,GA,063,Clayton
+10,GA,065,Clinch
+10,GA,067,Cobb
+10,GA,069,Coffee
+10,GA,071,Colquitt
+10,GA,073,Columbia
+10,GA,075,Cook
+10,GA,077,Coweta
+10,GA,079,Crawford
+10,GA,081,Crisp
+10,GA,083,Dade
+10,GA,085,Dawson
+10,GA,087,Decatur
+10,GA,089,De Kalb
+10,GA,091,Dodge
+10,GA,093,Dooly
+10,GA,095,Dougherty
+10,GA,097,Douglas
+10,GA,099,Early
+10,GA,101,Echols
+10,GA,103,Effingham
+10,GA,105,Elbert
+10,GA,107,Emanuel
+10,GA,109,Evans
+10,GA,111,Fannin
+10,GA,113,Fayette
+10,GA,115,Floyd
+10,GA,117,Forsyth
+10,GA,119,Franklin
+10,GA,121,Fulton
+10,GA,123,Gilmer
+10,GA,125,Glascock
+10,GA,127,Glynn
+10,GA,129,Gordon
+10,GA,131,Grady
+10,GA,133,Greene
+10,GA,135,Gwinnett
+10,GA,137,Habersham
+10,GA,139,Hall
+10,GA,141,Hancock
+10,GA,143,Haralson
+10,GA,145,Harris
+10,GA,147,Hart
+10,GA,149,Heard
+10,GA,151,Henry
+10,GA,153,Houston
+10,GA,155,Irwin
+10,GA,157,Jackson
+10,GA,159,Jasper
+10,GA,161,Jeff Davis
+10,GA,163,Jefferson
+10,GA,165,Jenkins
+10,GA,167,Johnson
+10,GA,169,Jones
+10,GA,171,Lamar
+10,GA,173,Lanier
+10,GA,175,Laurens
+10,GA,177,Lee
+10,GA,179,Liberty
+10,GA,181,Lincoln
+10,GA,183,Long
+10,GA,185,Lowndes
+10,GA,187,Lumpkin
+10,GA,189,Mc Duffie
+10,GA,191,Mc Intosh
+10,GA,193,Macon
+10,GA,195,Madison
+10,GA,197,Marion
+10,GA,199,Meriwether
+10,GA,201,Miller
+10,GA,205,Mitchell
+10,GA,207,Monroe
+10,GA,209,Montgomery
+10,GA,211,Morgan
+10,GA,213,Murray
+10,GA,215,Muscogee
+10,GA,217,Newton
+10,GA,219,Oconee
+10,GA,221,Oglethorpe
+10,GA,223,Paulding
+10,GA,225,Peach
+10,GA,227,Pickens
+10,GA,229,Pierce
+10,GA,231,Pike
+10,GA,233,Polk
+10,GA,235,Pulaski
+10,GA,237,Putnam
+10,GA,239,Quitman
+10,GA,241,Rabun
+10,GA,243,Randolph
+10,GA,245,Richmond
+10,GA,247,Rockdale
+10,GA,249,Schley
+10,GA,251,Screven
+10,GA,253,Seminole
+10,GA,255,Spalding
+10,GA,257,Stephens
+10,GA,259,Stewart
+10,GA,261,Sumter
+10,GA,263,Talbot
+10,GA,265,Taliaferro
+10,GA,267,Tattnall
+10,GA,269,Taylor
+10,GA,271,Telfair
+10,GA,273,Terrell
+10,GA,275,Thomas
+10,GA,277,Tift
+10,GA,279,Toombs
+10,GA,281,Towns
+10,GA,283,Treutlen
+10,GA,285,Troup
+10,GA,287,Turner
+10,GA,289,Twiggs
+10,GA,291,Union
+10,GA,293,Upson
+10,GA,295,Walker
+10,GA,297,Walton
+10,GA,299,Ware
+10,GA,301,Warren
+10,GA,303,Washington
+10,GA,305,Wayne
+10,GA,307,Webster
+10,GA,309,Wheller
+10,GA,311,White
+10,GA,313,Whitfield
+10,GA,315,Wilcox
+10,GA,317,Wilkes
+10,GA,319,Wilkinson
+10,GA,321,Worth
+10,GA,329,State Waters - Bryan County
+10,GA,339,State Waters - Camden County
+10,GA,351,State Waters - Chatham County
+10,GA,427,State Waters - Glynn County
+10,GA,479,State Waters - Liberty County
+10,GA,491,State Waters - Mc Intosh County
+11,ID,001,Ada
+11,ID,003,Adams
+11,ID,005,Bannock
+11,ID,007,Bear Lake
+11,ID,009,Benewah
+11,ID,011,Bingham
+11,ID,013,Blaine
+11,ID,015,Boise
+11,ID,017,Bonner
+11,ID,019,Bonneville
+11,ID,021,Boundary
+11,ID,023,Butte
+11,ID,025,Camas
+11,ID,027,Canyon
+11,ID,029,Caribou
+11,ID,031,Cassia
+11,ID,033,Clark
+11,ID,035,Clearwater
+11,ID,037,Custer
+11,ID,039,Elmore
+11,ID,041,Franklin
+11,ID,043,Fremont
+11,ID,045,Gem
+11,ID,047,Gooding
+11,ID,049,Idaho
+11,ID,051,Jefferson
+11,ID,053,Jerome
+11,ID,055,Kootenai
+11,ID,057,Latah
+11,ID,059,Lemhi
+11,ID,061,Lewis
+11,ID,063,Lincoln
+11,ID,065,Madison
+11,ID,067,Minidoka
+11,ID,069,Nez Perce
+11,ID,071,Oneida
+11,ID,073,Owyhee
+11,ID,075,Payette
+11,ID,077,Power
+11,ID,079,Shoshone
+11,ID,081,Teton
+11,ID,083,Twin Falls
+11,ID,085,Valley
+11,ID,087,Washington
+12,IL,001,Adams
+12,IL,003,Alexander
+12,IL,005,Bond
+12,IL,007,Boone
+12,IL,009,Brown
+12,IL,011,Bureau
+12,IL,013,Calhoun
+12,IL,015,Carroll
+12,IL,017,Cass
+12,IL,019,Champaign
+12,IL,021,Christian
+12,IL,023,Clark
+12,IL,025,Clay
+12,IL,027,Clinton
+12,IL,029,Coles
+12,IL,031,Cook
+12,IL,033,Crawford
+12,IL,035,Cumberland
+12,IL,037,De Kalb
+12,IL,039,De Witt
+12,IL,041,Douglas
+12,IL,043,Du Page
+12,IL,045,Edgar
+12,IL,047,Edwards
+12,IL,049,Effingham
+12,IL,051,Fayette
+12,IL,053,Ford
+12,IL,055,Franklin
+12,IL,057,Fulton
+12,IL,059,Gallatin
+12,IL,061,Greene
+12,IL,063,Grundy
+12,IL,065,Hamilton
+12,IL,067,Hancock
+12,IL,069,Hardin
+12,IL,071,Henderson
+12,IL,073,Henry
+12,IL,075,Iroquois
+12,IL,077,Jackson
+12,IL,079,Jasper
+12,IL,081,Jefferson
+12,IL,083,Jersey
+12,IL,085,Jo Daviess
+12,IL,087,Johnson
+12,IL,089,Kane
+12,IL,091,Kankakee
+12,IL,093,Kendall
+12,IL,095,Knox
+12,IL,097,Lake
+12,IL,099,La Salle
+12,IL,101,Lawrence
+12,IL,103,Lee
+12,IL,105,Livingston
+12,IL,107,Logan
+12,IL,109,Mc Donough
+12,IL,111,Mc Henry
+12,IL,113,Mc Lean
+12,IL,115,Macon
+12,IL,117,Macoupin
+12,IL,119,Madison
+12,IL,121,Marion
+12,IL,123,Marshall
+12,IL,125,Mason
+12,IL,127,Massac
+12,IL,129,Menard
+12,IL,131,Mercer
+12,IL,133,Monroe
+12,IL,135,Montgomery
+12,IL,137,Morgan
+12,IL,139,Moultrie
+12,IL,141,Ogle
+12,IL,143,Peoria
+12,IL,145,Perry
+12,IL,147,Piatt
+12,IL,149,Pike
+12,IL,151,Pope
+12,IL,153,Pulaski
+12,IL,155,Putnam
+12,IL,157,Randolph
+12,IL,159,Richland
+12,IL,161,Rock Island
+12,IL,163,St. Clair
+12,IL,165,Saline
+12,IL,167,Sangamon
+12,IL,169,Schuyler
+12,IL,171,Scott
+12,IL,173,Shelby
+12,IL,175,Stark
+12,IL,177,Stephenson
+12,IL,179,Tazewell
+12,IL,181,Union
+12,IL,183,Vermilion
+12,IL,185,Wabash
+12,IL,187,Warren
+12,IL,189,Washington
+12,IL,191,Wayne
+12,IL,193,White
+12,IL,195,Whiteside
+12,IL,197,Will
+12,IL,199,Williamson
+12,IL,201,Winnebago
+12,IL,203,Woodford
+13,IN,001,Adams
+13,IN,003,Allen
+13,IN,005,Bartholomew
+13,IN,007,Benton
+13,IN,009,Blackford
+13,IN,011,Boone
+13,IN,013,Brown
+13,IN,015,Carroll
+13,IN,017,Cass
+13,IN,019,Clark
+13,IN,021,Clay
+13,IN,023,Clinton
+13,IN,025,Crawford
+13,IN,027,Daviess
+13,IN,029,Dearborn
+13,IN,031,Decatur
+13,IN,033,De Kalb
+13,IN,035,Delaware
+13,IN,037,Dubois
+13,IN,039,Elkhart
+13,IN,041,Fayette
+13,IN,043,Floyd
+13,IN,045,Fountain
+13,IN,047,Franklin
+13,IN,049,Fulton
+13,IN,051,Gibson
+13,IN,053,Grant
+13,IN,055,Greene
+13,IN,057,Hamilton
+13,IN,059,Hancock
+13,IN,061,Harrison
+13,IN,063,Hendricks
+13,IN,065,Henry
+13,IN,067,Howard
+13,IN,069,Huntington
+13,IN,071,Jackson
+13,IN,073,Jasper
+13,IN,075,Jay
+13,IN,077,Jefferson
+13,IN,079,Jennings
+13,IN,081,Johnson
+13,IN,083,Knox
+13,IN,085,Kosciusko
+13,IN,087,Lagrange
+13,IN,089,Lake
+13,IN,091,La Porte
+13,IN,093,Lawrence
+13,IN,095,Madison
+13,IN,097,Marion
+13,IN,099,Marshall
+13,IN,101,Martin
+13,IN,103,Miami
+13,IN,105,Monroe
+13,IN,107,Montgomery
+13,IN,109,Morgan
+13,IN,111,Newton
+13,IN,113,Noble
+13,IN,115,Ohio
+13,IN,117,Orange
+13,IN,119,Owen
+13,IN,121,Parke
+13,IN,123,Perry
+13,IN,125,Pike
+13,IN,127,Porter
+13,IN,129,Posley
+13,IN,131,Pulaski
+13,IN,133,Putnam
+13,IN,135,Randolph
+13,IN,137,Ripley
+13,IN,139,Rush
+13,IN,141,St. Joseph
+13,IN,143,Scott
+13,IN,145,Shelby
+13,IN,147,Spencer
+13,IN,149,Starke
+13,IN,151,Steuben
+13,IN,153,Sullivan
+13,IN,155,Switzerland
+13,IN,157,Tippecanoe
+13,IN,159,Tipton
+13,IN,161,Union
+13,IN,163,Vanderburgh
+13,IN,165,Vermillion
+13,IN,167,Vigo
+13,IN,169,Wabash
+13,IN,171,Warren
+13,IN,173,Warrick
+13,IN,175,Washington
+13,IN,177,Wayne
+13,IN,179,Wells
+13,IN,181,White
+13,IN,183,Whitley
+14,IA,001,Adair
+14,IA,003,Adams
+14,IA,005,Allamakee
+14,IA,007,Appanoose
+14,IA,009,Audubon
+14,IA,011,Benton
+14,IA,013,Black Hawk
+14,IA,015,Boone
+14,IA,017,Bremer
+14,IA,019,Buchanan
+14,IA,021,Buena Vista
+14,IA,023,Butler
+14,IA,025,Calhoun
+14,IA,027,Carroll
+14,IA,029,Cass
+14,IA,031,Cedar
+14,IA,033,Cerro Gordo
+14,IA,035,Cherokee
+14,IA,037,Chickasaw
+14,IA,039,Clarke
+14,IA,041,Clay
+14,IA,043,Clayton
+14,IA,045,Clinton
+14,IA,047,Crawford
+14,IA,049,Dallas
+14,IA,051,Davis
+14,IA,053,Decatur
+14,IA,055,Delaware
+14,IA,057,Des Moines
+14,IA,059,Dickinson
+14,IA,061,Dubuque
+14,IA,063,Emmet
+14,IA,065,Fayette
+14,IA,067,Floyd
+14,IA,069,Franklin
+14,IA,071,Fremont
+14,IA,073,Greene
+14,IA,075,Grundy
+14,IA,077,Guthrie
+14,IA,079,Hamilton
+14,IA,081,Hancock
+14,IA,083,Hardin
+14,IA,085,Harrison
+14,IA,087,Henry
+14,IA,089,Howard
+14,IA,091,Humboldt
+14,IA,093,Ida
+14,IA,095,Iowa
+14,IA,097,Jackson
+14,IA,099,Jasper
+14,IA,101,Jefferson
+14,IA,103,Johnson
+14,IA,105,Jones
+14,IA,107,Keokuk
+14,IA,109,Kossuth
+14,IA,111,Lee
+14,IA,113,Linn
+14,IA,115,Louisa
+14,IA,117,Lucas
+14,IA,119,Lyon
+14,IA,121,Madison
+14,IA,123,Mahaska
+14,IA,125,Marion
+14,IA,127,Marshall
+14,IA,129,Mills
+14,IA,131,Mitchell
+14,IA,133,Monona
+14,IA,135,Monroe
+14,IA,137,Montgomery
+14,IA,139,Muscatine
+14,IA,141,O Brien
+14,IA,143,Osceola
+14,IA,145,Page
+14,IA,147,Palo Alto
+14,IA,149,Plymouth
+14,IA,151,Pocahontas
+14,IA,153,Polk
+14,IA,155,Pottawattamie
+14,IA,157,Poweshiek
+14,IA,159,Ringgold
+14,IA,161,Sac
+14,IA,163,Scott
+14,IA,165,Shelby
+14,IA,167,Sioux
+14,IA,169,Story
+14,IA,171,Tama
+14,IA,173,Taylor
+14,IA,175,Union
+14,IA,177,Van Buren
+14,IA,179,Wapello
+14,IA,181,Warren
+14,IA,183,Washington
+14,IA,185,Wayne
+14,IA,187,Webster
+14,IA,189,Winnebago
+14,IA,191,Winneshiek
+14,IA,193,Woodbury
+14,IA,195,Worth
+14,IA,197,Wright
+15,KS,001,Allen
+15,KS,003,Anderson
+15,KS,005,Atchison
+15,KS,007,Barber
+15,KS,009,Barton
+15,KS,011,Bourbon
+15,KS,013,Brown
+15,KS,015,Butler
+15,KS,017,Chase
+15,KS,019,Cahutauqua
+15,KS,021,Cherokee
+15,KS,023,Cheyenne
+15,KS,025,Clark
+15,KS,027,Clay
+15,KS,029,Cloud
+15,KS,031,Coffey
+15,KS,033,Comanche
+15,KS,035,Cowley
+15,KS,037,Crawford
+15,KS,039,Decatur
+15,KS,041,Dickinson
+15,KS,043,Doniphan
+15,KS,045,Douglas
+15,KS,047,Edwards
+15,KS,049,Elk
+15,KS,051,Ellis
+15,KS,053,Ellsworth
+15,KS,055,Finney
+15,KS,057,Ford
+15,KS,059,Franklin
+15,KS,061,Geary
+15,KS,063,Gove
+15,KS,065,Graham
+15,KS,067,Grant
+15,KS,069,Gray
+15,KS,071,Greeley
+15,KS,073,Greenwood
+15,KS,075,Hamilton
+15,KS,077,Harper
+15,KS,079,Harvey
+15,KS,081,Haskell
+15,KS,083,Hodgeman
+15,KS,085,Jackson
+15,KS,087,Jefferson
+15,KS,089,Jewell
+15,KS,091,Johnson
+15,KS,093,Kearny
+15,KS,095,Kingman
+15,KS,097,Kiowa
+15,KS,099,Labette
+15,KS,101,Lane
+15,KS,103,Leavenworth
+15,KS,105,Lincoln
+15,KS,107,Linn
+15,KS,109,Logan
+15,KS,111,Lyon
+15,KS,113,Mc Pherson
+15,KS,115,Marion
+15,KS,117,Marshall
+15,KS,119,Meade
+15,KS,121,Miami
+15,KS,123,Mitchell
+15,KS,125,Montgomery
+15,KS,127,Morris
+15,KS,129,Morton
+15,KS,131,Nemaha
+15,KS,133,Neosho
+15,KS,135,Ness
+15,KS,137,Norton
+15,KS,139,Osage
+15,KS,141,Osborne
+15,KS,143,Ottawa
+15,KS,145,Pawnee
+15,KS,147,Phillips
+15,KS,149,Pottawatomie
+15,KS,151,Pratt
+15,KS,153,Rawlins
+15,KS,155,Reno
+15,KS,157,Republic
+15,KS,159,Rice
+15,KS,161,Riley
+15,KS,163,Rooks
+15,KS,165,Rush
+15,KS,167,Russell
+15,KS,169,Saline
+15,KS,171,Scott
+15,KS,173,Sedgwick
+15,KS,175,Seward
+15,KS,177,Shawnee
+15,KS,179,Sheridan
+15,KS,181,Sherman
+15,KS,183,Smith
+15,KS,185,Stafford
+15,KS,187,Stanton
+15,KS,189,Stevens
+15,KS,191,Sumner
+15,KS,193,Thomas
+15,KS,195,Trego
+15,KS,197,Wabaunsee
+15,KS,199,Wallace
+15,KS,201,Washington
+15,KS,203,Wichita
+15,KS,205,Wilson
+15,KS,207,Woodson
+15,KS,209,Wyandotte
+16,KY,001,Adair
+16,KY,003,Allen
+16,KY,005,Anderson
+16,KY,007,Ballard
+16,KY,009,Barren
+16,KY,011,Bath
+16,KY,013,Bell
+16,KY,015,Boone
+16,KY,017,Bourbon
+16,KY,019,Boyd
+16,KY,021,Boyle
+16,KY,023,Bracken
+16,KY,025,Breathitt
+16,KY,027,Breckinridge
+16,KY,029,Bullitt
+16,KY,031,Butler
+16,KY,033,Caldwell
+16,KY,035,Calloway
+16,KY,037,Campbell
+16,KY,039,Carlisle
+16,KY,041,Carroll
+16,KY,043,Carter
+16,KY,045,Casey
+16,KY,047,Christian
+16,KY,049,Clark
+16,KY,051,Clay
+16,KY,053,Clinton
+16,KY,055,Crittenden
+16,KY,057,Cumberland
+16,KY,059,Daviess
+16,KY,061,Edmonson
+16,KY,063,Elliott
+16,KY,065,Estill
+16,KY,067,Fayette
+16,KY,069,Fleming
+16,KY,071,Floyd
+16,KY,073,Franklin
+16,KY,075,Fulton
+16,KY,077,Gallatin
+16,KY,079,Garrard
+16,KY,081,Grant
+16,KY,083,Graves
+16,KY,085,Grayson
+16,KY,087,Green
+16,KY,089,Greenup
+16,KY,091,Hancock
+16,KY,093,Hardin
+16,KY,095,Harlan
+16,KY,097,Harrison
+16,KY,099,Hart
+16,KY,101,Henderson
+16,KY,103,Henry
+16,KY,105,Hickman
+16,KY,107,Hopkins
+16,KY,109,Jackson
+16,KY,111,Jefferson
+16,KY,113,Jessamine
+16,KY,115,Johnson
+16,KY,117,Kenton
+16,KY,119,Knott
+16,KY,121,Knox
+16,KY,123,Larue
+16,KY,125,Laurel
+16,KY,127,Lawrence
+16,KY,129,Lee
+16,KY,131,Leslie
+16,KY,133,Letcher
+16,KY,135,Lewis
+16,KY,137,Lincoln
+16,KY,139,Livingston
+16,KY,141,Logan
+16,KY,143,Lyon
+16,KY,145,Mc Cracken
+16,KY,147,Mc Creary
+16,KY,149,Mc Lean
+16,KY,151,Madison
+16,KY,153,Magoffin
+16,KY,155,Marion
+16,KY,157,Marshall
+16,KY,159,Martin
+16,KY,161,Mason
+16,KY,163,Meade
+16,KY,165,Menifee
+16,KY,167,Mercer
+16,KY,169,Metcalfe
+16,KY,171,Monroe
+16,KY,173,Montgomery
+16,KY,175,Morgan
+16,KY,177,Muhlenberg
+16,KY,179,Nelson
+16,KY,181,Nicholas
+16,KY,183,Ohio
+16,KY,185,Oldham
+16,KY,187,Owen
+16,KY,189,Owsley
+16,KY,191,Pendleton
+16,KY,193,Perry
+16,KY,195,Pike
+16,KY,197,Powell
+16,KY,199,Pulaski
+16,KY,201,Robertson
+16,KY,203,Rockcastle
+16,KY,205,Rowan
+16,KY,207,Russell
+16,KY,209,Scott
+16,KY,211,Shelby
+16,KY,213,Simpson
+16,KY,215,Spencer
+16,KY,217,Taylor
+16,KY,219,Todd
+16,KY,221,Trigg
+16,KY,223,Trimble
+16,KY,225,Union
+16,KY,227,Warren
+16,KY,229,Washington
+16,KY,231,Wayne
+16,KY,233,Webster
+16,KY,235,Whitley
+16,KY,237,Wolfe
+16,KY,239,Woodford
+17,LA,001,Acadia
+17,LA,003,Allen
+17,LA,005,Ascension
+17,LA,007,Assumption
+17,LA,009,Avoyelles
+17,LA,011,Beauregard
+17,LA,013,Bienville
+17,LA,015,Bossier
+17,LA,017,Caddo
+17,LA,019,Calcasieu
+17,LA,021,Caldwell
+17,LA,023,Cameron
+17,LA,025,Catahoula
+17,LA,027,Claiborne
+17,LA,029,Concordia
+17,LA,031,De Soto
+17,LA,033,East Baton Rouge
+17,LA,035,East Carroll
+17,LA,037,East Feliciana
+17,LA,039,Evangeline
+17,LA,041,Franklin
+17,LA,043,Grant
+17,LA,045,Iberia
+17,LA,047,Iberville
+17,LA,049,Jackson
+17,LA,051,Jefferson
+17,LA,053,Jefferson Davis
+17,LA,055,Lafayette
+17,LA,057,Lafourche
+17,LA,059,La Salle
+17,LA,061,Lincoln
+17,LA,063,Livingston
+17,LA,065,Madison
+17,LA,067,Morehouse
+17,LA,069,Natchitoches
+17,LA,071,Orleans
+17,LA,073,Ouachita
+17,LA,075,Plaquemines
+17,LA,077,Pointe Coupee
+17,LA,079,Rapides
+17,LA,081,Red River
+17,LA,083,Richland
+17,LA,085,Sabine
+17,LA,087,St. Bernard
+17,LA,089,St. Charles
+17,LA,091,St. Helena
+17,LA,093,St. James
+17,LA,095,St. John the Baptist
+17,LA,097,St. Landry
+17,LA,099,St. Martin
+17,LA,101,St. Mary
+17,LA,103,St. Tammany
+17,LA,105,Tangipahoa
+17,LA,107,Rensas
+17,LA,109,Terrebone
+17,LA,111,Union
+17,LA,113,Vermilion
+17,LA,115,Vernon
+17,LA,117,Washington
+17,LA,119,Webster
+17,LA,121,West Baton Rouge
+17,LA,123,West Carroll
+17,LA,125,West Feliciana
+17,LA,127,Winn
+17,LA,700,B.L.M. Area Name = West Cameron
+17,LA,701,B.L.M. Area Name = West Cameron - West
+17,LA,702,B.L.M. Area Name = West Cameron - South
+17,LA,703,B.L.M. Area Name = East Cameron
+17,LA,704,B.L.M. Area Name = East Cameron - South
+17,LA,705,B.L.M. Area Name = Vermilion
+17,LA,706,B.L.M. Area Name = Vermilion - South
+17,LA,707,B.L.M. Area Name = South Marsh Island and South Marsh Island - North
+17,LA,708,B.L.M. Area Name = South Marsh Island - South
+17,LA,709,B.L.M. Area Name = Eugene Island
+17,LA,710,B.L.M. Area Name = Eugene Island - South
+17,LA,711,B.L.M. Area Name = Ship Shoal
+17,LA,712,B.L.M. Area Name = Ship Shoal - South
+17,LA,713,B.L.M. Area Name = South Pelto
+17,LA,714,B.L.M. Area Name = Bay Marchand
+17,LA,715,B.L.M. Area Name = South Timbalier
+17,LA,716,B.L.M. Area Name = South Timbalier - South
+17,LA,717,B.L.M. Area Name = Grand Island
+17,LA,718,B.L.M. Area Name = Grand Island - South
+17,LA,719,B.L.M. Area Name = West Delta
+17,LA,720,B.L.M. Area Name = West Delta - South
+17,LA,721,B.L.M. Area Name = South Pass
+17,LA,722,B.L.M. Area Name = South Pass - South
+17,LA,723,B.L.M. Area Name = South Pass - East
+17,LA,724,B.L.M. Area Name = Main Pass - South and East
+17,LA,725,B.L.M. Area Name = Main Pass
+17,LA,726,B.L.M. Area Name = Breton South
+17,LA,727,B.L.M. Area Name = Chandeleur Sound
+17,LA,728,B.L.M. Area Name = Chandeleur
+17,LA,729,B.L.M. Area Name = Chandeleur - East
+17,LA,730,B.L.M. Area Name = Chandeleur Sound Addition
+17,LA,731,B.L.M. Area Name = Sabine Pass
+18,ME,001,Androscoggin
+18,ME,003,Aroostook
+18,ME,005,Cumberland
+18,ME,007,Franklin
+18,ME,009,Hancock
+18,ME,011,Kennebec
+18,ME,013,Knox
+18,ME,015,Lincoln
+18,ME,017,Oxford
+18,ME,019,Penobscot
+18,ME,021,Piscataquis
+18,ME,023,Sagadahoc
+18,ME,025,Somerset
+18,ME,027,Waldo
+18,ME,029,Washington
+18,ME,031,York
+18,ME,205,State Waters - Cumberland County
+18,ME,209,State Waters - Hancock County
+18,ME,213,State Waters - Knox County
+18,ME,215,State Waters - Lincoln County
+18,ME,223,State Waters - Sagadahoc County
+18,ME,229,State Waters - Washington County
+18,ME,231,State Waters - York County
+19,MD,001,Allegany
+19,MD,003,Anne Arundel
+19,MD,005,Baltimore
+19,MD,007,Baltimore City
+19,MD,009,Calvert
+19,MD,011,Caroline
+19,MD,013,Carroll
+19,MD,015,Cecil
+19,MD,017,Charles
+19,MD,019,Dorchester
+19,MD,021,Frederick
+19,MD,023,Garrett
+19,MD,025,Harford
+19,MD,027,Howard
+19,MD,029,Kent
+19,MD,031,Montgomery
+19,MD,033,Prince Georges
+19,MD,035,Queen Annes
+19,MD,037,St. Marys
+19,MD,039,Somerset
+19,MD,041,Talbot
+19,MD,043,Washington
+19,MD,045,Wicomico
+19,MD,047,Worcester
+19,MD,247,State Waters - Worcester County
+20,MA,001,Barnstable
+20,MA,003,Berkshire
+20,MA,005,Bristol
+20,MA,007,Dukes
+20,MA,009,Essex
+20,MA,011,Franklin
+20,MA,013,Hampden
+20,MA,015,Hampshire
+20,MA,017,Middlesex
+20,MA,019,Nantucket
+20,MA,021,Norfolk
+20,MA,023,Plymouth
+20,MA,025,Suffolk
+20,MA,027,Worcester
+20,MA,201,State Waters - Barnstable County
+20,MA,205,State Waters - Bristol County
+20,MA,207,State Waters - Dukes County
+20,MA,209,State Waters - Essex County
+20,MA,219,State Waters - Nantucket County
+20,MA,221,State Waters - Norfolk County
+20,MA,223,State Waters - Plymouth County
+20,MA,225,State Waters - Suffolk County
+21,MI,001,Alcona
+21,MI,003,Alger
+21,MI,005,Allegan
+21,MI,007,Alpena
+21,MI,009,Antrim
+21,MI,011,Arenac
+21,MI,013,Baraga
+21,MI,015,Barry
+21,MI,017,Bay
+21,MI,019,Benzie
+21,MI,021,Berrien
+21,MI,023,Branch
+21,MI,025,Calhoun
+21,MI,027,Cass
+21,MI,029,Charlevoix
+21,MI,031,Cheboygan
+21,MI,033,Chippewa
+21,MI,035,Clare
+21,MI,037,Clinton
+21,MI,039,Crawford
+21,MI,041,Delta
+21,MI,043,Dickinson
+21,MI,045,Eaton
+21,MI,047,Emmet
+21,MI,049,Genesee
+21,MI,051,Gladwin
+21,MI,053,Gogebic
+21,MI,055,Grand Traverse
+21,MI,057,Gratiot
+21,MI,059,Hillsdale
+21,MI,061,Houghton
+21,MI,063,Huron
+21,MI,065,Ingham
+21,MI,067,Ionia
+21,MI,069,Iosco
+21,MI,071,Iron
+21,MI,073,Isabella
+21,MI,075,Jackson
+21,MI,077,Kalamazoo
+21,MI,079,Kalkaska
+21,MI,081,Kent
+21,MI,083,Keweenaw
+21,MI,085,Lake
+21,MI,087,Lapeer
+21,MI,089,Leelanau
+21,MI,091,Lenawee
+21,MI,093,Livingston
+21,MI,095,Luce
+21,MI,097,Mackinac
+21,MI,099,Macomb
+21,MI,101,Manistee
+21,MI,103,Marquette
+21,MI,105,Mason
+21,MI,107,Mecosta
+21,MI,109,Menominee
+21,MI,111,Midland
+21,MI,113,Missaukee
+21,MI,115,Monroe
+21,MI,117,Montcalm
+21,MI,119,Montmorency
+21,MI,121,Muskegon
+21,MI,123,Newaygo
+21,MI,125,Oakland
+21,MI,127,Oceana
+21,MI,129,Ogemaw
+21,MI,131,Ontonagon
+21,MI,133,Osceola
+21,MI,135,Oscoda
+21,MI,137,Otsego
+21,MI,139,Ottawa
+21,MI,141,Presque Isle
+21,MI,143,Roscommon
+21,MI,145,Saginaw
+21,MI,147,St. Clair
+21,MI,149,St. Joseph
+21,MI,151,Sanilac
+21,MI,153,Schoolcraft
+21,MI,155,Shiawassee
+21,MI,157,Tuscola
+21,MI,159,Van Buren
+21,MI,161,Washtenaw
+21,MI,163,Wayne
+21,MI,165,Wexford
+22,MN,001,Aitkin
+22,MN,003,Anoka
+22,MN,005,Becker
+22,MN,007,Beltrami
+22,MN,009,Benton
+22,MN,011,Big Stone
+22,MN,013,Blue Earth
+22,MN,015,Brown
+22,MN,017,Carlton
+22,MN,019,Carver
+22,MN,021,Cass
+22,MN,023,Chippewa
+22,MN,025,Chisago
+22,MN,027,Clay
+22,MN,029,Clearwater
+22,MN,031,Cook
+22,MN,033,Cottonwood
+22,MN,035,Crow Wing
+22,MN,037,Dakota
+22,MN,039,Dodge
+22,MN,041,Douglas
+22,MN,043,Faribault
+22,MN,045,Fillmore
+22,MN,047,Freeborn
+22,MN,049,Goodhue
+22,MN,051,Grant
+22,MN,053,Hennepin
+22,MN,055,Houston
+22,MN,057,Hubbard
+22,MN,059,Isanti
+22,MN,061,Itasca
+22,MN,063,Jackson
+22,MN,065,Kanabec
+22,MN,067,Kandiyohi
+22,MN,069,Kittson
+22,MN,071,Koochiching
+22,MN,073,Lac Qui Parle
+22,MN,075,Lake
+22,MN,077,Lake of the Woods
+22,MN,079,Le Sueur
+22,MN,081,Lincoln
+22,MN,083,Lyon
+22,MN,085,Mc Leod
+22,MN,087,Mahnomen
+22,MN,089,Marshall
+22,MN,091,Martin
+22,MN,093,Meeker
+22,MN,095,Mille Lacs
+22,MN,097,Morrison
+22,MN,099,Mower
+22,MN,101,Murray
+22,MN,103,Nicollet
+22,MN,105,Nobles
+22,MN,107,Norman
+22,MN,109,Olmsted
+22,MN,111,Otter Tail
+22,MN,113,Pennington
+22,MN,115,Pine
+22,MN,117,Pipestone
+22,MN,119,Polk
+22,MN,121,Pope
+22,MN,123,Ramsey
+22,MN,125,Red Lake
+22,MN,127,Redwood
+22,MN,129,Renville
+22,MN,131,Rice
+22,MN,133,Rock
+22,MN,135,Roseau
+22,MN,137,St. Louis
+22,MN,139,Scott
+22,MN,141,Sherburne
+22,MN,143,Sibley
+22,MN,145,Stearns
+22,MN,147,Steele
+22,MN,149,Stevens
+22,MN,151,Swift
+22,MN,153,Todd
+22,MN,155,Traverse
+22,MN,157,Wabasha
+22,MN,159,Wadena
+22,MN,161,Waseca
+22,MN,163,Washington
+22,MN,165,Watonwan
+22,MN,167,Wilkin
+22,MN,169,Winona
+22,MN,171,Wright
+22,MN,173,Yellow Medicine
+23,MS,001,Adams
+23,MS,003,Alcorn
+23,MS,005,Amite
+23,MS,007,Attala
+23,MS,009,Benton
+23,MS,011,Bolivar
+23,MS,013,Calhoun
+23,MS,015,Carroll
+23,MS,017,Chickasaw
+23,MS,019,Choctaw
+23,MS,021,Claiborne
+23,MS,023,Clarke
+23,MS,025,Clay
+23,MS,027,Coahoma
+23,MS,029,Copiah
+23,MS,031,Covington
+23,MS,033,De Soto
+23,MS,035,Forrest
+23,MS,037,Franklin
+23,MS,039,George
+23,MS,041,Greene
+23,MS,043,Grenada
+23,MS,045,Hancock
+23,MS,047,Harrison
+23,MS,049,Hinds
+23,MS,051,Holmes
+23,MS,053,Humphreys
+23,MS,055,Issaquena
+23,MS,057,Itawamba
+23,MS,059,Jackson
+23,MS,061,Jasper
+23,MS,063,Jefferson
+23,MS,065,Jefferson Davis
+23,MS,067,Jones
+23,MS,069,Kemper
+23,MS,071,Lafayette
+23,MS,073,Lamar
+23,MS,075,Lauderdale
+23,MS,077,Lawrence
+23,MS,079,Leake
+23,MS,081,Lee
+23,MS,083,Leflore
+23,MS,085,Lincoln
+23,MS,087,Lowndes
+23,MS,089,Madison
+23,MS,091,Marion
+23,MS,093,Marshall
+23,MS,095,Monroe
+23,MS,097,Montgomery
+23,MS,099,Neshoba
+23,MS,101,Newton
+23,MS,103,Noxubee
+23,MS,105,Oktibbeha
+23,MS,107,Panola
+23,MS,109,Pearl River
+23,MS,111,Perry
+23,MS,113,Pike
+23,MS,115,Pontotoc
+23,MS,117,Prentiss
+23,MS,119,Quitman
+23,MS,121,Rankin
+23,MS,123,Scott
+23,MS,125,Sharkey
+23,MS,127,Simpson
+23,MS,129,Smith
+23,MS,131,Stone
+23,MS,133,Sunflower
+23,MS,135,Tallahatchie
+23,MS,137,Tate
+23,MS,139,Tippah
+23,MS,141,Tishomingo
+23,MS,143,Tunica
+23,MS,145,Union
+23,MS,147,Walthall
+23,MS,149,Warren
+23,MS,151,Washington
+23,MS,153,Wayne
+23,MS,155,Webster
+23,MS,157,Wilkinson
+23,MS,159,Winston
+23,MS,161,Yalobusha
+23,MS,163,Yazoo
+23,MS,247,State Waters - Harrison County
+23,MS,259,State Waters - Jackson County
+24,MO,001,Adair
+24,MO,003,Andrew
+24,MO,005,Atchison
+24,MO,007,Audrain
+24,MO,009,Barry
+24,MO,011,Barton
+24,MO,013,Bates
+24,MO,015,Benton
+24,MO,017,Bollinger
+24,MO,019,Boone
+24,MO,021,Buchanan
+24,MO,023,Butler
+24,MO,025,Caldwell
+24,MO,027,Callaway
+24,MO,029,Camden
+24,MO,031,Cape Girardeau
+24,MO,033,Carroll
+24,MO,035,Carter
+24,MO,037,Cass
+24,MO,039,Cedar
+24,MO,041,Chariton
+24,MO,043,Christian
+24,MO,045,Clark
+24,MO,047,Clay
+24,MO,049,Clinton
+24,MO,051,Cole
+24,MO,053,Cooper
+24,MO,055,Crawford
+24,MO,057,Dade
+24,MO,059,Dallas
+24,MO,061,Daviess
+24,MO,063,De Kalb
+24,MO,065,Dent
+24,MO,067,Douglas
+24,MO,069,Dunklin
+24,MO,071,Franklin
+24,MO,073,Gasconade
+24,MO,075,Gentry
+24,MO,077,Greene
+24,MO,079,Grundy
+24,MO,081,Harrison
+24,MO,083,Henry
+24,MO,085,Hickory
+24,MO,087,Holt
+24,MO,089,Howard
+24,MO,091,Howell
+24,MO,093,Iron
+24,MO,095,Jackson
+24,MO,097,Jasper
+24,MO,099,Jefferson
+24,MO,101,Johnson
+24,MO,103,Knox
+24,MO,105,Laclede
+24,MO,107,Lafayette
+24,MO,109,Lawrence
+24,MO,111,Lewis
+24,MO,113,Lincoln
+24,MO,115,Linn
+24,MO,117,Livingston
+24,MO,119,Mc Donald
+24,MO,121,Macon
+24,MO,123,Madison
+24,MO,125,Maries
+24,MO,127,Marion
+24,MO,129,Mercer
+24,MO,131,Miller
+24,MO,133,Mississippi
+24,MO,135,Moniteau
+24,MO,137,Monroe
+24,MO,139,Montgomery
+24,MO,141,Morgan
+24,MO,143,New Madrid
+24,MO,145,Newton
+24,MO,147,Nodaway
+24,MO,149,Oregon
+24,MO,151,Osage
+24,MO,153,Ozark
+24,MO,155,Pemiscot
+24,MO,157,Perry
+24,MO,159,Pettis
+24,MO,161,Phelps
+24,MO,163,Pike
+24,MO,165,Platte
+24,MO,167,Polk
+24,MO,169,Pulaski
+24,MO,171,Putnam
+24,MO,173,Ralls
+24,MO,175,Randolph
+24,MO,177,Ray
+24,MO,179,Reynolds
+24,MO,181,Ripley
+24,MO,183,St. Charles
+24,MO,185,St. Clair
+24,MO,187,St. Francois
+24,MO,189,St. Louis
+24,MO,191,St. Louis City
+24,MO,193,Ste. Genevieve
+24,MO,195,Saline
+24,MO,197,Schuyler
+24,MO,199,Scotland
+24,MO,201,Scott
+24,MO,203,Shannon
+24,MO,205,Shelby
+24,MO,207,Stoddard
+24,MO,209,Stone
+24,MO,211,Sullivan
+24,MO,213,Taney
+24,MO,215,Texas
+24,MO,217,Vernon
+24,MO,219,Warren
+24,MO,221,Washington
+24,MO,223,Wayne
+24,MO,225,Webster
+24,MO,227,Worth
+24,MO,229,Wright
+25,MT,001,Beaverhead
+25,MT,003,Big Horn
+25,MT,005,Blaine
+25,MT,007,Broadwater
+25,MT,009,Carbon
+25,MT,011,Carter
+25,MT,013,Cascade
+25,MT,015,Chouteau
+25,MT,017,Custer
+25,MT,019,Daniels
+25,MT,021,Dawson
+25,MT,023,Deer Lodge
+25,MT,025,Fallon
+25,MT,027,Fergus
+25,MT,029,Flathead
+25,MT,031,Gallatin
+25,MT,033,Garfield
+25,MT,035,Glacier
+25,MT,037,Golden Valley
+25,MT,039,Granite
+25,MT,041,Hill
+25,MT,043,Jefferson
+25,MT,045,Judith Basin
+25,MT,047,Lake
+25,MT,049,Lewis and Clark
+25,MT,051,Liberty
+25,MT,053,Lincoln
+25,MT,055,McCone
+25,MT,057,Madison
+25,MT,059,Meagher
+25,MT,061,Mineral
+25,MT,063,Missoula
+25,MT,065,Musselshell
+25,MT,067,Park
+25,MT,069,Petroleum
+25,MT,071,Phillips
+25,MT,073,Pondera
+25,MT,075,Powder River
+25,MT,077,Powell
+25,MT,079,Prairie
+25,MT,081,Ravalli
+25,MT,083,Richland
+25,MT,085,Roosevelt
+25,MT,087,Rosebud
+25,MT,089,Sanders
+25,MT,091,Sheridan
+25,MT,093,Silver Bow
+25,MT,095,Stillwater
+25,MT,097,Sweet Grass
+25,MT,099,Teton
+25,MT,101,Toole
+25,MT,103,Treasure
+25,MT,105,Valley
+25,MT,107,Wheatland
+25,MT,109,Wibaux
+25,MT,111,Yellowstone
+25,MT,113,Yellowstone National Park
+26,NE,001,Adams
+26,NE,003,Antelope
+26,NE,005,Arthur
+26,NE,007,Banner
+26,NE,009,Blaine
+26,NE,011,Boone
+26,NE,013,Box Butte
+26,NE,015,Boyd
+26,NE,017,Brown
+26,NE,019,Buffalo
+26,NE,021,Burt
+26,NE,023,Butler
+26,NE,025,Cass
+26,NE,027,Cedar
+26,NE,029,Chase
+26,NE,031,Cherry
+26,NE,033,Cheyenne
+26,NE,035,Clay
+26,NE,037,Colfax
+26,NE,039,Cuming
+26,NE,041,Custer
+26,NE,043,Dakota
+26,NE,045,Dawes
+26,NE,047,Dawson
+26,NE,049,Deuel
+26,NE,051,Dixon
+26,NE,053,Dodge
+26,NE,055,Douglas
+26,NE,057,Dundy
+26,NE,059,Fillmore
+26,NE,061,Franklin
+26,NE,063,Frontier
+26,NE,065,Furnas
+26,NE,067,Gage
+26,NE,069,Garden
+26,NE,071,Garfield
+26,NE,073,Gosper
+26,NE,075,Grant
+26,NE,077,Greeley
+26,NE,079,Hall
+26,NE,081,Hamilton
+26,NE,083,Harlan
+26,NE,085,Hayes
+26,NE,087,Hitchcock
+26,NE,089,Holt
+26,NE,091,Hooker
+26,NE,093,Howard
+26,NE,095,Jefferson
+26,NE,097,Johnson
+26,NE,099,Kearney
+26,NE,101,Keith
+26,NE,103,Keya Paha
+26,NE,105,Kimball
+26,NE,107,Knox
+26,NE,109,Lancaster
+26,NE,111,Lincoln
+26,NE,113,Logan
+26,NE,115,Loup
+26,NE,117,Mc Pherson
+26,NE,119,Madison
+26,NE,121,Merrick
+26,NE,123,Morrill
+26,NE,125,Nance
+26,NE,127,Nemaha
+26,NE,129,Nuckolls
+26,NE,131,Otoe
+26,NE,133,Pawnee
+26,NE,135,Perkins
+26,NE,137,Phelps
+26,NE,139,Pierce
+26,NE,141,Platte
+26,NE,143,Polk
+26,NE,145,Red Willow
+26,NE,147,Richardson
+26,NE,149,Rock
+26,NE,151,Saline
+26,NE,153,Sarpy
+26,NE,155,Saunders
+26,NE,157,Scotts Bluff
+26,NE,159,Seward
+26,NE,161,Sheridan
+26,NE,163,Sherman
+26,NE,165,Sioux
+26,NE,167,Stanton
+26,NE,169,Thayer
+26,NE,171,Thomas
+26,NE,173,Thurston
+26,NE,175,Valley
+26,NE,177,Washington
+26,NE,179,Wayne
+26,NE,181,Webster
+26,NE,183,Wheeler
+26,NE,185,York
+27,NV,001,Churchill
+27,NV,003,Clark
+27,NV,005,Douglas
+27,NV,007,Elko
+27,NV,009,Esmeralda
+27,NV,011,Eureka
+27,NV,013,Humboldt
+27,NV,015,Lander
+27,NV,017,Lincoln
+27,NV,019,Lyon
+27,NV,021,Mineral
+27,NV,023,Nye
+27,NV,025,Carson City ( Ormsby )
+27,NV,027,Pershing
+27,NV,029,Storey
+27,NV,031,Washoe
+27,NV,033,White Pine
+28,NH,001,Belknap
+28,NH,003,Carroll
+28,NH,005,Cheshire
+28,NH,007,Coos
+28,NH,009,Grafton
+28,NH,011,Hillsborough
+28,NH,013,Merrimack
+28,NH,015,Rockingham
+28,NH,017,Strafford
+28,NH,019,Sullivan
+28,NH,215,State Waters - Rockingham County
+29,NJ,001,Atlantic
+29,NJ,003,Bergen
+29,NJ,005,Burlington
+29,NJ,007,Camden
+29,NJ,009,Cape May
+29,NJ,011,Cumberland
+29,NJ,013,Essex
+29,NJ,015,Gloucester
+29,NJ,017,Hudson
+29,NJ,019,Hunterdon
+29,NJ,021,Mercer
+29,NJ,023,Middlesex
+29,NJ,025,Monmouth
+29,NJ,027,Morris
+29,NJ,029,Ocean
+29,NJ,031,Passaic
+29,NJ,033,Salem
+29,NJ,035,Somerset
+29,NJ,037,Sussex
+29,NJ,039,Union
+29,NJ,041,Warren
+29,NJ,201,State Waters - Atlantic County
+29,NJ,209,State Waters - Cape May County
+29,NJ,225,State Waters - Monmouth County
+29,NJ,229,State Waters - Ocean County
+30,NM,001,Bernalillo
+30,NM,003,Catron
+30,NM,005,Chaves
+30,NM,006,Cibola
+30,NM,007,Colfax
+30,NM,009,Curry
+30,NM,011,De Baca
+30,NM,013,Dona Ana
+30,NM,015,Eddy
+30,NM,017,Grant
+30,NM,019,Guadalupe
+30,NM,021,Harding
+30,NM,023,Hidalgo
+30,NM,025,Lea
+30,NM,027,Lincoln
+30,NM,028,Los Alamos
+30,NM,029,Luna
+30,NM,031,McKinley
+30,NM,033,Mora
+30,NM,035,Otero
+30,NM,037,Quay
+30,NM,039,Rio Arriba
+30,NM,041,Roosevelt
+30,NM,043,Sandoval
+30,NM,045,San Juan
+30,NM,047,San Miguel
+30,NM,049,Santa Fe
+30,NM,051,Sierra
+30,NM,053,Socorro
+30,NM,055,Taos
+30,NM,057,Torrance
+30,NM,059,Union
+30,NM,061,Valencia
+31,NY,001,Albany
+31,NY,003,Allegany
+31,NY,005,Bronx
+31,NY,007,Broome
+31,NY,009,Cattaraugus
+31,NY,011,Cayuga
+31,NY,013,Chautauqua
+31,NY,015,Chemung
+31,NY,017,Chanango
+31,NY,019,Clinton
+31,NY,021,Columbia
+31,NY,023,Cortland
+31,NY,025,Delaware
+31,NY,027,Dutchess
+31,NY,029,Erie
+31,NY,031,Essex
+31,NY,033,Franklin
+31,NY,035,Fulton
+31,NY,037,Genesee
+31,NY,039,Greene
+31,NY,041,Hamilton
+31,NY,043,Herkimer
+31,NY,045,Jefferson
+31,NY,047,Kings
+31,NY,049,Lewis
+31,NY,051,Livingston
+31,NY,053,Madison
+31,NY,055,Monroe
+31,NY,057,Montgomery
+31,NY,059,Nassau
+31,NY,061,New York
+31,NY,063,Niagara
+31,NY,065,Oneida
+31,NY,067,Onondaga
+31,NY,069,Ontario
+31,NY,071,Orange
+31,NY,073,Orleans
+31,NY,075,Oswego
+31,NY,077,Otsego
+31,NY,079,Putnam
+31,NY,081,Queens
+31,NY,083,Rensselaer
+31,NY,085,Richmond
+31,NY,087,Rockland
+31,NY,089,St. Lawrence
+31,NY,091,Saratoga
+31,NY,093,Schenectady
+31,NY,095,Schoharie
+31,NY,097,Schuyler
+31,NY,099,Seneca
+31,NY,101,Steuben
+31,NY,103,Suffolk
+31,NY,105,Sullivan
+31,NY,107,Tioga
+31,NY,109,Tompkins
+31,NY,111,Ulster
+31,NY,113,Warren
+31,NY,115,Washington
+31,NY,117,Wayne
+31,NY,119,Westchester
+31,NY,121,Wyoming
+31,NY,123,Yates
+31,NY,247,State Waters - Kings County
+31,NY,259,State Waters - Nassau County
+31,NY,281,State Waters - Queens County
+31,NY,285,State Waters - Richmond County
+31,NY,303,State Waters - Suffolk County
+32,NC,001,Alamance
+32,NC,003,Alexander
+32,NC,005,Alleghany
+32,NC,007,Anson
+32,NC,009,Ashe
+32,NC,011,Avery
+32,NC,013,Beaufort
+32,NC,015,Bertie
+32,NC,017,Bladen
+32,NC,019,Brunswick
+32,NC,021,Buncombe
+32,NC,023,Burke
+32,NC,025,Cabarrus
+32,NC,027,Caldwell
+32,NC,029,Camden
+32,NC,031,Carteret
+32,NC,033,Caswell
+32,NC,035,Catawba
+32,NC,037,Chatham
+32,NC,039,Cherokee
+32,NC,041,Chowan
+32,NC,043,Clay
+32,NC,045,Cleveland
+32,NC,047,Columbus
+32,NC,049,Craven
+32,NC,051,Cumberland
+32,NC,053,Currituck
+32,NC,055,Dare
+32,NC,057,Davidson
+32,NC,059,Davie
+32,NC,061,Duplin
+32,NC,063,Durham
+32,NC,065,Edgecombe
+32,NC,067,Forsyth
+32,NC,069,Franklin
+32,NC,071,Gaston
+32,NC,073,Gates
+32,NC,075,Graham
+32,NC,077,Granville
+32,NC,079,Greene
+32,NC,081,Guilford
+32,NC,083,Halifax
+32,NC,085,Harnett
+32,NC,087,Haywood
+32,NC,089,Henderson
+32,NC,091,Hertford
+32,NC,093,Hoke
+32,NC,095,Hyde
+32,NC,097,Iredell
+32,NC,099,Jackson
+32,NC,101,Johnson
+32,NC,103,Jones
+32,NC,105,Lee
+32,NC,107,Lenoir
+32,NC,109,Lincoln
+32,NC,111,Mc Dowell
+32,NC,113,Macon
+32,NC,115,Madison
+32,NC,117,Martin
+32,NC,119,Mecklenburg
+32,NC,121,Mitchell
+32,NC,123,Montgomery
+32,NC,125,Moore
+32,NC,127,Nash
+32,NC,129,New Hanover
+32,NC,131,Northhampton
+32,NC,133,Onslow
+32,NC,135,Orange
+32,NC,137,Pamlico
+32,NC,139,Pasquotank
+32,NC,141,Pender
+32,NC,143,Perquimans
+32,NC,145,Person
+32,NC,147,Pitt
+32,NC,149,Polk
+32,NC,151,Randolph
+32,NC,153,Richmond
+32,NC,155,Robeson
+32,NC,157,Rockingham
+32,NC,159,Rowan
+32,NC,161,Rutherford
+32,NC,163,Sampson
+32,NC,165,Scotland
+32,NC,167,Stanly
+32,NC,169,Stokes
+32,NC,171,Surry
+32,NC,173,Swain
+32,NC,175,Transylvania
+32,NC,177,Tyrrell
+32,NC,179,Union
+32,NC,181,Vance
+32,NC,183,Wake
+32,NC,185,Warren
+32,NC,187,Washington
+32,NC,189,Watauga
+32,NC,191,Wayne
+32,NC,193,Wilkes
+32,NC,195,Wilson
+32,NC,197,Yadkin
+32,NC,199,Yancey
+32,NC,219,State Waters - Brunswick County
+32,NC,231,State Waters - Carteret County
+32,NC,253,State Waters - Currituck County
+32,NC,255,State Waters - Dare County
+32,NC,295,State Waters - Hyde County
+32,NC,329,State Waters - New Hanover County
+32,NC,333,State Waters - Onslow County
+32,NC,341,State Waters - Pender County
+33,ND,001,Adams
+33,ND,003,Barnes
+33,ND,005,Benson
+33,ND,007,Billings
+33,ND,009,Bottineau
+33,ND,011,Bowman
+33,ND,013,Burke
+33,ND,015,Burleigh
+33,ND,017,Cass
+33,ND,019,Cavalier
+33,ND,021,Dickey
+33,ND,023,Divide
+33,ND,025,Dunn
+33,ND,027,Eddy
+33,ND,029,Emmons
+33,ND,031,Foster
+33,ND,033,Golden Valley
+33,ND,035,Grand Forks
+33,ND,037,Grant
+33,ND,039,Griggs
+33,ND,041,Hettinger
+33,ND,043,Kidder
+33,ND,045,La Moure
+33,ND,047,Logan
+33,ND,049,Mc Henry
+33,ND,051,Mc Intosh
+33,ND,053,Mc Kenzie
+33,ND,055,McLean
+33,ND,057,Mercer
+33,ND,059,Morton
+33,ND,061,Mountrail
+33,ND,063,Nelson
+33,ND,065,Oliver
+33,ND,067,Pembina
+33,ND,069,Pierce
+33,ND,071,Ramsey
+33,ND,073,Ransom
+33,ND,075,Renville
+33,ND,077,Richland
+33,ND,079,Rolette
+33,ND,081,Sargent
+33,ND,083,Sheridan
+33,ND,085,Sioux
+33,ND,087,Slope
+33,ND,089,Stark
+33,ND,091,Steele
+33,ND,093,Stutsman
+33,ND,095,Towner
+33,ND,097,Traill
+33,ND,099,Walsh
+33,ND,101,Ward
+33,ND,103,Wells
+33,ND,105,Williams
+34,OH,001,Adams
+34,OH,003,Allen
+34,OH,005,Ashland
+34,OH,007,Ashtabula
+34,OH,009,Athens
+34,OH,011,Auglaize
+34,OH,013,Belmont
+34,OH,015,Brown
+34,OH,017,Butler
+34,OH,019,Carroll
+34,OH,021,Champaign
+34,OH,023,Clark
+34,OH,025,Clermont
+34,OH,027,Clinton
+34,OH,029,Columbiana
+34,OH,031,Coshocton
+34,OH,033,Crawford
+34,OH,035,Cuyahoga
+34,OH,037,Darke
+34,OH,039,Defiance
+34,OH,041,Delaware
+34,OH,043,Erie
+34,OH,045,Fairfield
+34,OH,047,Fayette
+34,OH,049,Franklin
+34,OH,051,Fulton
+34,OH,053,Gallia
+34,OH,055,Geauga
+34,OH,057,Greene
+34,OH,059,Guernsey
+34,OH,061,Hamilton
+34,OH,063,Hancock
+34,OH,065,Hardin
+34,OH,067,Harrison
+34,OH,069,Henry
+34,OH,071,Highland
+34,OH,073,Hocking
+34,OH,075,Holmes
+34,OH,077,Huron
+34,OH,079,Jackson
+34,OH,081,Jefferson
+34,OH,083,Knox
+34,OH,085,Lake
+34,OH,087,Lawrence
+34,OH,089,Licking
+34,OH,091,Logan
+34,OH,093,Lorian
+34,OH,095,Lucas
+34,OH,097,Madison
+34,OH,099,Mahoning
+34,OH,101,Marion
+34,OH,103,Medina
+34,OH,105,Meigs
+34,OH,107,Mercer
+34,OH,109,Miami
+34,OH,111,Monroe
+34,OH,113,Montgomery
+34,OH,115,Morgan
+34,OH,117,Morrow
+34,OH,119,Muskingum
+34,OH,121,Noble
+34,OH,123,Ottawa
+34,OH,125,Paulding
+34,OH,127,Perry
+34,OH,129,Pickaway
+34,OH,131,Pike
+34,OH,133,Portage
+34,OH,135,Preble
+34,OH,137,Putnam
+34,OH,139,Richland
+34,OH,141,Ross
+34,OH,143,Sandusky
+34,OH,145,Scioto
+34,OH,147,Seneca
+34,OH,149,Shelby
+34,OH,151,Stark
+34,OH,153,Summit
+34,OH,155,Trumbull
+34,OH,157,Tuscarawas
+34,OH,159,Union
+34,OH,161,Van Wert
+34,OH,163,Vinton
+34,OH,165,Warren
+34,OH,167,Washington
+34,OH,169,Wayne
+34,OH,171,Williams
+34,OH,173,Wood
+34,OH,175,Wyandot
+35,OK,001,Adair
+35,OK,003,Alfalfa
+35,OK,005,Atoka
+35,OK,007,Beaver
+35,OK,009,Beckham
+35,OK,011,Blaine
+35,OK,013,Bryan
+35,OK,015,Caddo
+35,OK,017,Canadian
+35,OK,019,Carter
+35,OK,021,Cherokee
+35,OK,023,Choctaw
+35,OK,025,Cimarron
+35,OK,027,Cleveland
+35,OK,029,Coal
+35,OK,031,Comanche
+35,OK,033,Cotton
+35,OK,035,Craig
+35,OK,037,Creek
+35,OK,039,Custer
+35,OK,041,Delaware
+35,OK,043,Dewey
+35,OK,045,Ellis
+35,OK,047,Garfield
+35,OK,049,Garvin
+35,OK,051,Grady
+35,OK,053,Grant
+35,OK,055,Greer
+35,OK,057,Harmon
+35,OK,059,Harper
+35,OK,061,Haskell
+35,OK,063,Hughes
+35,OK,065,Jackson
+35,OK,067,Jefferson
+35,OK,069,Johnston
+35,OK,071,Kay
+35,OK,073,Kingfisher
+35,OK,075,Kiowa
+35,OK,077,Latimer
+35,OK,079,Le Flore
+35,OK,081,Lincoln
+35,OK,083,Logan
+35,OK,085,Love
+35,OK,087,Mc Clain
+35,OK,089,Mc Curtain
+35,OK,091,Mc Intosh
+35,OK,093,Major
+35,OK,095,Marshall
+35,OK,097,Mayes
+35,OK,099,Murray
+35,OK,101,Muskogee
+35,OK,103,Noble
+35,OK,105,Nowata
+35,OK,107,Okfuskee
+35,OK,109,Oklahoma
+35,OK,111,Okmulgee
+35,OK,113,Osage
+35,OK,115,Ottawa
+35,OK,117,Pawnee
+35,OK,119,Payne
+35,OK,121,Pittsburg
+35,OK,123,Pontotoc
+35,OK,125,Pottawatomie
+35,OK,127,Pushmataha
+35,OK,129,Roger Mills
+35,OK,131,Rogers
+35,OK,133,Seminole
+35,OK,135,Sequoyah
+35,OK,137,Stephens
+35,OK,139,Texas
+35,OK,141,Tillman
+35,OK,143,Tulsa
+35,OK,145,Wagoner
+35,OK,147,Washington
+35,OK,149,Washita
+35,OK,151,Woods
+35,OK,153,Woodward
+36,OR,001,Baker
+36,OR,003,Benton
+36,OR,005,Clackamas
+36,OR,007,Clatsop
+36,OR,009,Columbia
+36,OR,011,Coos
+36,OR,013,Crook
+36,OR,015,Curry
+36,OR,017,Deschutes
+36,OR,019,Douglas
+36,OR,021,Glliam
+36,OR,023,Grant
+36,OR,025,Harney
+36,OR,027,Hood River
+36,OR,029,Jackson
+36,OR,031,Jefferson
+36,OR,033,Josephine
+36,OR,035,Klamath
+36,OR,037,Lake
+36,OR,039,Lane
+36,OR,041,Lincoln
+36,OR,043,Linn
+36,OR,045,Malheur
+36,OR,047,Marion
+36,OR,049,Morrow
+36,OR,051,Multnomah
+36,OR,053,Polk
+36,OR,055,Sherman
+36,OR,057,Tillamook
+36,OR,059,Umatilla
+36,OR,061,Union
+36,OR,063,Wallowa
+36,OR,065,Wasco
+36,OR,067,Washington
+36,OR,069,Wheeler
+36,OR,071,Yamhill
+36,OR,207,State Waters - Clatsop County
+36,OR,211,State Waters - Coos County
+36,OR,215,State Waters - Curry County
+36,OR,219,State Waters - Douglas County
+36,OR,239,State Waters - Lane County
+36,OR,241,State Waters - Lincoln County
+36,OR,257,State Waters - Tillamook County
+37,PA,001,Adams
+37,PA,003,Allegheny
+37,PA,005,Armstrong
+37,PA,007,Beaver
+37,PA,009,Bedford
+37,PA,011,Berks
+37,PA,013,Blair
+37,PA,015,Bradford
+37,PA,017,Bucks
+37,PA,019,Butler
+37,PA,021,Cambria
+37,PA,023,Cameron
+37,PA,025,Carbon
+37,PA,027,Centre
+37,PA,029,Chester
+37,PA,031,Clarion
+37,PA,033,Clearfield
+37,PA,035,Clinton
+37,PA,037,Columbia
+37,PA,039,Crawford
+37,PA,041,Cumberland
+37,PA,043,Dauphin
+37,PA,045,Delaware
+37,PA,047,Elk
+37,PA,049,Erie
+37,PA,051,Fayette
+37,PA,053,Forest
+37,PA,055,Franklin
+37,PA,057,Fulton
+37,PA,059,Greene
+37,PA,061,Huntingdon
+37,PA,063,Indiana
+37,PA,065,Jefferson
+37,PA,067,Juniata
+37,PA,069,Lackawanna
+37,PA,071,Lancaster
+37,PA,073,Lawrence
+37,PA,075,Lebanon
+37,PA,077,Lehigh
+37,PA,079,Luzerne
+37,PA,081,Lycoming
+37,PA,083,Mc Kean
+37,PA,085,Mercer
+37,PA,087,Mifflin
+37,PA,089,Monroe
+37,PA,091,Montgomery
+37,PA,093,Montour
+37,PA,095,Northampton
+37,PA,097,Northumberland
+37,PA,099,Perry
+37,PA,101,Philadelphia
+37,PA,103,Pike
+37,PA,105,Potter
+37,PA,107,Schuylkill
+37,PA,109,Snyder
+37,PA,111,Somerset
+37,PA,113,Sullivan
+37,PA,115,Susquehanna
+37,PA,117,Tioga
+37,PA,119,Union
+37,PA,121,Venango
+37,PA,123,Warren
+37,PA,125,Washington
+37,PA,127,Wayne
+37,PA,129,Westmoreland
+37,PA,131,Wyoming
+37,PA,133,York
+38,RI,001,Bristol
+38,RI,003,Kent
+38,RI,005,Newport
+38,RI,007,Providence
+38,RI,009,Washington
+38,RI,205,State Waters - Newport County
+38,RI,209,State Waters - Washington County
+39,SC,001,Abbeville
+39,SC,003,Aiken
+39,SC,005,Allendale
+39,SC,007,Anderson
+39,SC,009,Bamberg
+39,SC,011,Barnwell
+39,SC,013,Beaufort
+39,SC,015,Berkeley
+39,SC,017,Calhoun
+39,SC,019,Charleston
+39,SC,021,Cherokee
+39,SC,023,Chester
+39,SC,025,Chesterfield
+39,SC,027,Clarendon
+39,SC,029,Colleton
+39,SC,031,Darlington
+39,SC,033,Dillon
+39,SC,035,Dorchester
+39,SC,037,Edgefield
+39,SC,039,Fairfield
+39,SC,041,Florence
+39,SC,043,Georgetown
+39,SC,045,Greenville
+39,SC,047,Greenwood
+39,SC,049,Hampton
+39,SC,051,Horry
+39,SC,053,Jasper
+39,SC,055,Kershaw
+39,SC,057,Lancaster
+39,SC,059,Laurens
+39,SC,061,Lee
+39,SC,063,Lexington
+39,SC,065,Mc Cormick
+39,SC,067,Marion
+39,SC,069,Marlboro
+39,SC,071,Newberry
+39,SC,073,Oconee
+39,SC,075,Orangeburg
+39,SC,077,Pickens
+39,SC,079,Richland
+39,SC,081,Saluda
+39,SC,083,Spartanburg
+39,SC,085,Sumter
+39,SC,087,Union
+39,SC,089,Williamsburg
+39,SC,091,York
+39,SC,213,State Waters - Beaufort County
+39,SC,219,State Waters - Charleston County
+39,SC,229,State Waters - Colleton County
+39,SC,243,State Waters - Georgetown County
+39,SC,251,State Waters - Horry County
+40,SD,001,Aurora
+40,SD,003,Beadle
+40,SD,005,Bennett
+40,SD,009,Bon Homme
+40,SD,011,Brookings
+40,SD,013,Brown
+40,SD,015,Brule
+40,SD,017,Buffalo
+40,SD,019,Butte
+40,SD,021,Campbell
+40,SD,023,Charles Mix
+40,SD,025,Clark
+40,SD,027,Clay
+40,SD,029,Codington
+40,SD,031,Corson
+40,SD,033,Custer
+40,SD,035,Davison
+40,SD,037,Day
+40,SD,039,Deuel
+40,SD,041,Dewey
+40,SD,043,Douglas
+40,SD,045,Edmunds
+40,SD,047,Fall River
+40,SD,049,Faulk
+40,SD,051,Grant
+40,SD,053,Gregory
+40,SD,055,Haakon
+40,SD,057,Hamlin
+40,SD,059,Hand
+40,SD,061,Hanson
+40,SD,063,Harding
+40,SD,065,Hughes
+40,SD,067,Hutchinson
+40,SD,069,Hyde
+40,SD,071,Jackson
+40,SD,073,Jerauld
+40,SD,075,Jones
+40,SD,077,Kingsbury
+40,SD,079,Lake
+40,SD,081,Lawrence
+40,SD,083,Lincoln
+40,SD,085,Lyman
+40,SD,087,Mc Cook
+40,SD,089,Mc Pherson
+40,SD,091,Marshall
+40,SD,093,Meade
+40,SD,095,Mellette
+40,SD,097,Miner
+40,SD,099,Minnehaha
+40,SD,101,Moody
+40,SD,103,Pennington
+40,SD,105,Perkins
+40,SD,107,Potter
+40,SD,109,Roberts
+40,SD,111,Sanborn
+40,SD,113,Shannon
+40,SD,115,Spink
+40,SD,117,Stanley
+40,SD,119,Sully
+40,SD,121,Todd
+40,SD,123,Tripp
+40,SD,125,Turner
+40,SD,127,Union
+40,SD,129,Walworth
+40,SD,131,Washabaugh
+40,SD,135,Yankton
+40,SD,137,Ziebach
+41,TN,001,Anderson
+41,TN,003,Bedford
+41,TN,005,Benton
+41,TN,007,Bledsoe
+41,TN,009,Blount
+41,TN,011,Bradley
+41,TN,013,Campbell
+41,TN,015,Cannon
+41,TN,017,Carroll
+41,TN,019,Carter
+41,TN,021,Cheatham
+41,TN,023,Chester
+41,TN,025,Claiborne
+41,TN,027,Clay
+41,TN,029,Cocke
+41,TN,031,Coffee
+41,TN,033,Crockett
+41,TN,035,Cumberland
+41,TN,037,Davidson
+41,TN,039,Decatur
+41,TN,041,Da Kalb
+41,TN,043,Dickson
+41,TN,045,Dyer
+41,TN,047,Fayette
+41,TN,049,Fentress
+41,TN,051,Franklin
+41,TN,053,Gibson
+41,TN,055,Giles
+41,TN,057,Grainger
+41,TN,059,Greene
+41,TN,061,Grundy
+41,TN,063,Hamblen
+41,TN,065,Hamilton
+41,TN,067,Hancock
+41,TN,069,Hardeman
+41,TN,071,Hardin
+41,TN,073,Hawkins
+41,TN,075,Haywood
+41,TN,077,Henderson
+41,TN,079,Henry
+41,TN,081,Hickman
+41,TN,083,Houston
+41,TN,085,Humphreys
+41,TN,087,Jackson
+41,TN,089,Jefferson
+41,TN,091,Johnson
+41,TN,093,Knox
+41,TN,095,Lake
+41,TN,097,Lauderdale
+41,TN,099,Lawrence
+41,TN,101,Lewis
+41,TN,103,Lincoln
+41,TN,105,Loudon
+41,TN,107,Mc Minn
+41,TN,109,Mc Nairy
+41,TN,111,Macon
+41,TN,113,Madison
+41,TN,115,Marion
+41,TN,117,Marshall
+41,TN,119,Maury
+41,TN,121,Meigs
+41,TN,123,Monroe
+41,TN,125,Montgomery
+41,TN,127,Moore
+41,TN,129,Morgan
+41,TN,131,Obion
+41,TN,133,Overton
+41,TN,135,Perry
+41,TN,137,Pickett
+41,TN,139,Polk
+41,TN,141,Putnam
+41,TN,143,Rhea
+41,TN,145,Roane
+41,TN,147,Robertson
+41,TN,149,Rutherford
+41,TN,151,Scott
+41,TN,153,Sequatchie
+41,TN,155,Sevier
+41,TN,157,Shelby
+41,TN,159,Smith
+41,TN,161,Stewart
+41,TN,163,Sullivan
+41,TN,165,Sumner
+41,TN,167,Tipton
+41,TN,169,Trousdale
+41,TN,171,Unicoi
+41,TN,173,Union
+41,TN,175,Van Buren
+41,TN,177,Warren
+41,TN,179,Washington
+41,TN,181,Wayne
+41,TN,183,Weakley
+41,TN,185,White
+41,TN,187,Williamson
+41,TN,189,Wilson
+42,TX,001,Anderson
+42,TX,003,Andrews
+42,TX,005,Angelina
+42,TX,007,Aransas
+42,TX,009,Archer
+42,TX,011,Armstrong
+42,TX,013,Atascosa
+42,TX,015,Austin
+42,TX,017,Bailey
+42,TX,019,Bandera
+42,TX,021,Bastrop
+42,TX,023,Baylor
+42,TX,025,Bee
+42,TX,027,Bell
+42,TX,029,Bexar
+42,TX,031,Blanco
+42,TX,033,Borden
+42,TX,035,Bosque
+42,TX,037,Bowie
+42,TX,039,Brazoria
+42,TX,041,Brazos
+42,TX,043,Brewster
+42,TX,045,Briscoe
+42,TX,047,Brooks
+42,TX,049,Brown
+42,TX,051,Burleson
+42,TX,053,Burnet
+42,TX,055,Caldwell
+42,TX,057,Calhoun
+42,TX,059,Callahan
+42,TX,061,Cameron
+42,TX,063,Camp
+42,TX,065,Carson
+42,TX,067,Cass
+42,TX,069,Castro
+42,TX,071,Chambers
+42,TX,073,Cherokee
+42,TX,075,Childress
+42,TX,077,Clay
+42,TX,079,Cochran
+42,TX,081,Coke
+42,TX,083,Coleman
+42,TX,085,Collin
+42,TX,087,Collingsworth
+42,TX,089,Colorado
+42,TX,091,Comal
+42,TX,093,Comanche
+42,TX,095,Concho
+42,TX,097,Cooke
+42,TX,099,Coryell
+42,TX,101,Cottle
+42,TX,103,Crane
+42,TX,105,Crockett
+42,TX,107,Crosby
+42,TX,109,Culberson
+42,TX,111,Dallam
+42,TX,113,Dallas
+42,TX,115,Dawson
+42,TX,117,Deaf Smith
+42,TX,119,Delta
+42,TX,121,Denton
+42,TX,123,De Witt
+42,TX,125,Dickens
+42,TX,127,Dimmit
+42,TX,129,Donley
+42,TX,131,Duval
+42,TX,133,Eastland
+42,TX,135,Ector
+42,TX,137,Edwards
+42,TX,139,Ellis
+42,TX,141,El Paso
+42,TX,143,Erath
+42,TX,145,Falls
+42,TX,147,Fannin
+42,TX,149,Fayette
+42,TX,151,Fisher
+42,TX,153,Floyd
+42,TX,155,Foard
+42,TX,157,Fort Bend
+42,TX,159,Franklin
+42,TX,161,Freestone
+42,TX,163,Frio
+42,TX,165,Gaines
+42,TX,167,Galveston
+42,TX,169,Garza
+42,TX,171,Gillespie
+42,TX,173,Glasscock
+42,TX,175,Goliad
+42,TX,177,Gonzales
+42,TX,179,Gray
+42,TX,181,Grayson
+42,TX,183,Gregg
+42,TX,185,Grimes
+42,TX,187,Guadalupe
+42,TX,189,Hale
+42,TX,191,Hall
+42,TX,193,Hamilton
+42,TX,195,Hansford
+42,TX,197,Hardeman
+42,TX,199,Hardin
+42,TX,201,Harris
+42,TX,203,Harrison
+42,TX,205,Hartley
+42,TX,207,Haskell
+42,TX,209,Hays
+42,TX,211,Hemphill
+42,TX,213,Henderson
+42,TX,215,Hidalgo
+42,TX,217,Hill
+42,TX,219,Hockley
+42,TX,221,Hood
+42,TX,223,Hopkins
+42,TX,225,Houston
+42,TX,227,Howard
+42,TX,229,Hudspeth
+42,TX,231,Hunt
+42,TX,233,Hutchinson
+42,TX,235,Irion
+42,TX,237,Jack
+42,TX,239,Jackson
+42,TX,241,Jasper
+42,TX,243,Jeff Davis
+42,TX,245,Jefferson
+42,TX,247,Jim Hogg
+42,TX,249,Jim Wells
+42,TX,251,Johnson
+42,TX,253,Jones
+42,TX,255,Karnes
+42,TX,257,Kaufman
+42,TX,259,Kendall
+42,TX,261,Kenedy
+42,TX,263,Kent
+42,TX,265,Kerr
+42,TX,267,Kimble
+42,TX,269,King
+42,TX,271,Kinney
+42,TX,273,Kleberg
+42,TX,275,Knox
+42,TX,277,Lamar
+42,TX,279,Lamb
+42,TX,281,Lampasas
+42,TX,283,La Salle
+42,TX,285,Lavaca
+42,TX,287,Lee
+42,TX,289,Leon
+42,TX,291,Liberty
+42,TX,293,Limestone
+42,TX,295,Lipscomb
+42,TX,297,Live Oak
+42,TX,299,Llano
+42,TX,301,Loving
+42,TX,303,Lubbock
+42,TX,305,Lynn
+42,TX,307,Mc Culloch
+42,TX,309,Mc Lennan
+42,TX,311,Mc Mullen
+42,TX,313,Madison
+42,TX,315,Marion
+42,TX,317,Martin
+42,TX,319,Mason
+42,TX,321,Matagorda
+42,TX,323,Maverick
+42,TX,325,Medina
+42,TX,327,Menard
+42,TX,329,Midland
+42,TX,331,Milam
+42,TX,333,Mills
+42,TX,335,Mitchell
+42,TX,337,Montague
+42,TX,339,Montgomery
+42,TX,341,Moore
+42,TX,343,Morris
+42,TX,345,Motley
+42,TX,347,Nacogdoches
+42,TX,349,Navarro
+42,TX,351,Newton
+42,TX,353,Nolan
+42,TX,355,Nueces
+42,TX,357,Ochiltree
+42,TX,359,Oldham
+42,TX,361,Orange
+42,TX,363,Palo Pinto
+42,TX,365,Panola
+42,TX,367,Parker
+42,TX,369,Parmer
+42,TX,371,Pecos
+42,TX,373,Polk
+42,TX,375,Potter
+42,TX,377,Presidio
+42,TX,379,Rains
+42,TX,381,Randall
+42,TX,383,Reagan
+42,TX,385,Real
+42,TX,387,Red River
+42,TX,389,Reeves
+42,TX,391,Refugio
+42,TX,393,Roberts
+42,TX,395,Robertson
+42,TX,397,Rockwall
+42,TX,399,Runnels
+42,TX,401,Rusk
+42,TX,403,Sabine
+42,TX,405,San Augustine
+42,TX,407,San Jacinto
+42,TX,409,San Patricio
+42,TX,411,San Saba
+42,TX,413,Schleicher
+42,TX,415,Scurry
+42,TX,417,Shackelford
+42,TX,419,Shelby
+42,TX,421,Sherman
+42,TX,423,Smith
+42,TX,425,Somervell
+42,TX,427,Starr
+42,TX,429,Stephens
+42,TX,431,Sterling
+42,TX,433,Stonewall
+42,TX,435,Sutton
+42,TX,437,Swisher
+42,TX,439,Tarrant
+42,TX,441,Taylor
+42,TX,443,Terrell
+42,TX,445,Terry
+42,TX,447,Throckmorton
+42,TX,449,Titus
+42,TX,451,Tom Green
+42,TX,453,Travis
+42,TX,455,Trinity
+42,TX,457,Tyler
+42,TX,459,Upshur
+42,TX,461,Upton
+42,TX,463,Uvalde
+42,TX,465,Val Verde
+42,TX,467,Van Zandt
+42,TX,469,Victoria
+42,TX,471,Walker
+42,TX,473,Waller
+42,TX,475,Ward
+42,TX,477,Washington
+42,TX,479,Webb
+42,TX,481,Wharton
+42,TX,483,Wheeler
+42,TX,485,Wichita
+42,TX,487,Wilbarger
+42,TX,489,Willacy
+42,TX,491,Williamson
+42,TX,493,Wilson
+42,TX,495,Winkler
+42,TX,497,Wise
+42,TX,499,Wood
+42,TX,501,Yoakum
+42,TX,503,Young
+42,TX,505,Zapata
+42,TX,507,Zavala
+42,TX,600,B.L.M. Area Name = South Padre Island ( smaller water-bottom tracts )
+42,TX,601,B.L.M. Area Name = North Padre Island ( smaller water-bottom tracts )
+42,TX,602,B.L.M. Area Name = Mustang Island ( smaller water-bottom tracts )
+42,TX,603,B.L.M. Area Name = Matagorda Island ( smaller water-bottom tracts )
+42,TX,604,B.L.M. Area Name = Brazos  ( smaller water-bottom tracts )
+42,TX,605,B.L.M. Area Name = Galveston ( smaller water-bottom tracts )
+42,TX,606,B.L.M. Area Name = High Island ( smaller water-bottom tracts )
+42,TX,700,B.L.M. Area Name = South Padre Island ( larger water-bottom tracts )
+42,TX,701,B.L.M. Area Name = North Padre Island ( larger water-bottom tracts )
+42,TX,702,B.L.M. Area Name = Mustang Island ( larger water-bottom tracts )
+42,TX,703,B.L.M. Area Name = Matagorda Island ( larger water-bottom tracts )
+42,TX,704,B.L.M. Area Name = Brazos  ( larger water-bottom tracts )
+42,TX,705,B.L.M. Area Name = Brazos - South
+42,TX,706,B.L.M. Area Name = Galveston ( larger water-bottom tracts )
+42,TX,707,B.L.M. Area Name = Galveston - South
+42,TX,708,B.L.M. Area Name = High Island ( larger water-bottom tracts )
+42,TX,709,B.L.M. Area Name = High Island - South
+42,TX,710,B.L.M. Area Name = High Island - East
+42,TX,711,"B.L.M. Area Name = High Island - East,  South"
+42,TX,712,B.L.M. Area Name = Mustang Island - East
+42,TX,713,B.L.M. Area Bane = North Padre Island - East
+42,TX,714,B.L.M. Area Name = South Padre Island - East
+42,TX,715,B.L.M. Area Name = Sabine Pass
+43,UT,001,Beaver
+43,UT,003,Box Elder
+43,UT,005,Cache
+43,UT,007,Carbon
+43,UT,009,Daggett
+43,UT,011,Davis
+43,UT,013,Duchesne
+43,UT,015,Emery
+43,UT,017,Garfield
+43,UT,019,Grand
+43,UT,021,Iron
+43,UT,023,Juab
+43,UT,025,Kane
+43,UT,027,Millard
+43,UT,029,Morgan
+43,UT,031,Piute
+43,UT,033,Rich
+43,UT,035,Salt Lake
+43,UT,037,San Juan
+43,UT,039,Sanpete
+43,UT,041,Sevier
+43,UT,043,Summit
+43,UT,045,Tooele
+43,UT,047,Uintah
+43,UT,049,Utah
+43,UT,051,Wasatch
+43,UT,053,Washington
+43,UT,055,Wayne
+43,UT,057,Weber
+44,VT,001,Addison
+44,VT,003,Bennington
+44,VT,005,Caledonia
+44,VT,007,Chittenden
+44,VT,009,Essex
+44,VT,011,Franklin
+44,VT,013,Grand Isle
+44,VT,015,Lamoille
+44,VT,017,Orange
+44,VT,019,Orleans
+44,VT,021,Rutland
+44,VT,023,Washington
+44,VT,025,Windham
+44,VT,027,Windsor
+45,VA,001,Accomack
+45,VA,003,Albemarle
+45,VA,003,Charlottesville ( City )
+45,VA,005,Alleghany
+45,VA,005,Clifton Forge ( City )
+45,VA,005,Covington ( City )
+45,VA,007,Amelia
+45,VA,009,Amherst
+45,VA,011,Appomattox
+45,VA,013,Alexandria ( City )
+45,VA,013,Arlington
+45,VA,015,Augusta
+45,VA,015,Staunton ( City )
+45,VA,015,Waynesboro ( City )
+45,VA,017,Bath
+45,VA,019,Bedford
+45,VA,019,Bedford ( City )
+45,VA,021,Bland
+45,VA,023,Botetourt
+45,VA,025,Brunswick
+45,VA,027,Buchanan
+45,VA,029,Buckingham
+45,VA,031,Campbell
+45,VA,031,Lynchburg ( City )
+45,VA,033,Caroline
+45,VA,035,Carroll
+45,VA,035,Galax ( City )
+45,VA,037,Charles City
+45,VA,039,Charoltte
+45,VA,041,Chesterfield
+45,VA,041,Colonial Heights ( City )
+45,VA,043,Clarke
+45,VA,045,Craig
+45,VA,047,Culpeper
+45,VA,049,Cumberland
+45,VA,051,Dickenson
+45,VA,053,Dinwiddie
+45,VA,053,Petersburg ( City )
+45,VA,057,Essex
+45,VA,059,Fairfax
+45,VA,059,Fairfax ( City )
+45,VA,059,Falls Church ( City )
+45,VA,061,Fauquier
+45,VA,063,Floyd
+45,VA,065,Fluvanna
+45,VA,067,Franklin
+45,VA,069,Frederick
+45,VA,069,Winchester ( City )
+45,VA,071,Giles
+45,VA,073,Gloucester
+45,VA,075,Goochland
+45,VA,077,Grayson
+45,VA,079,Greene
+45,VA,081,Emporia ( City )
+45,VA,081,Greensville
+45,VA,083,Halifax
+45,VA,083,South Boston ( City )
+45,VA,085,Hanover
+45,VA,087,Henrico
+45,VA,087,Richmond ( City )
+45,VA,089,Henry
+45,VA,089,Martinsville ( City )
+45,VA,091,Highland
+45,VA,093,Isle of Wight
+45,VA,095,James City
+45,VA,095,Williamsburg ( City )
+45,VA,097,King and Queen
+45,VA,099,King George
+45,VA,101,King William
+45,VA,103,Lancaster
+45,VA,105,Lee
+45,VA,107,Loudoun
+45,VA,109,Louisa
+45,VA,111,Lunenburg
+45,VA,113,Madison
+45,VA,115,Mathews
+45,VA,117,Mecklenburg
+45,VA,119,Middlesex
+45,VA,121,Montgomery
+45,VA,121,Radford ( City )
+45,VA,123,Nansemond
+45,VA,123,Suffolk ( City )
+45,VA,125,Nelson
+45,VA,127,New Kent
+45,VA,129,Chesapeake
+45,VA,129,Norfolk ( City )
+45,VA,129,Portsmouth ( City )
+45,VA,131,Northhampton
+45,VA,133,Northumberland
+45,VA,135,Nottoway
+45,VA,137,Orange
+45,VA,139,Page
+45,VA,141,Patrick
+45,VA,143,Danville ( City )
+45,VA,143,Pittsylvania
+45,VA,145,Powhatan
+45,VA,147,Prince Edward
+45,VA,149,Hopewell ( City )
+45,VA,149,Prince George
+45,VA,151,Virgina Beach
+45,VA,153,Prince William
+45,VA,155,Pulaski
+45,VA,157,Rappahannock
+45,VA,159,Richmond
+45,VA,161,Roanoke
+45,VA,161,Roanoke ( City )
+45,VA,161,Salem ( City )
+45,VA,163,Buena Vista ( City )
+45,VA,163,Lexington ( City )
+45,VA,163,Rockbridge
+45,VA,165,Harrisonburg ( City )
+45,VA,165,Rockingham
+45,VA,167,Russell
+45,VA,169,Scott
+45,VA,171,Shenandoah
+45,VA,173,Smyth
+45,VA,175,Franklin ( City )
+45,VA,175,Southampton
+45,VA,177,Fredericksburg ( City )
+45,VA,177,Spotsylvania
+45,VA,179,Stafford
+45,VA,181,Surry
+45,VA,183,Sussex
+45,VA,185,Tazewell
+45,VA,187,Warren
+45,VA,191,Bristol ( City )
+45,VA,191,Washington
+45,VA,193,Westmoreland
+45,VA,195,Norton ( City )
+45,VA,195,Wise
+45,VA,197,Wythe
+45,VA,199,Hampton ( City )
+45,VA,199,Newport News ( City )
+45,VA,199,York
+45,VA,201,State Waters - Accomack County
+45,VA,331,State Waters - Northhampton County
+45,VA,351,State Waters - Virgina Beach County
+45,VA,399,State Waters - York County
+46,WA,001,Adams
+46,WA,003,Asotin
+46,WA,005,Benton
+46,WA,007,Chelan
+46,WA,009,Clallam
+46,WA,011,Clark
+46,WA,013,Columbia
+46,WA,015,Cowlitz
+46,WA,017,Douglas
+46,WA,019,Ferry
+46,WA,021,Franklin
+46,WA,023,Garfield
+46,WA,025,Grant
+46,WA,027,Grays Harbor
+46,WA,029,Island
+46,WA,031,Jefferson
+46,WA,033,King
+46,WA,035,Kitsap
+46,WA,037,Kittitas
+46,WA,039,Klickitat
+46,WA,041,Lewis
+46,WA,043,Lincoln
+46,WA,045,Mason
+46,WA,047,Okanogan
+46,WA,049,Pacific
+46,WA,051,Pend Oreille
+46,WA,053,Pierce
+46,WA,055,San Juan
+46,WA,057,Skagit
+46,WA,059,Skamania
+46,WA,061,Snohomish
+46,WA,063,Spokane
+46,WA,065,Stevens
+46,WA,067,Thurston
+46,WA,069,Wahkiakum
+46,WA,071,Walla Walla
+46,WA,073,Whatcom
+46,WA,075,Whitman
+46,WA,077,Yakima
+46,WA,209,State Waters - Clallam County
+46,WA,227,State Waters - Grays Harbor County
+46,WA,231,State Waters - Jefferson County
+46,WA,249,State Waters - Pacific County
+47,WV,001,Barbour
+47,WV,003,Berkeley
+47,WV,005,Boone
+47,WV,007,Braxton
+47,WV,009,Brooke
+47,WV,011,Cabell
+47,WV,013,Calhoun
+47,WV,015,Clay
+47,WV,017,Doddridge
+47,WV,019,Fayette
+47,WV,021,Gilmer
+47,WV,023,Grant
+47,WV,025,Greenbrier
+47,WV,027,Hampshire
+47,WV,029,Hancock
+47,WV,031,Hardy
+47,WV,033,Harrison
+47,WV,035,Jackson
+47,WV,037,Jefferson
+47,WV,039,Kanawha
+47,WV,041,Lewis
+47,WV,043,Lincoln
+47,WV,045,Logan
+47,WV,047,Mc Dowell
+47,WV,049,Marion
+47,WV,051,Marshall
+47,WV,053,Mason
+47,WV,055,Mercer
+47,WV,057,Mineral
+47,WV,059,Mingo
+47,WV,061,Monongalia
+47,WV,063,Monroe
+47,WV,065,Morgan
+47,WV,067,Nicholas
+47,WV,069,Ohio
+47,WV,071,Pendleton
+47,WV,073,Pleasants
+47,WV,075,Pocahontas
+47,WV,077,Preston
+47,WV,079,Putnam
+47,WV,081,Raleigh
+47,WV,083,Randolph
+47,WV,085,Ritchie
+47,WV,087,Roane
+47,WV,089,Summers
+47,WV,091,Taylor
+47,WV,093,Tucker
+47,WV,095,Tyler
+47,WV,097,Upshur
+47,WV,099,Wayne
+47,WV,101,Webster
+47,WV,103,Wetzel
+47,WV,105,Wirt
+47,WV,107,Wood
+47,WV,109,Wyoming
+48,WI,001,Adams
+48,WI,003,Ashland
+48,WI,005,Barron
+48,WI,007,Bayfield
+48,WI,009,Brown
+48,WI,011,Buffalo
+48,WI,013,Burnett
+48,WI,015,Calumet
+48,WI,017,Chippewa
+48,WI,019,Clark
+48,WI,021,Columbia
+48,WI,023,Crawford
+48,WI,025,Dane
+48,WI,027,Dodge
+48,WI,029,Door
+48,WI,031,Douglas
+48,WI,033,Dunn
+48,WI,035,Eau Claire
+48,WI,037,Florence
+48,WI,039,Fond Du Lac
+48,WI,041,Forest
+48,WI,043,Grant
+48,WI,045,Green
+48,WI,047,Green Lake
+48,WI,049,Iowa
+48,WI,051,Iron
+48,WI,053,Jackson
+48,WI,055,Jefferson
+48,WI,057,Juneau
+48,WI,059,Kenosha
+48,WI,061,Kewaunee
+48,WI,063,La Crosse
+48,WI,065,Lafayette
+48,WI,067,Langlade
+48,WI,069,Lincoln
+48,WI,071,Manitowoc
+48,WI,073,Marathon
+48,WI,075,Marinette
+48,WI,077,Marquette
+48,WI,078,Menominee
+48,WI,079,Milwaukee
+48,WI,081,Monroe
+48,WI,083,Oconto
+48,WI,085,Oneida
+48,WI,087,Outagamie
+48,WI,089,Ozaukee
+48,WI,091,Pepin
+48,WI,093,Pierce
+48,WI,095,Polk
+48,WI,097,Portage
+48,WI,099,Price
+48,WI,101,Racine
+48,WI,103,Richland
+48,WI,105,Rock
+48,WI,107,Rusk
+48,WI,109,St. Croix
+48,WI,111,Sauk
+48,WI,113,Sawyer
+48,WI,115,Shawano
+48,WI,117,Sheboygan
+48,WI,119,Taylor
+48,WI,121,Trempealeau
+48,WI,123,Vernon
+48,WI,125,Vilas
+48,WI,127,Walworth
+48,WI,129,Washburn
+48,WI,131,Washington
+48,WI,133,Waukesha
+48,WI,135,Waupaca
+48,WI,137,Waushara
+48,WI,139,Winnebago
+48,WI,141,Wood
+49,WY,001,Albany
+49,WY,003,Big Horn
+49,WY,005,Campbell
+49,WY,007,Carbon
+49,WY,009,Converse
+49,WY,011,Crook
+49,WY,013,Fremont
+49,WY,015,Goshen
+49,WY,017,Hot Springs
+49,WY,019,Johnson
+49,WY,021,Laramie
+49,WY,023,Lincoln
+49,WY,025,Natrona
+49,WY,027,Niobrara
+49,WY,029,Park
+49,WY,031,Platte
+49,WY,033,Sheridan
+49,WY,035,Sublette
+49,WY,037,Sweetwater
+49,WY,039,Teton
+49,WY,041,Uinta
+49,WY,043,Washakie
+49,WY,045,Weston
+49,WY,047,Yellowstone National Park
+50,AK,001,Adak
+50,AK,003,Afognak
+50,AK,005,Ambler River
+50,AK,007,Amukta
+50,AK,009,Anchorage
+50,AK,011,Artic
+50,AK,013,Atka
+50,AK,015,Atlin
+50,AK,017,Attu
+50,AK,019,Baird Inlet
+50,AK,021,Baird Mountains
+50,AK,023,Barrow
+50,AK,025,Barter Island
+50,AK,027,Beaver
+50,AK,029,Beechey Point
+50,AK,031,Bendeleben
+50,AK,033,Bering Glacier
+50,AK,035,Bethel
+50,AK,037,Bettles
+50,AK,039,Big Delta
+50,AK,041,Black
+50,AK,043,Black River
+50,AK,045,Blying Sound
+50,AK,047,Bradfield Channel
+50,AK,049,Bristol Bay
+50,AK,051,Candle
+50,AK,053,Cape Mendenhall
+50,AK,055,Chandalar
+50,AK,057,Chandler Lake
+50,AK,059,Charley River
+50,AK,061,Chignik
+50,AK,063,Christian
+50,AK,065,Circle
+50,AK,067,Coleen
+50,AK,069,Cordova
+50,AK,071,Craig
+50,AK,073,De Long Mountains
+50,AK,075,Demarcation Point
+50,AK,077,Dillingham
+50,AK,079,Dixon Entrance
+50,AK,081,Eagel
+50,AK,083,Fairbanks
+50,AK,085,Fairweather
+50,AK,087,False Pass
+50,AK,089,Flaxman
+50,AK,091,Fort Yukon
+50,AK,093,Cold Bay
+50,AK,093,Fort Randall
+50,AK,095,Gareloi Island
+50,AK,097,Goodnews
+50,AK,099,Gulkana
+50,AK,101,Hagemeister Island
+50,AK,103,Harrison Bay
+50,AK,105,Healy
+50,AK,107,Holy Cross
+50,AK,109,Hooper Bay
+50,AK,111,Howard Pass
+50,AK,113,Hughes
+50,AK,115,Icy Bay
+50,AK,117,Iditarod
+50,AK,119,Ikpikpuk River
+50,AK,121,Iliamna
+50,AK,123,Juneau
+50,AK,125,Kagyuak
+50,AK,127,Kantishna River
+50,AK,129,Karluk
+50,AK,131,Kateel River
+50,AK,133,Kenai
+50,AK,135,Ketchikan
+50,AK,137,Killik River
+50,AK,139,Kiska
+50,AK,141,Kodiak
+50,AK,143,Kotzebue
+50,AK,145,Kuskokwim Bay
+50,AK,147,Kwiguk
+50,AK,149,Lake Clark
+50,AK,151,Lime Hills
+50,AK,153,Livengood
+50,AK,155,Lookout Ridge
+50,AK,157,Marshall
+50,AK,159,McCarthy
+50,AK,161,McGrath
+50,AK,163,Meade River
+50,AK,165,Medfra
+50,AK,167,Melozitna
+50,AK,169,Middleton Island
+50,AK,171,Misheguk Mountain
+50,AK,173,Mt. Hayes
+50,AK,175,Mt. Katmai
+50,AK,177,Mt. McKinley
+50,AK,179,Mt. Michelson
+50,AK,181,Mt. St. Elias
+50,AK,183,Nabesna
+50,AK,185,Naknek
+50,AK,187,Noatak
+50,AK,189,Nome
+50,AK,191,Norton Bay
+50,AK,193,Nulato
+50,AK,195,Nunivak Island
+50,AK,197,Nushagak Bay
+50,AK,199,Ophir
+50,AK,201,Petersburg
+50,AK,203,Phil Smith Mountain
+50,AK,205,Point Hope
+50,AK,207,Point Lay
+50,AK,209,Port Alexander
+50,AK,211,Port Moller
+50,AK,213,Pribilof Island
+50,AK,215,Prince Rupert
+50,AK,217,Rat Islands
+50,AK,219,Ruby
+50,AK,221,Russian Mission
+50,AK,223,Sagavanirktok
+50,AK,225,Samalga Island
+50,AK,227,Seguam
+50,AK,229,Selawik
+50,AK,231,Seldovia
+50,AK,233,Seward
+50,AK,235,Shismaref
+50,AK,237,Shungnak
+50,AK,239,Simeonof Island
+50,AK,241,Sitka
+50,AK,243,Skagway
+50,AK,245,Sleetmute
+50,AK,247,Solomon
+50,AK,249,St. Matthew
+50,AK,251,Stepovak Bay
+50,AK,253,St. Lawrence
+50,AK,255,St. Michael
+50,AK,257,Sumdum
+50,AK,259,Survey Pass
+50,AK,261,Sutwik Island
+50,AK,263,Table Mountain
+50,AK,265,Taku River
+50,AK,267,Talkeetna
+50,AK,269,Talkeetna Mountains
+50,AK,271,Tanacross
+50,AK,273,Tanana
+50,AK,275,Taylor Mountains
+50,AK,277,Teller
+50,AK,279,Teshekpuk
+50,AK,281,Trinity Island
+50,AK,283,Tyonek
+50,AK,285,Ugashik
+50,AK,287,Umiat
+50,AK,289,Umnak
+50,AK,291,Unalakleet
+50,AK,293,Unalaska
+50,AK,295,Unimak
+50,AK,297,Utukok River
+50,AK,299,Valdez
+50,AK,301,Wainwright
+50,AK,303,Wiseman
+50,AK,305,Yakutat
+50,AK,601,State Waters - Adak Quadrangle
+50,AK,603,State Waters - Afognak Quadrangle
+50,AK,607,State Waters - Amukta Quadrangle
+50,AK,609,State Waters - Anchorage Quadrangle
+50,AK,613,State Waters - Atka Quadrangle
+50,AK,617,State Waters - Attu Quadrangle
+50,AK,619,State Waters - Baird Inlet Quadrangle
+50,AK,623,State Waters - Barrow Quadrangle
+50,AK,625,State Waters - Barter Island Quadrangle
+50,AK,629,State Waters - Beechey Point Quadrangle
+50,AK,633,State Waters - Bering Glacier Quadrangle
+50,AK,641,State Waters - Black Quadrangle
+50,AK,645,State Waters - Blying Sound Quadrangle
+50,AK,647,State Waters - Bradfield Channel Quadrangle
+50,AK,649,State Waters - Bristol Bay Quadrangle
+50,AK,653,State Waters - Cape Mendenhall Quadrangle
+50,AK,661,State Waters - Chignik Quadrangle
+50,AK,669,State Waters - Cordova Quadrangle
+50,AK,671,State Waters - Craig Quadrangle
+50,AK,673,State Waters - De Long Mountains Quadrangle
+50,AK,675,State Waters - Demarcation Point Quadrangle
+50,AK,679,State Waters - Dixon Entrance Quadrangle
+50,AK,685,State Waters - Fairweather Quadrangle
+50,AK,687,State Waters - False Pass Quadrangle
+50,AK,689,State Waters - Flaxman Quadrangle
+50,AK,693,State Waters - Cold Bay Quadrangle
+50,AK,693,State Waters - Fort Randall Quadrangle
+50,AK,695,State Waters - Gareloi Island Quadrangle
+50,AK,697,State Waters - Goodnews Quadrangle
+50,AK,701,State Waters - Hagemeister Island Quadrangle
+50,AK,703,State Waters - Harrison Bay Quadrangle
+50,AK,709,State Waters - Hooper Bay Quadrangle
+50,AK,715,State Waters - Icy Bay Quadrangle
+50,AK,721,State Waters - Iliamna Quadrangle
+50,AK,723,State Waters - Juneau Quadrangle
+50,AK,725,State Waters - Kagyuak Quadrangle
+50,AK,729,State Waters - Karluk Quadrangle
+50,AK,733,State Waters - Kenai Quadrangle
+50,AK,735,State Waters - Ketchikan Quadrangle
+50,AK,737,State Waters - Killik River Quadrangle
+50,AK,739,State Waters - Kiska Quadrangle
+50,AK,741,State Waters - Kodiak Quadrangle
+50,AK,743,State Waters - Kotzebue Quadrangle
+50,AK,745,State Waters - Kuskokwim Bay Quadrangle
+50,AK,747,State Waters - Kwiguk Quadrangle
+50,AK,763,State Waters - Meade River Quadrangle
+50,AK,769,State Waters - Middleton Island Quadrangle
+50,AK,775,State Waters - Mt. Katmai Quadrangle
+50,AK,779,State Waters - Mt. Michelson Quadrangle
+50,AK,781,State Waters - Mt. St. Elias Quadrangle
+50,AK,785,State Waters - Naknek Quadrangle
+50,AK,787,State Waters - Noatak Quadrangle
+50,AK,789,State Waters - Nome Quadrangle
+50,AK,791,State Waters - Norton Bay Quadrangle
+50,AK,795,State Waters - Nunivak Island Quadrangle
+50,AK,797,State Waters - Nushagak Bay Quadrangle
+50,AK,801,State Waters - Petersburg Quadrangle
+50,AK,805,State Waters - Point Hope Quadrangle
+50,AK,807,State Waters - Point Lay Quadrangle
+50,AK,809,State Waters - Port Alexander Quadrangle
+50,AK,811,State Waters - Port Moller Quadrangle
+50,AK,813,State Waters - Pribilof Island Quadrangle
+50,AK,815,State Waters - Prince Rupert Quadrangle
+50,AK,817,State Waters - Rat Islands Quadrangle
+50,AK,825,State Waters - Samalga Island Quadrangle
+50,AK,827,State Waters - Seguam Quadrangle
+50,AK,829,State Waters - Selawik Quadrangle
+50,AK,831,State Waters - Seldovia Quadrangle
+50,AK,833,State Waters - Seward Quadrangle
+50,AK,835,State Waters - Shismaref Quadrangle
+50,AK,839,State Waters - Simeonof Island Quadrangle
+50,AK,841,State Waters - Sitka Quadrangle
+50,AK,843,State Waters - Skagway Quadrangle
+50,AK,847,State Waters - Solomon Quadrangle
+50,AK,849,State Waters - St. Matthew Quadrangle
+50,AK,851,State Waters - Stepovak Bay Quadrangle
+50,AK,853,State Waters - St. Lawrence Quadrangle
+50,AK,855,State Waters - St. Michael Quadrangle
+50,AK,857,State Waters - Sumdum Quadrangle
+50,AK,859,State Waters - Survey Pass Quadrangle
+50,AK,861,State Waters - Sutwik Island Quadrangle
+50,AK,865,State Waters - Taku River Quadrangle
+50,AK,869,State Waters - Talkeetna Mountains Quadrangle
+50,AK,877,State Waters - Teller Quadrangle
+50,AK,879,State Waters - Teshekpuk Quadrangle
+50,AK,881,State Waters - Trinity Island Quadrangle
+50,AK,883,State Waters - Tyonek Quadrangle
+50,AK,885,State Waters - Ugashik Quadrangle
+50,AK,887,State Waters - Umiat Quadrangle
+50,AK,889,State Waters - Umnak Quadrangle
+50,AK,891,State Waters - Unalakleet Quadrangle
+50,AK,893,State Waters - Unalaska Quadrangle
+50,AK,895,State Waters - Unimak Quadrangle
+50,AK,899,State Waters - Valdez Quadrangle
+50,AK,901,State Waters - Wainwright Quadrangle
+50,AK,905,State Waters - Yakutat Quadrangle
+51,HI,001,Hawaii
+51,HI,001,Honolulu
+51,HI,002,Kalawao
+51,HI,002,Kauai
+51,HI,003,Maui
+55,Alaska Offshore,,
+56,Pacific Coast Offshore,,
+60,Northern Gulf of Mexico,,
+61,Atlantic Coast Offshore,,

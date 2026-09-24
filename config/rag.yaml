@@ -42,10 +42,14 @@ handlers:
 enrich:
   well_ids:
     label_window: 60        # characters before an identifier in which its label must appear
-    max_per_document: 0     # 0: keep every identifier a document names
+    max_per_document: 2     # 0: keep every identifier a document names
 
 retrieve:
   top_k: 6
+  # How many of the k places one document may take. A shapefile of 2,111 wells
+  # is 452 chunks that read alike, and it took ranks 1 to 5 for any question
+  # about wells; the answer is then one source dressed as six. 0 turns this off.
+  per_document: 2
   # Document metadata a handler extracted (well, api, field, operator...) is part
   # of ranking: when a question names a value that exists in the index, that
   # document's chunks get this added to their cosine score. Identifiers are what

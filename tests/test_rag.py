@@ -129,3 +129,47 @@ def test_idf_weights_rarity():
     assert _idf(1, 1000) == pytest.approx(1.0), "a value only one document carries"
     assert _idf(1000, 1000) == 0.0, "a value every document carries is no evidence"
     assert _idf(10, 1000) > _idf(500, 1000)
+
+
+def _tiny_index(path, rows, dim=3):
+    """An index of hand-written vectors: (doc_id, path, text, embedding)."""
+    import duckdb
+
+    con = duckdb.connect(str(path))
+    con.execute("CREATE TABLE meta (key VARCHAR PRIMARY KEY, value VARCHAR)")
+    con.executemany("INSERT INTO meta VALUES (?, ?)",
+                    [("embed_model", "test-model"), ("dim", str(dim))])
+    con.execute("CREATE TABLE documents (doc_id VARCHAR, path VARCHAR)")
+    con.execute("CREATE TABLE doc_meta (doc_id VARCHAR, key VARCHAR, value VARCHAR, num_value DOUBLE)")
+    con.execute(f"CREATE TABLE chunks (doc_id VARCHAR, ord INTEGER, page INTEGER,"
+                f" text VARCHAR, embedding FLOAT[{dim}])")
+    for i, (doc_id, doc_path, text, vector) in enumerate(rows):
+        con.execute("INSERT INTO documents VALUES (?, ?)", [doc_id, doc_path])
+        con.execute("INSERT INTO chunks VALUES (?, ?, NULL, ?, ?)", [doc_id, i, text, vector])
+    con.close()
+
+
+def test_one_document_cannot_take_every_place_in_the_answer(tmp_path, monkeypatch):
+    """A shapefile of 2,111 wells is 452 chunks that read alike; without a limit
+    it held ranks 1 to 5 for any question about wells."""
+    from geo_mini_rag import openrouter
+    from geo_mini_rag.rag import index
+
+    db = tmp_path / "tiny.duckdb"
+    _tiny_index(db, [
+        *[("big", "layer.shp", f"well {n}", [1.0, 0.0, 0.02 * (5 - n)]) for n in range(5)],
+        ("las1", "one.las", "log one", [0.9, 0.1, 0.0]),
+        ("las2", "two.las", "log two", [0.85, 0.1, 0.0]),
+    ])
+    monkeypatch.setattr(openrouter, "embed",
+                        lambda *a, **k: openrouter.EmbedResult("test-model", "test-model", [[1.0, 0.0, 0.0]]))
+
+    cfg = {"retrieve": {"metadata_boost": 0.1, "per_document": 0}}
+    hits, _ = index.search("q", 4, db, cfg=cfg)
+    assert {h.path for h in hits} == {"layer.shp"}, "unlimited, the big file takes them all"
+
+    cfg["retrieve"]["per_document"] = 2
+    hits, _ = index.search("q", 4, db, cfg=cfg)
+    assert [h.path for h in hits] == ["layer.shp", "layer.shp", "one.las", "two.las"]
+    assert [h.rank for h in hits] == [1, 2, 3, 4]
+    assert hits[0].score >= hits[-1].score, "still ordered by score"

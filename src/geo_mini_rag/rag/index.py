@@ -600,10 +600,12 @@ def search(
     """Embed the question and rank chunks, with metadata in both stages.
 
     `where` restricts the candidates; any metadata value the question names
-    lifts its documents up the ranking.
+    lifts its documents up the ranking; and no document may take more than
+    `per_document` of the k places, so one big file cannot fill the answer.
     """
     cfg = cfg if cfg is not None else settings.load_rag_config()
     boost = cfg.get("retrieve", {}).get("metadata_boost", 0.15)
+    per_document = cfg.get("retrieve", {}).get("per_document", 0)
 
     with connect(db, read_only=True) as con:
         meta = dict(con.execute("SELECT key, value FROM meta").fetchall())
@@ -642,16 +644,28 @@ def search(
         con.execute("CREATE OR REPLACE TEMP TABLE metadata_boost (doc_id VARCHAR, weight DOUBLE)")
         if weights:
             con.executemany("INSERT INTO metadata_boost VALUES (?, ?)", list(weights.items()))
-        sql = f"""
+        scored = f"""
             SELECT array_cosine_similarity(c.embedding, ?::FLOAT[{int(dim)}])
                    + coalesce(b.weight, 0) AS score,
                    d.path, c.page, c.text, d.doc_id
             FROM chunks c
             JOIN documents d USING (doc_id)
             LEFT JOIN metadata_boost b ON b.doc_id = d.doc_id
-            {"WHERE " + " AND ".join(filters) if filters else ""}
-            ORDER BY score DESC LIMIT ?"""
-        rows = con.execute(sql, [qres.vectors[0], *params, k]).fetchall()
+            {"WHERE " + " AND ".join(filters) if filters else ""}"""
+        if per_document:
+            # A layer of 2,111 wells is 452 chunks that read alike, and without
+            # this it takes every place in the answer. Rank within each document
+            # first, then across documents, so the k places go to k different
+            # sources wherever there are that many.
+            sql = f"""
+                SELECT score, path, page, text, doc_id FROM (
+                    SELECT *, row_number() OVER (PARTITION BY doc_id ORDER BY score DESC) AS seat
+                    FROM ({scored})
+                ) WHERE seat <= ? ORDER BY score DESC LIMIT ?"""
+            rows = con.execute(sql, [qres.vectors[0], *params, per_document, k]).fetchall()
+        else:
+            rows = con.execute(f"{scored} ORDER BY score DESC LIMIT ?",
+                               [qres.vectors[0], *params, k]).fetchall()
 
     hits = [
         Hit(i + 1, s, p, pg, t, ", ".join(by_doc.get(doc_id, [])))

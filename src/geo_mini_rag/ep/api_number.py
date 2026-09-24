@@ -20,14 +20,12 @@ Two rules keep it honest, and the order matters:
     digits in between, leaves none of them. The label is what discriminates;
     the code table only confirms.
 
-2.  The state and county must exist. `api_codes.csv` is the authority for that
-    (see the module's `SOURCE`), so nothing here is inferred from a name or a
-    shape. A labelled number whose codes are not in the table is not recorded.
-    The four offshore pseudo-states are the exception: they name no county, so
-    the CSV cannot hold them and `OFFSHORE` does, with the area code accepted
-    unchecked. `api_codes_local.csv` holds rows the vendor table is missing,
-    each with its citation. The well number itself is checked only for 00000,
-    which the numbering does not use.
+2.  The state and county must exist. `data/api_codes.csv` is the authority for
+    that, so nothing here is inferred from a name or a shape, and a labelled
+    number whose codes are not in it is not recorded. Offshore rows carry no
+    county code, since offshore wells are numbered by area; for those the area
+    code is accepted as given. The well number itself is checked only for
+    00000, which the numbering does not use.
 
 Canadian UWIs are not handled. Their shapes are well defined -- DLS
 100/04-11-082-04W6/00, NTS 200/a-096-H/094-A-15/00 -- but there is no Canadian
@@ -53,25 +51,13 @@ from dataclasses import dataclass
 from functools import cache
 from pathlib import Path
 
+# This project's table of API state and county codes, maintained here. Its rows
+# follow the numbering described at en.wikipedia.org/wiki/API_well_number:
+# states 01-51 in alphabetical order, county codes usually odd with even ones
+# for counties created later, and four offshore pseudo-states. An offshore row
+# has no county code, because offshore wells are numbered by area instead; the
+# area code is then accepted unchecked and the label carries the evidence.
 CODES = Path(__file__).parent / "data" / "api_codes.csv"
-SOURCE = "rbhughes/freezer, cat-rasputin/api_codes.csv"
-# Rows the vendor table is missing. Kept separate so the copy above stays
-# byte-identical to its upstream and every local addition carries its citation:
-# La Paz, Arizona, split from Yuma in 1983 and given an even code the way New
-# Mexico's Cibola was. Corrections belong upstream; this is what runs meanwhile.
-LOCAL = CODES.with_name("api_codes_local.csv")
-
-# Offshore wells are numbered under pseudo-states that name no county, so the
-# CSV's schema cannot hold them and does not. These four are the whole set, from
-# en.wikipedia.org/wiki/API_well_number. Their middle three digits are an area
-# code, and no authoritative list of those is on hand, so any is accepted: for
-# offshore numbers the label is the only evidence, which it mostly is anyway.
-OFFSHORE = {
-    "55": "Alaska Offshore",
-    "56": "Pacific Coast Offshore",
-    "60": "Northern Gulf of Mexico",
-    "61": "Atlantic Coast Offshore",
-}
 
 # The label that has to be there. `well no` is deliberately absent: "Well No. 5"
 # names a well without claiming to be an API number.
@@ -100,21 +86,27 @@ class WellId:
 
 
 @cache
+def offshore() -> frozenset[str]:
+    """State codes that name an area instead of a county."""
+    with CODES.open(newline="", encoding="utf-8-sig") as f:
+        return frozenset(row["state_code"].strip() for row in csv.DictReader(f)
+                         if not row["county_code"].strip())
+
+
+@cache
 def _tables() -> tuple[dict[str, str], dict[tuple[str, str], tuple[str, ...]]]:
     """(state code -> abbreviation, (state, county) -> names) from the CSV."""
     states: dict[str, str] = {}
     counties: dict[tuple[str, str], list[str]] = {}
-    for path in (CODES, LOCAL):
-        if not path.exists():
-            continue
-        with path.open(newline="", encoding="utf-8-sig") as f:
-            for row in csv.DictReader(f):
-                state = row["STATE_API_CODE"].strip()
-                county = row["COUNTY_API_CODE"].strip()
-                states[state] = row["STATE_ABBR"].strip()
-                names = counties.setdefault((state, county), [])
-                if (name := row["COUNTY_NAME"].strip()) not in names:
-                    names.append(name)
+    with CODES.open(newline="", encoding="utf-8-sig") as f:
+        for row in csv.DictReader(f):
+            state, county = row["state_code"].strip(), row["county_code"].strip()
+            states[state] = row["state"].strip()
+            if not county:
+                continue                # offshore: numbered by area, not by county
+            names = counties.setdefault((state, county), [])
+            if (name := row["county"].strip()) not in names:
+                names.append(name)
     return states, {key: tuple(names) for key, names in counties.items()}
 
 
@@ -140,8 +132,8 @@ def find(text: str, limits: dict | None = None) -> list[WellId]:
         state_code, county_code, well = match.group(1), match.group(2), match.group(3)
         if well == "00000":
             continue                    # well numbers run 00001-99999
-        if state_code in OFFSHORE:
-            state, county_names = OFFSHORE[state_code], ()
+        if state_code in offshore():
+            state, county_names = states[state_code], ()
         elif state_code in states and (state_code, county_code) in counties:
             state, county_names = states[state_code], counties[(state_code, county_code)]
         else:
