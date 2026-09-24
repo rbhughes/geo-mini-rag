@@ -78,7 +78,7 @@ def test_unique_sizes_are_never_read(root_dir, tmp_path):
 
 def test_excluded_files_are_left_out_of_dedupe(root_dir, tmp_path):
     body = b"seismic bytes " * 100
-    rows, result = run_pass1(root_dir, {"one.sgy": body, "two.sgy": body}, tmp_path)
+    rows, result = run_pass1(root_dir, {"one.dlis": body, "two.dlis": body}, tmp_path)
     assert result.duplicates == 0, "pass 0 already excluded these as non-documents"
     assert all(r["reason"].startswith("not_a_document") for r in rows.values())
 
@@ -94,11 +94,11 @@ def test_admitted_paths_exclude_what_the_passes_rejected(root_dir, tmp_path):
         "keep.txt": b"a real document",
         "reports/final.txt": body,
         "backup/final.txt": body,
-        "survey.sgy": b"\x00" * 3000,
+        "survey.dlis": b"\x00" * 3000,
         ".DS_Store": b"junk",
     })
     pass1.run(mid, db=tmp_path / "test.duckdb", root=str(root_dir))
     admitted = manifest.admitted(1, mid)
     assert any(p.endswith("keep.txt") for p in admitted)
     assert sum(1 for p in admitted if p.endswith("final.txt")) == 1, "only the keeper survives"
-    assert not any(p.endswith((".sgy", ".DS_Store")) for p in admitted)
+    assert not any(p.endswith((".dlis", ".DS_Store")) for p in admitted)

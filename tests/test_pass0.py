@@ -29,12 +29,12 @@ def test_drops_junk_and_empty_files(tmp_path):
 
 def test_excludes_non_document_formats(tmp_path):
     rows = build(tmp_path, {
-        "survey.sgy": b"\x00" * 4000,
+        "survey.dlis": b"\x00" * 4000,
         "model.dwg": b"AC1015" + b"\x00" * 200,
         "notes.txt": b"plain text",
     })
-    assert rows["survey.sgy"].verdict == "EXCLUDE"
-    assert "not_a_document" in rows["survey.sgy"].reason
+    assert rows["survey.dlis"].verdict == "EXCLUDE"
+    assert "not_a_document" in rows["survey.dlis"].reason
     assert rows["model.dwg"].verdict == "EXCLUDE"
     assert rows["notes.txt"].verdict == "PENDING"
 
@@ -59,6 +59,17 @@ def test_las_is_flagged_as_its_own_class_not_excluded(tmp_path):
     rows = build(tmp_path, {"log.las": b"~VERSION INFORMATION\nVERS. 2.0:\n"})
     assert rows["log.las"].verdict == "PENDING"
     assert "special_class" in rows["log.las"].reason
+
+
+def test_seismic_formats_are_special_classes_now_that_handlers_read_them(tmp_path):
+    """A SEG-Y volume is not a document, but its textual header is."""
+    rows = build(tmp_path, {
+        "survey.sgy": b"\xc3\xf0\xf1" + b"\x40" * 4000,
+        "positions.seg": b"H  SEISMIC SURVEY DATA\n CLIENT : ARCTIC OIL\n",
+    })
+    for name in ("survey.sgy", "positions.seg"):
+        assert rows[name].verdict == "PENDING", name
+        assert "special_class" in rows[name].reason, name
 
 
 def test_extension_mismatch_is_recorded_but_kept(tmp_path):

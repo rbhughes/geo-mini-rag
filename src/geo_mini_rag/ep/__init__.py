@@ -54,8 +54,12 @@ def find(path: Path, head: bytes) -> Handler | None:
 
 def _load_builtin() -> None:
     from geo_mini_rag.ep.las import LasHandler
+    from geo_mini_rag.ep.segp1 import SegP1Handler
+    from geo_mini_rag.ep.segy import SegyHandler
 
     register(LasHandler())
+    register(SegyHandler())
+    register(SegP1Handler())
 
 
 _load_builtin()

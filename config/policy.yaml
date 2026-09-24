@@ -9,7 +9,7 @@ inventory:
 
 # E&P formats that are data, not documents. Excluded with a stated reason.
 not_documents:
-  extensions: [".sgy", ".segy", ".dlis", ".lis", ".dwg", ".dxf"]
+  extensions: [".dlis", ".lis", ".dwg", ".dxf"]
   # Petra / GeoGraphix project folders. Left empty until the real on-disk
   # signatures are confirmed from actual projects or vendor documentation.
   project_dirs: []
@@ -26,6 +26,10 @@ bundles:
 # Structured text that wants its own summarizer, not a chunker
 special_classes:
   las: [".las"]
+  # Seismic volumes and positioning data: their handlers read the headers, which
+  # is where the words are. The traces and coordinates are never indexed.
+  segy: [".sgy", ".segy"]
+  segp1: [".seg", ".p1", ".sp1"]
   # The primary of a bundle: its handler reads the sidecars off disk, so the
   # .prj, .dbf and .shp.xml never stand alone as documents.
   shapefile: [".shp"]
