@@ -56,10 +56,12 @@ def _load_builtin() -> None:
     from geo_mini_rag.ep.las import LasHandler
     from geo_mini_rag.ep.segp1 import SegP1Handler
     from geo_mini_rag.ep.segy import SegyHandler
+    from geo_mini_rag.ep.shapefile import ShapefileHandler
 
     register(LasHandler())
     register(SegyHandler())
     register(SegP1Handler())
+    register(ShapefileHandler())
 
 
 _load_builtin()

@@ -26,6 +26,16 @@ extract:
   ocr_below_chars_per_page: 50
   ocr_language: eng
 
+# Per-handler settings. A handler reads its own block and falls back to its
+# defaults, so adding a handler does not require touching this file.
+handlers:
+  shapefile:
+    features_per_chunk: 25          # attribute rows described in one chunk
+    max_feature_chunks: 200         # a 54,000-feature layer is summarised, not transcribed
+    categorical_max_ratio: 0.2      # each value recurs at least five times: a category, not a name
+    prose_min_length: 40            # average characters, above which a field is text not a label
+    max_fact_values: 200
+
 retrieve:
   top_k: 6
   # Document metadata a handler extracted (well, api, field, operator...) is part
