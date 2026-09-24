@@ -550,20 +550,30 @@ def mentioned_metadata(con, question: str, cfg: dict) -> list[tuple[str, str, st
     headers rank alike for "the API number of NPR #3 #13SX11-11". Matching the
     question against values already in the index is exact, needs no model, and
     is limited to the vocabulary the handlers actually extracted.
+
+    Both sides are reduced to words first, because neither punctuation nor word
+    boundaries survive the trip from a header to a question. A LAS calls a well
+    FLUOR 41 "X" #1-2 and the person asking writes FLUOR 41 X #1-2; matching the
+    raw strings missed it. Going the other way, a bare substring test matched
+    the curve named DEPT inside the word "depth", which lifted 1,400 logs for
+    any question that mentioned depth.
     """
     if not _has_table(con, "doc_meta"):
         return []
     retrieve = cfg.get("retrieve", {})
     skip = set(retrieve.get("metadata_skip_keys", []))
     min_len = retrieve.get("metadata_min_value_length", 4)
+    words = "trim(regexp_replace(lower({}), '[^a-z0-9]+', ' ', 'g'))"
     rows = con.execute(
-        """
+        f"""
         SELECT m.doc_id, m.key, m.value, c.docs
         FROM doc_meta m
         JOIN (
             SELECT key, value, count(DISTINCT doc_id) AS docs FROM doc_meta GROUP BY 1, 2
         ) c USING (key, value)
-        WHERE length(m.value) >= ? AND lower(?) LIKE '%' || lower(m.value) || '%'
+        WHERE length({words.format("m.value")}) >= ?
+          AND ' ' || {words.format("?")} || ' '
+              LIKE '%' || ' ' || {words.format("m.value")} || ' ' || '%'
         """,
         [min_len, question],
     ).fetchall()

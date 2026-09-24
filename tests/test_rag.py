@@ -217,3 +217,30 @@ def test_an_identifier_the_index_does_not_hold_changes_nothing(tmp_path, monkeyp
     hits, _ = index.search("what about well 4902599999", 2, db,
                            cfg={"retrieve": {"identifier_lookup": True}})
     assert [h.path for h in hits] == ["one.txt"]
+
+
+def test_metadata_matches_on_words_not_on_raw_substrings(tmp_path):
+    """A LAS calls a well FLUOR 41 "X" #1-2; the person asking writes it without
+    the quotes. And the curve DEPT must not match inside the word "depth"."""
+    import duckdb
+
+    from geo_mini_rag.rag.index import mentioned_metadata
+
+    db = tmp_path / "meta.duckdb"
+    con = duckdb.connect(str(db))
+    con.execute("CREATE TABLE doc_meta (doc_id VARCHAR, key VARCHAR, value VARCHAR, num_value DOUBLE)")
+    con.executemany("INSERT INTO doc_meta VALUES (?, ?, ?, NULL)", [
+        ("d1", "well", 'FLUOR 41 "X" #1-2'),
+        ("d2", "curve", "DEPT"),
+        ("d3", "field", "TEAPOT DOME"),
+    ])
+    cfg = {"retrieve": {"metadata_min_value_length": 4}}
+
+    question = "What depth interval does the log for FLUOR 41 X #1-2 cover?"
+    matched = {(k, v) for _, k, v, _ in mentioned_metadata(con, question, cfg)}
+    assert ("well", 'FLUOR 41 "X" #1-2') in matched, "punctuation does not survive the trip"
+    assert ("curve", "DEPT") not in matched, "DEPT is not the word depth"
+
+    matched = {k for _, k, _, _ in mentioned_metadata(con, "wells in the teapot dome field", cfg)}
+    assert "field" in matched, "case and word order within the value still match"
+    con.close()
