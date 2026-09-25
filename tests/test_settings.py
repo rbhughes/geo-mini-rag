@@ -9,5 +9,5 @@ def test_one_model_each_for_answering_and_embedding():
 
 
 def test_data_dirs_exist():
-    for d in (settings.MANIFEST_DIR, settings.OCR_DIR, settings.INDEX_DIR):
+    for d in (settings.OCR_DIR, settings.INDEX_DIR):
         assert d.is_dir()

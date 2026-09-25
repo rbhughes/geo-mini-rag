@@ -1,4 +1,4 @@
-"""geo-mini-rag: appraise a directory of E&P documents, then run RAG over what survives."""
+"""geo-mini-rag: a small RAG pipeline that reads E&P file formats."""
 
 
 def main() -> None:

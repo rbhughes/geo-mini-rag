@@ -1,6 +1,6 @@
-# The pipeline's settings. One chat model, one embedding model: this project
-# studies appraisal and ingest for E&P documents, not model selection.
-# Changing the embedding model or the chunking requires `ingest --rebuild`.
+# Every setting the pipeline has. One chat model, one embedding model, both
+# cheap: this project is about reading E&P formats well, not about comparing
+# models. Changing the embedding model or the chunking needs `ingest --rebuild`.
 embed:
   model: openai/text-embedding-3-small   # OpenRouter; `geo-mini-rag models --embeddings` lists the alternatives
   batch_size: 100                        # chunks per embeddings request
@@ -31,18 +31,9 @@ extract:
 handlers:
   shapefile:
     features_per_chunk: 25          # attribute rows described in one chunk, budget permitting
-    max_features_read: 0            # 0: read every record, so a layer is never part-indexed
     categorical_max_ratio: 0.2      # each value recurs at least five times: a category, not a name
     dominant_max_share: 0.9         # a value this common describes the layer, not the feature
     prose_min_length: 40            # average characters, above which a field is text not a label
-    max_fact_values: 200
-
-# Facts that any document can carry, whatever its format. These run over the
-# text partitioning produced, so a PDF report and a LAS header are read alike.
-enrich:
-  well_ids:
-    label_window: 60        # characters before an identifier in which its label must appear
-    max_per_document: 2     # 0: keep every identifier a document names
 
 retrieve:
   top_k: 6
@@ -50,11 +41,6 @@ retrieve:
   # is 452 chunks that read alike, and it took ranks 1 to 5 for any question
   # about wells; the answer is then one source dressed as six. 0 turns this off.
   per_document: 2
-  # A well identifier in a question is looked up, not ranked: `well 4902511080`
-  # scores 0.324 against the log that carries it and 0.729 against a page of
-  # unrelated digits. Only identifiers the index holds narrow anything, so a
-  # question naming one we do not have is answered normally.
-  identifier_lookup: true
   # Document metadata a handler extracted (well, api, field, operator...) is part
   # of ranking: when a question names a value that exists in the index, that
   # document's chunks get this added to their cosine score. Identifiers are what
@@ -62,4 +48,3 @@ retrieve:
   # without it. `search --where key=value` filters instead of boosting.
   metadata_boost: 0.10           # full boost goes to a value only one document carries
   metadata_min_value_length: 4   # shorter values match too much to be evidence
-  metadata_skip_keys: []         # rarity governs the weight, so every key can take part

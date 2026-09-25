@@ -50,24 +50,20 @@ def test_nothing_is_inferred_from_a_partial_number():
 
 
 def test_one_well_is_one_fact_however_it_was_written():
-    facts, notes = enrich(
+    facts = enrich(
         {"api": "490251108000"},
         [(None, "API . 490251108000\nsee also API 49-025-11080 and API 05-123-45678")],
     )
     assert facts["api"] == ["4902511080", "0512345678"]
     assert facts["api_state"] == ["CO", "WY"]
     assert facts["api_county"] == ["Natrona", "Weld"]
-    assert notes == []
 
 
-def test_every_identifier_is_kept_unless_a_cap_is_asked_for():
+def test_every_identifier_a_document_names_is_kept():
+    """There is no cap. A loader report listing 4,937 wells is a document about
+    4,937 wells, and a fact costs a row."""
     text = "\n".join(f"API 49-025-{n:05d}" for n in range(1, 301))
-    facts, notes = enrich({}, [(None, text)])
-    assert len(facts["api"]) == 300 and notes == []
-
-    facts, notes = enrich({}, [(None, text)], {"max_per_document": 100})
-    assert len(facts["api"]) == 100
-    assert notes == ["api: kept 100 of 300 identifiers"]
+    assert len(enrich({}, [(None, text)])["api"]) == 300
 
 
 def test_a_code_naming_more_than_one_place_reports_both():
@@ -85,8 +81,8 @@ def test_the_table_covers_every_state_and_the_offshore_areas():
 
 
 def test_a_document_with_no_wells_gets_no_facts():
-    facts, notes = enrich({}, [(None, "A report about nothing in particular.")])
-    assert facts == {} and notes == []
+    facts = enrich({}, [(None, "A report about nothing in particular.")])
+    assert facts == {}
 
 
 def test_well_id_is_hashable_so_callers_can_deduplicate():
@@ -95,13 +91,13 @@ def test_well_id_is_hashable_so_callers_can_deduplicate():
 
 
 def test_a_uwi_header_field_is_filed_the_same_way():
-    facts, _ = enrich({"uwi": "490251108000"}, [(None, "API . 490251108000")])
+    facts = enrich({"uwi": "490251108000"}, [(None, "API . 490251108000")])
     assert facts["api"] == facts["uwi"] == ["4902511080"], "one well, one shape"
 
 
 def test_a_canadian_uwi_is_left_exactly_as_found():
     """Not an API number. The shapes are known; nothing here is tested against them."""
-    facts, _ = enrich({"uwi": "100/04-11-082-04W6/00"}, [(None, "API 49-025-11080")])
+    facts = enrich({"uwi": "100/04-11-082-04W6/00"}, [(None, "API 49-025-11080")])
     assert facts["uwi"] == ["100/04-11-082-04W6/00"]
 
 
@@ -137,3 +133,14 @@ def test_counties_the_table_was_missing_or_had_wrong():
     assert find("API 05-014-11080")[0].counties == ("Broomfield",)
     assert find("API 16-181-11080")[0].counties == ("Nicholas",)
     assert find("API 16-179-11080")[0].counties == ("Nelson",)
+
+
+def test_nothing_can_cap_the_identifiers_a_document_yields():
+    """The cap existed only to be set to zero, and an edit meant for
+    retrieve.per_document matched max_per_document and set it to 2 instead.
+    Six thousand facts went missing quietly. The knob is gone."""
+    from geo_mini_rag.ep.api_number import DEFAULTS
+    from geo_mini_rag.settings import load_rag_config
+
+    assert not [k for k in DEFAULTS if "max" in k]
+    assert not [k for k in load_rag_config().get("enrich", {}).get("well_ids", {}) if "max" in k]

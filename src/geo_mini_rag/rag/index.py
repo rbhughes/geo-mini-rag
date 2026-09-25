@@ -71,7 +71,9 @@ def _init(
     con: duckdb.DuckDBPyConnection, model: str, rebuild: bool, trace: Tracer
 ) -> None:
     if rebuild:
-        for table in ("chunks", "documents", "meta"):
+        # doc_meta was added after this list and left out of it, so facts for
+        # files since deleted from disk survived a rebuild as orphans.
+        for table in ("chunks", "documents", "doc_meta", "meta"):
             _sql(con, trace, f"DROP TABLE IF EXISTS {table}")
     _sql(
         con,
@@ -94,7 +96,7 @@ def _init(
             doc_id VARCHAR PRIMARY KEY, path VARCHAR, size BIGINT, mtime DOUBLE,
             status VARCHAR, kind VARCHAR, reason VARCHAR,
             pages INTEGER, n_chars BIGINT, n_chunks INTEGER, truncated BOOLEAN,
-            embed_tokens BIGINT, embed_cost DOUBLE, ocr_path VARCHAR
+            embed_tokens BIGINT, embed_cost DOUBLE, ocr_path VARCHAR, sha256 VARCHAR
         )""",
     )
     migrate(con, trace)
@@ -103,6 +105,7 @@ def _init(
 def migrate(con: duckdb.DuckDBPyConnection, trace: Tracer = OFF) -> None:
     """Bring an index built by an older version up to the current schema."""
     _sql(con, trace, "ALTER TABLE documents ADD COLUMN IF NOT EXISTS ocr_path VARCHAR")
+    _sql(con, trace, "ALTER TABLE documents ADD COLUMN IF NOT EXISTS sha256 VARCHAR")
     _sql(con, trace, """
         CREATE TABLE IF NOT EXISTS doc_meta (
             doc_id VARCHAR, key VARCHAR, value VARCHAR, num_value DOUBLE
@@ -182,6 +185,7 @@ class _Parsed:
     ex: Extracted
     chunks: list
     n_chars: int
+    sha256: str
 
     @property
     def chars(self) -> int:
@@ -194,6 +198,15 @@ class IngestEvent:
     status: str  # indexed | skipped | unchanged | error
     detail: str = ""
     cost: float = 0.0
+
+
+def _sha256(path: Path) -> str:
+    """The file's content hash, read in chunks so a large file is not held in memory."""
+    digest = hashlib.sha256()
+    with path.open("rb") as f:
+        while block := f.read(1 << 20):
+            digest.update(block)
+    return digest.hexdigest()
 
 
 def _walk(root: Path) -> Iterator[Path]:
@@ -211,14 +224,11 @@ def ingest(
     rebuild: bool = False,
     limit: int | None = None,
     embed_model: str | None = None,
-    paths: list[Path] | None = None,
     on_event: Callable[[IngestEvent], None] = lambda e: None,
     trace: Tracer = OFF,
 ) -> None:
-    if paths is None and "://" in root:
-        raise UserError(
-            "ingest reads local paths for now; fsspec URLs come with appraisal"
-        )
+    if "://" in root:
+        raise UserError("ingest reads local paths")
     cfg = settings.load_rag_config()
     model = embed_model or cfg["embed"]["model"]
     batch_size = cfg["embed"]["batch_size"]
@@ -233,9 +243,7 @@ def ingest(
         f"max_pdf_pages={cfg['extract']['max_pdf_pages']} max_text_bytes={cfg['extract']['max_text_bytes']:,}",
     )
 
-    source = iter(paths) if paths is not None else _walk(root_path)
-    if paths is not None:
-        trace("walk", f"{len(paths)} files from the manifest; not walking {root_path}")
+    source = _walk(root_path)
 
     pending: list[_Parsed] = []
     pending_chunks = 0
@@ -243,6 +251,14 @@ def ingest(
 
     with connect(db) as con:
         _init(con, model, rebuild, trace)
+        # One copy of a file is indexed and the rest say which one they repeat.
+        # Seeded from the index so a duplicate of a file indexed last week is
+        # still caught this week.
+        seen_content: dict[str, str] = dict(
+            con.execute(
+                "SELECT sha256, path FROM documents WHERE status = 'indexed' AND sha256 IS NOT NULL"
+            ).fetchall()
+        )
 
         def flush() -> None:
             nonlocal pending_chunks
@@ -252,7 +268,7 @@ def ingest(
 
         for n, path in enumerate(source):
             if not path.exists():
-                on_event(IngestEvent(str(path), "error", "listed in the manifest but missing"))
+                on_event(IngestEvent(str(path), "error", "missing"))
                 continue
             if limit is not None and n >= limit:
                 trace("walk", f"--limit {limit} reached; stopping")
@@ -285,13 +301,24 @@ def ingest(
                 if not prev
                 else f"changed since indexing (was size={prev[0]} mtime={prev[1]})",
             )
+            digest = _sha256(path)
+            if (first := seen_content.get(digest)) is not None:
+                reason = f"exact duplicate of {first}"
+                trace("walk", reason)
+                _sql(con, trace, "BEGIN")
+                _replace_rows(con, trace, doc_id)
+                _doc_row(con, trace, doc_id, rel, st, "skipped", None, reason, sha256=digest)
+                _sql(con, trace, "COMMIT")
+                on_event(IngestEvent(rel, "skipped", reason))
+                continue
+            seen_content[digest] = rel
             _sql(con, trace, "BEGIN")
             try:
                 ex = parse(path, cfg, trace)
             except Skip as s:
                 trace("skip", str(s))
                 _replace_rows(con, trace, doc_id)
-                _doc_row(con, trace, doc_id, rel, st, "skipped", None, str(s))
+                _doc_row(con, trace, doc_id, rel, st, "skipped", None, str(s), sha256=digest)
                 _sql(con, trace, "COMMIT")
                 on_event(IngestEvent(rel, "skipped", str(s)))
                 continue
@@ -307,6 +334,7 @@ def ingest(
                     "error",
                     None,
                     f"{type(exc).__name__}: {exc}",
+                    sha256=digest,
                 )
                 _sql(con, trace, "COMMIT")
                 on_event(IngestEvent(rel, "error", f"{type(exc).__name__}: {exc}"))
@@ -328,14 +356,15 @@ def ingest(
                 trace("skip", "extraction produced no text to chunk")
                 _replace_rows(con, trace, doc_id)
                 _doc_row(
-                    con, trace, doc_id, rel, st, "skipped", ex, "no extractable text"
+                    con, trace, doc_id, rel, st, "skipped", ex, "no extractable text",
+                    sha256=digest,
                 )
                 _sql(con, trace, "COMMIT")
                 on_event(IngestEvent(rel, "skipped", f"{ex.kind}: no extractable text"))
                 continue
             # Nothing is written yet: this document waits for a full batch.
             _sql(con, trace, "COMMIT")
-            pending.append(_Parsed(doc_id, rel, st, ex, chunks, n_chars))
+            pending.append(_Parsed(doc_id, rel, st, ex, chunks, n_chars, digest))
             pending_chunks += len(chunks)
             if pending_chunks >= flush_at:
                 flush()
@@ -387,7 +416,7 @@ def _flush_group(
             con, trace, doc.doc_id, doc.rel, doc.st, "indexed", doc.ex, None,
             n_chars=doc.n_chars, n_chunks=take,
             embed_tokens=int(tokens * share), embed_cost=doc_cost,
-            ocr_path=doc.ex.metadata.get("ocr_path"),
+            ocr_path=doc.ex.metadata.get("ocr_path"), sha256=doc.sha256,
         )
         _store_metadata(con, doc.doc_id, doc.ex.metadata, trace)
         on_event(IngestEvent(doc.rel, "indexed", f"{doc.ex.kind}, {take} chunks, ${doc_cost:.5f}", doc_cost))
@@ -500,11 +529,12 @@ def _doc_row(
     embed_tokens=0,
     embed_cost=0.0,
     ocr_path=None,
+    sha256=None,
 ):
     _sql(
         con,
         trace,
-        "INSERT INTO documents VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        "INSERT INTO documents VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
         [
             doc_id,
             rel,
@@ -520,6 +550,7 @@ def _doc_row(
             embed_tokens,
             embed_cost,
             ocr_path,
+            sha256,
         ],
     )
 
@@ -561,7 +592,6 @@ def mentioned_metadata(con, question: str, cfg: dict) -> list[tuple[str, str, st
     if not _has_table(con, "doc_meta"):
         return []
     retrieve = cfg.get("retrieve", {})
-    skip = set(retrieve.get("metadata_skip_keys", []))
     min_len = retrieve.get("metadata_min_value_length", 4)
     words = "trim(regexp_replace(lower({}), '[^a-z0-9]+', ' ', 'g'))"
     rows = con.execute(
@@ -577,7 +607,7 @@ def mentioned_metadata(con, question: str, cfg: dict) -> list[tuple[str, str, st
         """,
         [min_len, question],
     ).fetchall()
-    return [r for r in rows if r[1] not in skip]
+    return rows
 
 
 COMPARISONS = (">=", "<=", "!=", ">", "<", "=")
@@ -631,7 +661,6 @@ def search(
     cfg = cfg if cfg is not None else settings.load_rag_config()
     boost = cfg.get("retrieve", {}).get("metadata_boost", 0.15)
     per_document = cfg.get("retrieve", {}).get("per_document", 0)
-    lookup = cfg.get("retrieve", {}).get("identifier_lookup", True)
 
     with connect(db, read_only=True) as con:
         meta = dict(con.execute("SELECT key, value FROM meta").fetchall())
@@ -652,17 +681,16 @@ def search(
             weights[doc_id] = max(weights.get(doc_id, 0.0), boost * _idf(docs, total_docs))
 
         filters, params = [], []
-        if lookup:
-            for key, value in _identifiers(con, question):
-                # An identifier names one well. Ranking cannot find it -- the
-                # digits embed close to any other digits -- so it is a lookup,
-                # narrowing the candidates the way --where does. Only values the
-                # index actually holds get this far, so it never empties a result.
-                filters.append(
-                    "d.doc_id IN (SELECT doc_id FROM doc_meta WHERE key = ? AND value = ?)"
-                )
-                params += [key, value]
-                looked_up.append(f"{key}={value}")
+        for key, value in _identifiers(con, question):
+            # An identifier names one well. Ranking cannot find it -- the digits
+            # embed close to any other digits -- so it is a lookup, narrowing the
+            # candidates the way --where does. Only values the index actually
+            # holds get this far, so it never empties a result.
+            filters.append(
+                "d.doc_id IN (SELECT doc_id FROM doc_meta WHERE key = ? AND value = ?)"
+            )
+            params += [key, value]
+            looked_up.append(f"{key}={value}")
         for key, op, value in _as_clauses(where):
             if op == "=":
                 filters.append(

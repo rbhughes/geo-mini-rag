@@ -100,7 +100,6 @@ def ingest(
     rebuild: bool = typer.Option(False, help="Drop the index and start over."),
     limit: int = typer.Option(None, help="Stop after this many files (for quick trials)."),
     embed_model: str = typer.Option(None, "--embed-model", "-e", help="OpenRouter embedding model; defaults to config/rag.yaml."),
-    manifest_id: str = typer.Option(None, "--manifest", help="Ingest only what an appraisal manifest admits: an id, or 'latest'. Without it every file under the root is walked."),
     db: Path = DB_OPTION,
     verbose: bool = typer.Option(False, "--verbose", "-v", help="Print one line per file."),
     trace: bool = typer.Option(False, "--trace", help="Print every step: sniffing, extraction, chunks, embedding calls, SQL."),
@@ -119,24 +118,6 @@ def ingest(
     counts: Counter[str] = Counter()
     spent = 0.0
     root = root or settings.docs_root()
-    paths = None
-    if manifest_id:
-        from geo_mini_rag.appraisal import manifest as manifest_mod
-        from geo_mini_rag.rag import index as index_mod
-
-        with index_mod.connect(db) as con:
-            mid, pass_n = (
-                manifest_mod.latest(con, root) if manifest_id == "latest" else (manifest_id, None)
-            )
-        if pass_n is None:  # explicit id: use the highest pass written for it
-            pass_n = max(
-                n for n in range(10) if manifest_mod.path_for(n, mid).exists()
-            )
-        admitted = manifest_mod.admitted(pass_n, mid)
-        paths = [settings.ROOT / p for p in admitted]
-        console.print(
-            f"manifest [bold]{mid}[/] pass {pass_n}: {len(paths)} files admitted"
-        )
     # A live progress bar fights with line-by-line trace output, so tracing turns it off.
     with Progress(console=console, transient=True, disable=trace) as progress:
         task = progress.add_task("ingesting", total=None)
@@ -159,11 +140,7 @@ def ingest(
 
         tracer = Tracer(emit, trace_chars) if trace else OFF
         index.ingest(root, db=db, rebuild=rebuild, limit=limit, embed_model=embed_model,
-                     paths=paths, on_event=on_event, trace=tracer)
-    if manifest_id:
-        with index.connect(db) as con:
-            con.execute("INSERT OR REPLACE INTO meta VALUES ('manifest_id', ?)", [mid])
-            con.execute("INSERT OR REPLACE INTO meta VALUES ('manifest_pass', ?)", [str(pass_n)])
+                     on_event=on_event, trace=tracer)
     console.print(f"{dict(counts)}  embedding cost this run: ${spent:.4f}")
     stats(db)
 
@@ -191,75 +168,6 @@ def stats(db: Path = DB_OPTION) -> None:
     for key, value in sorted(s["meta"].items()):
         meta.add_row(key, value)
     console.print(meta)
-
-
-@app.command()
-def appraise(
-    root: str = typer.Option(None, help="Folder or fsspec URL to inventory; defaults to GEO_DOCS_ROOT."),
-    db: Path = DB_OPTION,
-    limit: int = typer.Option(None, help="Stop after this many files (pass 0 only)."),
-    stop_after: int = typer.Option(None, "--stop-after", help="Last pass to run; default is all implemented."),
-    verbose: bool = typer.Option(False, "--verbose", "-v", help="Print one line per file."),
-    trace: bool = typer.Option(False, "--trace", help="Print the walk, magic verdicts, hashing, SQL and manifest writes."),
-    trace_chars: int = typer.Option(160, "--trace-chars", help="Text sample length in trace output; 0 for full."),
-) -> None:
-    """Appraise a root directory: inventory, then exact duplicates. Free: no API calls."""
-    from rich.progress import Progress
-    from rich.text import Text
-
-    from geo_mini_rag.appraisal import pass0, pass1
-    from geo_mini_rag.rag.trace import OFF, Tracer
-
-    db = _db(db)
-    root = root or settings.docs_root()
-    last = stop_after if stop_after is not None else 1
-
-    def emit(stage: str, message: str) -> None:
-        line = Text(f"  {stage:>8}  ", style=STAGE_STYLES.get(stage, "cyan"))
-        line.append(message)
-        console.print(line, soft_wrap=True)
-
-    tracer = Tracer(emit, trace_chars) if trace else OFF
-
-    with Progress(console=console, transient=True, disable=trace) as progress:
-        task = progress.add_task("pass 0", total=None)
-
-        def on_row(r) -> None:
-            progress.update(task, advance=1)
-            if verbose or trace:
-                path = r.path if hasattr(r, "path") else r["path"]
-                verdict = r.verdict if hasattr(r, "verdict") else r["verdict"]
-                detail = (r.reason if hasattr(r, "reason") else r.get("reason")) or ""
-                console.print(Text(f"{verdict:>8}  ", style="bold") + Text(f"{path}  {detail}"))
-
-        p0 = pass0.run(root, db=db, limit=limit, on_row=on_row, trace=tracer)
-    _pass_table(0, "inventory", p0.counts(), p0.seconds, p0.manifest_path)
-    console.print(f"manifest_id [bold]{p0.manifest_id}[/]")
-    if last < 1:
-        return
-
-    with Progress(console=console, transient=True, disable=trace) as progress:
-        task = progress.add_task("pass 1", total=None)
-
-        def on_dup(row: dict) -> None:
-            progress.update(task, advance=1)
-            if verbose or trace:
-                console.print(Text("EXCLUDE  ", style="bold")
-                              + Text(f"{row['path']}  duplicate of {row['dup_of']}"))
-
-        p1 = pass1.run(p0.manifest_id, db=db, root=root, on_row=on_dup, trace=tracer)
-    _pass_table(1, "exact duplicates", p1.counts(), p1.seconds, p1.manifest_path)
-    console.print(
-        f"[dim]hashed {p1.hashed} files ({p1.bytes_read / 1e6:.0f} MB read); "
-        f"{p1.duplicates} duplicates holding {p1.bytes_duplicated / 1e6:.0f} MB[/]"
-    )
-
-def _pass_table(n: int, name: str, counts: dict[str, int], seconds: float, manifest_path) -> None:
-    table = Table("outcome", "files", title=f"PASS {n} — {name}  ({seconds:.1f}s)")
-    for key, count in sorted(counts.items(), key=lambda kv: -kv[1]):
-        table.add_row(key, str(count))
-    console.print(table)
-    console.print(f"[dim]{manifest_path}[/]")
 
 
 @app.command()

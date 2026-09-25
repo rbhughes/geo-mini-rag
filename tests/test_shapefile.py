@@ -67,14 +67,6 @@ def _features(chunk):
     return chunk.split("\n")[2:]
 
 
-def _config(**limits):
-    """The pipeline config with the shapefile handler's limits overridden."""
-    cfg = settings.load_rag_config()
-    cfg["handlers"] = {**cfg.get("handlers", {}),
-                       "shapefile": {**(cfg.get("handlers", {}).get("shapefile") or {}), **limits}}
-    return cfg
-
-
 @pytest.fixture
 def wells(tmp_path):
     fields = [("WELL_NAME", "C", 12), ("COMPANY", "C", 16), ("FIELD_NAME", "C", 12),
@@ -191,17 +183,6 @@ def test_no_feature_is_dropped_however_many_chunks_that_takes(tmp_path):
     assert len(chunks) == 500, "a tight budget buys more chunks, not fewer features"
     assert sum(len(_features(chunk)) for chunk in chunks) == 500
     assert "WELL_NAME: No. 499" in chunks[-1], "the last feature is described too"
-
-
-def test_a_read_limit_is_off_by_default_and_reported_when_set(tmp_path):
-    fields = [("WELL_NAME", "C", 12), ("COMPANY", "C", 16)]
-    rows = [(f"No. {n}", "TEAPOT OIL") for n in range(60)]
-    path = write_bundle(tmp_path, "Capped_Wells", fields, rows)
-
-    assert len(read_layer(path).fields[0].values) == 60, "max_features_read: 0 reads all"
-
-    ex = ShapefileHandler().parse(path, _config(max_features_read=10), OFF)
-    assert ex.notes == ["attributes read for 10 of 60 features"]
 
 
 def test_a_value_on_nearly_every_feature_is_left_to_the_layer(tmp_path):

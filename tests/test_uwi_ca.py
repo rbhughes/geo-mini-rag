@@ -48,7 +48,7 @@ def test_a_bare_location_counts_only_where_a_label_vouches_for_it():
 
 
 def test_nothing_is_padded_into_a_uwi_the_document_did_not_write():
-    facts, _ = enrich({}, [(None, "UWI 04-11-082-04W6")])
+    facts = enrich({}, [(None, "UWI 04-11-082-04W6")])
     assert facts == {"well_location": ["041108204W6"]}, "a location is not a UWI"
 
 
@@ -58,14 +58,14 @@ def test_a_uwi_is_not_read_twice_as_its_own_location():
 
 
 def test_both_countries_can_appear_in_one_document():
-    facts, _ = enrich({}, [(None, f"API 49-025-11080 and UWI {DLS}")])
+    facts = enrich({}, [(None, f"API 49-025-11080 and UWI {DLS}")])
     assert facts["api"] == ["4902511080"]
     assert facts["uwi"] == ["100041108204W600"]
     assert facts["api_county"] == ["Natrona"]
 
 
 def test_a_canadian_uwi_in_a_header_is_not_renumbered_as_an_api():
-    facts, _ = enrich({"uwi": "100/04-11-082-04W6/00"}, [(None, f"UWI {DLS}")])
+    facts = enrich({"uwi": "100/04-11-082-04W6/00"}, [(None, f"UWI {DLS}")])
     assert facts["uwi"] == ["100/04-11-082-04W6/00", "100041108204W600"], (
         "the header's own wording is kept; only API numbers are renumbered"
     )

@@ -194,11 +194,7 @@ def test_an_identifier_in_a_question_is_looked_up_not_ranked(tmp_path, monkeypat
     monkeypatch.setattr(openrouter, "embed",
                         lambda *a, **k: openrouter.EmbedResult("m", "m", [[1.0, 0.0, 0.0]]))
 
-    cfg = {"retrieve": {"metadata_boost": 0.1, "identifier_lookup": False}}
-    hits, _ = index.search("well 4902511080", 2, db, cfg=cfg)
-    assert hits[0].path == "digits.txt", "ranked, the digits win"
-
-    cfg["retrieve"]["identifier_lookup"] = True
+    cfg = {"retrieve": {"metadata_boost": 0.1}}
     hits, _ = index.search("well 4902511080", 2, db, cfg=cfg)
     assert [h.path for h in hits] == ["log.las"], "looked up, only the well that carries it"
     assert "api=4902511080" in hits[0].matched
@@ -214,8 +210,7 @@ def test_an_identifier_the_index_does_not_hold_changes_nothing(tmp_path, monkeyp
     monkeypatch.setattr(openrouter, "embed",
                         lambda *a, **k: openrouter.EmbedResult("m", "m", [[1.0, 0.0, 0.0]]))
 
-    hits, _ = index.search("what about well 4902599999", 2, db,
-                           cfg={"retrieve": {"identifier_lookup": True}})
+    hits, _ = index.search("what about well 4902599999", 2, db, cfg={"retrieve": {}})
     assert [h.path for h in hits] == ["one.txt"]
 
 
@@ -243,4 +238,29 @@ def test_metadata_matches_on_words_not_on_raw_substrings(tmp_path):
 
     matched = {k for _, k, _, _ in mentioned_metadata(con, "wells in the teapot dome field", cfg)}
     assert "field" in matched, "case and word order within the value still match"
+    con.close()
+
+
+def test_rebuild_empties_every_table(tmp_path, monkeypatch):
+    """--rebuild has to mean the same thing as deleting the file."""
+    import duckdb
+
+    from geo_mini_rag import openrouter
+    from geo_mini_rag.rag import index
+
+    db = tmp_path / "rebuild.duckdb"
+    _tiny_index(db, [("gone", "deleted.txt", "text", [1.0, 0.0, 0.0])])
+    con = duckdb.connect(str(db))
+    con.execute("INSERT INTO doc_meta VALUES ('gone', 'api', '4902511080', NULL)")
+    con.close()
+
+    monkeypatch.setattr(openrouter, "embed",
+                        lambda *a, **k: openrouter.EmbedResult("m", "m", [[1.0, 0.0, 0.0]]))
+    index.ingest(str(tmp_path / "empty"), db=db, rebuild=True)
+
+    con = duckdb.connect(str(db), read_only=True)
+    tables = {r[0] for r in con.execute("SHOW TABLES").fetchall()}
+    assert "chunks" not in tables, "no embedding came back, so no chunks table"
+    for table in ("documents", "doc_meta"):
+        assert con.execute(f"SELECT count(*) FROM {table}").fetchone()[0] == 0, table
     con.close()

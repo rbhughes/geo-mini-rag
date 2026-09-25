@@ -49,11 +49,9 @@ DBF_HEADER_BYTES = 32
 # Defaults; `handlers.shapefile` in config/rag.yaml overrides them.
 DEFAULTS = {
     "features_per_chunk": 25,
-    "max_features_read": 0,         # 0: read every record. A layer is never part-indexed.
     "categorical_max_ratio": 0.2,   # each value recurs at least five times
     "dominant_max_share": 0.9,      # a value this common describes the layer, not the feature
     "prose_min_length": 40,         # average characters, above which it is text not a label
-    "max_fact_values": 200,
 }
 
 GEOMETRY_TYPES = {
@@ -146,7 +144,6 @@ class Layer:
     crs_epsg: str = ""
     metadata: dict[str, str] = field(default_factory=dict)   # from .shp.xml
     fields: list[Field] = field(default_factory=list)
-    truncated: bool = False
 
     @property
     def name(self) -> str:
@@ -167,8 +164,8 @@ def read_shp_header(path: Path) -> tuple[str, tuple[float, float, float, float] 
     return GEOMETRY_TYPES.get(shape_type, f"type {shape_type}"), box
 
 
-def read_dbf(path: Path, max_records: int) -> tuple[int, list[Field], bool]:
-    """(record count, fields with their values, truncated) from a .dbf table."""
+def read_dbf(path: Path) -> tuple[int, list[Field]]:
+    """(record count, fields with their values) from a .dbf table."""
     with path.open("rb") as f:
         head = f.read(DBF_HEADER_BYTES)
         if len(head) < DBF_HEADER_BYTES:
@@ -186,8 +183,7 @@ def read_dbf(path: Path, max_records: int) -> tuple[int, list[Field], bool]:
             raise NotShapefile(f"{path.name} has no attribute fields")
 
         f.seek(header_length)
-        wanted = min(count, max_records) if max_records else count
-        for _ in range(wanted):
+        for _ in range(count):
             record = f.read(record_length)
             if len(record) < record_length:
                 break
@@ -195,7 +191,7 @@ def read_dbf(path: Path, max_records: int) -> tuple[int, list[Field], bool]:
             for column in fields:
                 column.values.append(record[offset : offset + column.length].decode("latin-1").strip())
                 offset += column.length
-    return count, fields, count > wanted
+    return count, fields
 
 
 def read_prj(path: Path) -> dict[str, str]:
@@ -249,9 +245,7 @@ def read_layer(path: str | Path, limits: dict | None = None) -> Layer:
 
     dbf = path.with_suffix(".dbf")
     if dbf.exists():
-        layer.feature_count, layer.fields, layer.truncated = read_dbf(
-            dbf, limits["max_features_read"]
-        )
+        layer.feature_count, layer.fields = read_dbf(dbf)
     prj = path.with_suffix(".prj")
     if prj.exists():
         for key, value in read_prj(prj).items():
@@ -284,7 +278,7 @@ def layer_facts(layer: Layer, limits: dict) -> dict[str, object]:
             continue
         named.append(column.name)
         if role == "categorical":
-            values = sorted(set(column.filled))[: limits["max_fact_values"]]
+            values = sorted(set(column.filled))
             facts[column.name.lower()] = values
         elif role == "number":
             numbers = column.numbers()
@@ -468,12 +462,6 @@ class ShapefileHandler:
         features = feature_chunks(layer, limits, cfg["chunk"]["max_characters"])
         segments.extend((None, chunk) for chunk in features)
 
-        notes = []
-        if layer.truncated:
-            notes.append(
-                f"attributes read for {limits['max_features_read']:,} of "
-                f"{layer.feature_count:,} features"
-            )
         trace("shapefile", f"{layer.geometry}, {layer.feature_count:,} features, "
                            f"{len(layer.fields)} fields, {len(features)} feature chunks")
         return Extracted(
@@ -481,7 +469,6 @@ class ShapefileHandler:
             segments=segments,
             metadata=layer_facts(layer, limits),
             atomic=True,
-            notes=notes,
         )
 
 

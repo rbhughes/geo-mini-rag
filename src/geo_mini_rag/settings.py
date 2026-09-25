@@ -11,7 +11,6 @@ from dotenv import load_dotenv
 ROOT = Path(__file__).resolve().parents[2]
 CONFIG_DIR = ROOT / "config"
 DATA_DIR = ROOT / "data"
-MANIFEST_DIR = DATA_DIR / "manifests"   # one JSONL per appraisal pass
 OCR_DIR = DATA_DIR / "ocr"              # OCR'd copies of held scans (text recovery)
 INDEX_DIR = DATA_DIR / "index"          # DuckDB file with chunks + embeddings
 EVALS_DIR = ROOT / "evals"

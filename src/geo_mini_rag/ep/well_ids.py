@@ -36,8 +36,11 @@ def _merge(metadata: dict, key: str, values: list[str], canonical=lambda v: v) -
 
 
 def enrich(metadata: dict, segments: list[tuple[int | None, str]], limits: dict | None = None
-           ) -> tuple[dict, list[str]]:
-    """Well identifier facts for one document. Returns (facts, notes).
+           ) -> dict:
+    """Well identifier facts for one document.
+
+    Every identifier a document names is kept. A loader report listing 4,937
+    wells is a document about 4,937 wells, and a fact costs a row.
 
     A handler that already lifted an identifier out of a header keeps it: the
     sets are merged, so a LAS whose header declares one number and whose body
@@ -50,14 +53,6 @@ def enrich(metadata: dict, segments: list[tuple[int | None, str]], limits: dict 
 
     american = api_number.find(text, limits)
     canadian = uwi_ca.find(text, limits)
-    notes: list[str] = []
-    cap = limits["max_per_document"]
-    if cap and len(american) > cap:
-        notes.append(f"api: kept {cap:,} of {len(american):,} identifiers")
-        american = american[:cap]
-    if cap and len(canadian) > cap:
-        notes.append(f"uwi: kept {cap:,} of {len(canadian):,} identifiers")
-        canadian = canadian[:cap]
 
     facts: dict[str, list[str]] = {}
     if american:
@@ -73,7 +68,7 @@ def enrich(metadata: dict, segments: list[tuple[int | None, str]], limits: dict 
         facts["uwi"] = _merge(metadata, "uwi", [], api_number.ten)
     if located := [w.location for w in canadian if not w.uwi]:
         facts["well_location"] = _merge(metadata, "well_location", located)
-    return facts, notes
+    return facts
 
 
 def in_question(question: str) -> list[tuple[str, str]]:

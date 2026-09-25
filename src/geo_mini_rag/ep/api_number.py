@@ -70,7 +70,6 @@ NUMBER = re.compile(
 
 DEFAULTS = {
     "label_window": 60,      # characters before the digits in which the label must appear
-    "max_per_document": 0,   # 0: keep every one. A loader report naming 4,937 wells names them.
 }
 
 

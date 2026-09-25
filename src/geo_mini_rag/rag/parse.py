@@ -42,15 +42,12 @@ def parse(path: Path, cfg: dict, trace: Tracer = OFF, *, allow_ocr: bool = True)
 
 
 def _enrich(ex: Extracted, cfg: dict, trace: Tracer) -> Extracted:
-    facts, notes = well_ids.enrich(
-        ex.metadata, ex.segments, cfg.get("enrich", {}).get("well_ids")
-    )
+    facts = well_ids.enrich(ex.metadata, ex.segments)
     for key, values in facts.items():
         if key in ("api", "uwi", "well_location"):
             trace("enrich", f"{len(values)} {key}: {', '.join(values[:5])}"
                             f"{' ...' if len(values) > 5 else ''}")
     ex.metadata.update(facts)
-    ex.notes.extend(notes)
     return ex
 
 
