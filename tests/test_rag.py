@@ -3,7 +3,7 @@ import pytest
 from geo_mini_rag.rag.answer import build_messages
 from geo_mini_rag.rag.chunk import chunks_from
 from geo_mini_rag.rag.extract import Skip, extract, sniff
-from geo_mini_rag.rag.index import Hit
+from geo_mini_rag.rag.search import Hit
 
 
 def test_oversized_elements_split_with_overlap_and_keep_pages():
@@ -77,7 +77,7 @@ def test_prompt_numbers_sources():
 
 def test_missing_index_is_a_user_error(tmp_path):
     from geo_mini_rag.errors import UserError
-    from geo_mini_rag.rag.index import connect
+    from geo_mini_rag.rag.store import connect
 
     with pytest.raises(UserError, match="no index at"):
         connect(tmp_path / "absent.duckdb", read_only=True)
@@ -105,7 +105,7 @@ def test_ocr_output_mirrors_the_source_layout():
 
 
 def test_metadata_rows_expand_lists_and_type_numbers():
-    from geo_mini_rag.rag.index import metadata_rows
+    from geo_mini_rag.rag.store import metadata_rows
 
     rows = metadata_rows("doc1", {
         "well": "NPR #3 #13SX11-11",
@@ -124,7 +124,7 @@ def test_metadata_rows_expand_lists_and_type_numbers():
 
 
 def test_idf_weights_rarity():
-    from geo_mini_rag.rag.index import _idf
+    from geo_mini_rag.rag.search import _idf
 
     assert _idf(1, 1000) == pytest.approx(1.0), "a value only one document carries"
     assert _idf(1000, 1000) == 0.0, "a value every document carries is no evidence"
@@ -153,7 +153,7 @@ def test_one_document_cannot_take_every_place_in_the_answer(tmp_path, monkeypatc
     """A shapefile of 2,111 wells is 452 chunks that read alike; without a limit
     it held ranks 1 to 5 for any question about wells."""
     from geo_mini_rag import openrouter
-    from geo_mini_rag.rag import index
+    from geo_mini_rag.rag import search as search_mod
 
     db = tmp_path / "tiny.duckdb"
     _tiny_index(db, [
@@ -165,11 +165,11 @@ def test_one_document_cannot_take_every_place_in_the_answer(tmp_path, monkeypatc
                         lambda *a, **k: openrouter.EmbedResult("test-model", "test-model", [[1.0, 0.0, 0.0]]))
 
     cfg = {"retrieve": {"metadata_boost": 0.1, "per_document": 0}}
-    hits, _ = index.search("q", 4, db, cfg=cfg)
+    hits, _ = search_mod.search("q", 4, db, cfg=cfg)
     assert {h.path for h in hits} == {"layer.shp"}, "unlimited, the big file takes them all"
 
     cfg["retrieve"]["per_document"] = 2
-    hits, _ = index.search("q", 4, db, cfg=cfg)
+    hits, _ = search_mod.search("q", 4, db, cfg=cfg)
     assert [h.path for h in hits] == ["layer.shp", "layer.shp", "one.las", "two.las"]
     assert [h.rank for h in hits] == [1, 2, 3, 4]
     assert hits[0].score >= hits[-1].score, "still ordered by score"
@@ -181,7 +181,7 @@ def test_an_identifier_in_a_question_is_looked_up_not_ranked(tmp_path, monkeypat
     import duckdb
 
     from geo_mini_rag import openrouter
-    from geo_mini_rag.rag import index
+    from geo_mini_rag.rag import search as search_mod
 
     db = tmp_path / "ids.duckdb"
     _tiny_index(db, [
@@ -195,7 +195,7 @@ def test_an_identifier_in_a_question_is_looked_up_not_ranked(tmp_path, monkeypat
                         lambda *a, **k: openrouter.EmbedResult("m", "m", [[1.0, 0.0, 0.0]]))
 
     cfg = {"retrieve": {"metadata_boost": 0.1}}
-    hits, _ = index.search("well 4902511080", 2, db, cfg=cfg)
+    hits, _ = search_mod.search("well 4902511080", 2, db, cfg=cfg)
     assert [h.path for h in hits] == ["log.las"], "looked up, only the well that carries it"
     assert "api=4902511080" in hits[0].matched
 
@@ -203,14 +203,14 @@ def test_an_identifier_in_a_question_is_looked_up_not_ranked(tmp_path, monkeypat
 def test_an_identifier_the_index_does_not_hold_changes_nothing(tmp_path, monkeypatch):
     """Otherwise a question about a well we lack would return nothing at all."""
     from geo_mini_rag import openrouter
-    from geo_mini_rag.rag import index
+    from geo_mini_rag.rag import search as search_mod
 
     db = tmp_path / "absent.duckdb"
     _tiny_index(db, [("a", "one.txt", "something", [1.0, 0.0, 0.0])])
     monkeypatch.setattr(openrouter, "embed",
                         lambda *a, **k: openrouter.EmbedResult("m", "m", [[1.0, 0.0, 0.0]]))
 
-    hits, _ = index.search("what about well 4902599999", 2, db, cfg={"retrieve": {}})
+    hits, _ = search_mod.search("what about well 4902599999", 2, db, cfg={"retrieve": {}})
     assert [h.path for h in hits] == ["one.txt"]
 
 
@@ -219,7 +219,7 @@ def test_metadata_matches_on_words_not_on_raw_substrings(tmp_path):
     the quotes. And the curve DEPT must not match inside the word "depth"."""
     import duckdb
 
-    from geo_mini_rag.rag.index import mentioned_metadata
+    from geo_mini_rag.rag.search import mentioned_metadata
 
     db = tmp_path / "meta.duckdb"
     con = duckdb.connect(str(db))
@@ -246,7 +246,7 @@ def test_rebuild_empties_every_table(tmp_path, monkeypatch):
     import duckdb
 
     from geo_mini_rag import openrouter
-    from geo_mini_rag.rag import index
+    from geo_mini_rag.rag import ingest as index
 
     db = tmp_path / "rebuild.duckdb"
     _tiny_index(db, [("gone", "deleted.txt", "text", [1.0, 0.0, 0.0])])

@@ -1,74 +1,119 @@
 # geo-mini-rag
 
-Appraise a directory of mixed oil and gas documents, then run retrieval-augmented
-generation (RAG) over what survives.
+A small RAG pipeline built for cheap models, and a demonstration of what it
+takes to read oil and gas file formats into one.
 
-**Scope.** This project is about appraisal, ingest and embedding for E&P
-documents. The models are fixed and cheap on purpose: `inclusionai/ling-3.0-flash`
-answers, `openai/text-embedding-3-small` embeds, both set in `config/rag.yaml`.
-Comparing models is not the experiment; deciding what belongs in the index is.
+Two things it is for:
+
+1. **A simple pipeline.** Walk a folder, read what can be read, chunk it, embed
+   it, answer questions with citations. One DuckDB file holds everything. Both
+   models are fixed and cheap on purpose — `openai/text-embedding-3-small`
+   embeds, `inclusionai/ling-3.0-flash` answers. Comparing models is not the
+   point.
+2. **E&P formats as first-class citizens.** A well log, a seismic volume and a
+   map layer are not text files, and treating them as text gets you nothing or
+   nonsense. Each has a reader that pulls out the part a person would search
+   for, and leaves the numbers alone.
 
 ## Setup
 
 ```sh
-brew install libmagic  # or: apt install libmagic1 — file type detection
+brew install libmagic     # or: apt install libmagic1
 uv sync
-cp .env.example .env   # add OPENROUTER_API_KEY
+cp .env.example .env      # add OPENROUTER_API_KEY
 uv run geo-mini-rag models   # free: the two configured models, with live prices
-uv run geo-mini-rag ping     # one tiny paid call to confirm the key
 ```
 
-## RAG over a directory
+## Use
 
 ```sh
-uv run geo-mini-rag ingest            # extract and chunk data/raw, embed via OpenRouter (paid, cents)
-uv run geo-mini-rag stats             # what got indexed, and why the rest did not
-uv run geo-mini-rag search "question" # retrieval only (one tiny embedding call)
-uv run geo-mini-rag ask "question"    # answer with citations (paid)
+uv run geo-mini-rag ingest             # read data/raw, embed via OpenRouter (paid, cents)
+uv run geo-mini-rag stats              # what got indexed, and why the rest did not
+uv run geo-mini-rag search "question"  # retrieval only, one tiny embedding call
+uv run geo-mini-rag ask "question"     # answer with citations (paid)
+uv run geo-mini-rag meta               # what metadata the index holds
 ```
 
-Everything the pipeline uses lives in `config/rag.yaml`: both models, the
-chunk size and overlap, the extraction caps and the retrieval depth. `ask -m
-<id>` and `ingest -e <id>` override a model for a single run, which is for
-spot checks, not for sweeps.
+Re-running `ingest` costs nothing for files that have not changed: it compares
+size and mtime, and hashes content so a second copy of a file is recorded as a
+duplicate instead of indexed twice. `--rebuild` starts over.
 
-To watch every step on a small sample, use a separate index file:
+To watch every step on one folder:
 
 ```sh
-uv run geo-mini-rag ingest --root data/tiny --db data/index/tiny.duckdb --trace
-uv run geo-mini-rag ask "question" --db data/index/tiny.duckdb
+uv run geo-mini-rag ingest --root data/subset --db data/index/subset.duckdb --trace
 ```
 
-`--trace-chars 0` prints extracted text and chunks in full. `data/tiny/` holds
-one random file per extension, copied out of `data/raw`. It sits outside
-`data/raw` so an `ingest` of that root does not pick it up.
+## What the E&P readers do
 
-Sample material: GovDocs1 `thread0` (991 mixed files from .gov sites) sits in
-`data/raw/govdocs1_thread0/`, from
-`https://digitalcorpora.s3.amazonaws.com/corpora/files/govdocs1/threads/thread0.zip`.
+| format | what is indexed | what is not |
+|---|---|---|
+| **LAS** well logs | the header as a sentence, plus one fact per curve, depth range, well, field, operator | the log curves themselves |
+| **SEG-Y** seismic | the EBCDIC textual header, decoded, plus sample rate and trace geometry | the traces |
+| **SEG-P1** positioning | header labels, line names, shotpoint range, point count | the coordinates |
+| **ESRI shapefile** | title and abstract from `.shp.xml`, CRS from `.prj`, extent from `.shp`, and the `.dbf` attributes worth searching | the geometry |
+
+`.dbf` attributes are sorted by measurement rather than by name, because field
+names are a vendor's abbreviations and there is no list to check them against.
+A field whose values repeat is a category and becomes a filterable fact; one
+whose values are nearly all distinct names individual things and goes into the
+text; one that is 90% the same value describes the layer, not the row; one that
+is bare digits is dropped, because retrieval is text and a number that names
+nothing cannot be searched for.
+
+**API well numbers** are found in any document, not just the ones with headers
+— a completion report, a loader log, a scanned permit. They are validated
+against `src/geo_mini_rag/ep/data/api_codes.csv`, this project's table of state
+and county codes, and a label (`API`, `UWI`) must precede the digits. Measured
+on 992 documents that have nothing to do with wells: 139,629 bare 10/12/14-digit
+runs, of which 4,607 carry a plausible state and county and would pass on
+structure alone, and none survive the label rule.
+
+## Retrieval
+
+Cosine similarity, with three corrections that matter for a collection like
+this one:
+
+- **An identifier in the question is looked up, not ranked.** `well 4902511080`
+  scores 0.324 against the log that carries it and 0.729 against a page of
+  unrelated digits. Looked up, it is exact: recall@1 goes from 36% to 92%.
+- **Metadata the question names lifts the documents that carry it**, weighted by
+  rarity, so a well name held by one document outweighs `state=WYOMING` held by
+  1,375. `--where key=value` filters instead, including on numbers
+  (`--where depth_max>5000`).
+- **No document may take more than `per_document` of the answer.** A map layer
+  of 2,111 wells is 500 chunks that read alike, and without this it held every
+  place in the top ten for any question about wells.
+
+`geo-mini-rag eval evals/subset.jsonl` scores retrieval against questions with
+known answers: recall@k and MRR, no model judging the output.
 
 ## Layout
 
 ```
-config/rag.yaml        models, chunking, extraction caps, retrieval depth
-config/policy.yaml     appraisal policy; its hash is part of each manifest id
-data/raw/              documents to ingest, or set GEO_DOCS_ROOT (gitignored)
-data/manifests/        JSONL written by each appraisal pass (gitignored)
-data/ocr/              OCR'd copies of held scans, from text recovery (gitignored)
-data/index/            DuckDB chunks and embeddings (gitignored)
-data/tiny/             one file per extension, for tracing a small ingest (gitignored)
-evals/                 question sets with known answers
-src/geo_mini_rag/      cli, settings, openrouter client, appraisal/, rag/
+config/rag.yaml          every setting there is
+src/geo_mini_rag/
+  cli.py                 the commands
+  openrouter.py          the one HTTP client
+  rag/
+    ingest.py            walk, dedupe, parse, chunk, embed
+    store.py             the DuckDB file and its tables
+    search.py            ranking
+    parse.py             route a file to a reader
+    extract.py           pdf, docx, html, text
+    chunk.py             combine elements up to a size
+    ocr.py               scanned PDFs
+  ep/                    las, segy, segp1, shapefile, api_number
+data/raw/                documents to ingest (gitignored)
+evals/                   question sets with known answers
 ```
 
 ## Third-party notices
 
-File type detection uses [libmagic](https://www.darwinsys.com/file/), the
-library behind `file(1)`, through
+File type detection uses [libmagic](https://www.darwinsys.com/file/) through
 [python-magic](https://github.com/ahupp/python-magic) (MIT). libmagic is
-Copyright (c) Ian F. Darwin 1986-1995 and Christos Zoulas 2003, released
-under its own BSD-style licence; see the `COPYING` file shipped with it.
+Copyright (c) Ian F. Darwin 1986-1995 and Christos Zoulas 2003, under its own
+BSD-style licence.
 
 Sample corpus: [GovDocs1](https://digitalcorpora.org/corpora/file-corpora/files/)
-(Garfinkel et al., "Bringing Science to Digital Forensics with Standardized
-Forensic Corpora", DFRWS 2009), freely redistributable for research.
+(Garfinkel et al., DFRWS 2009), freely redistributable for research.

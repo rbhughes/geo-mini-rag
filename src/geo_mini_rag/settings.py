@@ -11,7 +11,7 @@ from dotenv import load_dotenv
 ROOT = Path(__file__).resolve().parents[2]
 CONFIG_DIR = ROOT / "config"
 DATA_DIR = ROOT / "data"
-OCR_DIR = DATA_DIR / "ocr"              # OCR'd copies of held scans (text recovery)
+OCR_DIR = DATA_DIR / "ocr"              # searchable copies of scanned PDFs
 INDEX_DIR = DATA_DIR / "index"          # DuckDB file with chunks + embeddings
 EVALS_DIR = ROOT / "evals"
 
@@ -19,11 +19,9 @@ load_dotenv(ROOT / ".env")
 
 
 def docs_root() -> str:
-    """Root directory of the documents to ingest; any fsspec URL or local path."""
+    """Folder of documents to ingest. Set GEO_DOCS_ROOT to point it elsewhere."""
     raw = os.environ.get("GEO_DOCS_ROOT", "data/raw")
-    if "://" in raw or Path(raw).is_absolute():
-        return raw
-    return str(ROOT / raw)
+    return raw if Path(raw).is_absolute() else str(ROOT / raw)
 
 
 def load_rag_config() -> dict:

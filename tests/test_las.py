@@ -4,7 +4,7 @@ import pytest
 
 from geo_mini_rag import settings
 from geo_mini_rag.ep.las import LasHandler
-from geo_mini_rag.rag.index import metadata_rows
+from geo_mini_rag.rag.store import metadata_rows
 from geo_mini_rag.rag.trace import OFF
 
 LAS = """~VERSION INFORMATION

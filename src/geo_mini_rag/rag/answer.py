@@ -6,7 +6,8 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from geo_mini_rag import openrouter
-from geo_mini_rag.rag.index import DB_PATH, Hit, search
+from geo_mini_rag.rag.search import Hit, search
+from geo_mini_rag.rag.store import DB_PATH
 
 SYSTEM = (
     "You answer questions using only the numbered sources provided. "

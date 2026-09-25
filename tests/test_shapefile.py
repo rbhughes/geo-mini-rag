@@ -14,7 +14,7 @@ from geo_mini_rag.ep.shapefile import (
     read_prj,
 )
 from geo_mini_rag.rag.extract import Skip
-from geo_mini_rag.rag.index import metadata_rows
+from geo_mini_rag.rag.store import metadata_rows
 from geo_mini_rag.rag.trace import OFF
 
 WKT = (

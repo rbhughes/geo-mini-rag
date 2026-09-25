@@ -3,7 +3,7 @@ import pytest
 from geo_mini_rag import settings
 from geo_mini_rag.ep.segp1 import NotSegP1, SegP1Handler, read_survey
 from geo_mini_rag.rag.extract import Skip
-from geo_mini_rag.rag.index import metadata_rows
+from geo_mini_rag.rag.store import metadata_rows
 from geo_mini_rag.rag.trace import OFF
 
 SURVEY = """H                              SEISMIC SURVEY DATA

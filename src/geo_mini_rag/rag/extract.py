@@ -1,13 +1,11 @@
-"""Text extraction for the baseline RAG path.
+"""Reading the ordinary formats: PDF, DOCX, HTML and plain text.
 
-Deliberately naive: this is the ungated condition, with no appraisal. The
-type comes from the file's leading bytes, not its extension. Anything that
-is not PDF, DOCX, HTML, or plain text is skipped with a reason.
+The type comes from the file's leading bytes rather than its extension, using a
+few signature checks that are certain. Anything else is handed to libmagic, and
+if libmagic cannot name something we can read, the file is skipped with that
+name as the reason, so `stats` can say what a collection is full of.
 
-Routing uses our own signature checks, which are few and certain. Naming a
-file we cannot read is left to libmagic, via python-magic. E&P formats that
-libmagic does not know (LAS, DLIS, SEGY and friends) are identified by
-extension in the appraisal passes, not here.
+E&P formats are not here: `geo_mini_rag.ep` claims those before this runs.
 """
 
 from __future__ import annotations

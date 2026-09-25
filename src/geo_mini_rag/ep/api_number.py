@@ -1,4 +1,4 @@
-"""US API well numbers found in any document, validated against a code table.
+"""API well numbers: find them in any document, and in any question.
 
 Not a handler: handlers own a format, and a well identifier is not a format. A
 PDF completion report, a scanned permit, a CSV export and a LAS header all name
@@ -27,11 +27,8 @@ Two rules keep it honest, and the order matters:
     code is accepted as given. The well number itself is checked only for
     00000, which the numbering does not use.
 
-Canadian UWIs are not handled. Their shapes are well defined -- DLS
-100/04-11-082-04W6/00, NTS 200/a-096-H/094-A-15/00 -- but there is no Canadian
-file in this corpus to test a detector against, and a detector nobody can test
-is a guess. `UWI` appears here only as a label, because LAS headers write the
-API number under that mnemonic.
+US numbers only. `UWI` appears here as a label, not a format, because LAS
+headers write the API number under that mnemonic.
 
 Nothing is repaired. Teapot_Wells.dbf stores its API as `2500153`, which is
 Natrona county 025 and well 00153 with the state code absent and the leading
@@ -188,3 +185,47 @@ def main(argv: list[str] | None = None) -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+
+
+def enrich(metadata: dict, segments: list[tuple[int | None, str]]) -> dict:
+    """The `api`, `api_state` and `api_county` facts a document carries.
+
+    Every identifier a document names is kept: a loader report listing 4,937
+    wells is a document about 4,937 wells, and a fact costs a row. A handler
+    that already lifted one out of a header keeps it -- the sets are merged --
+    and one well is one fact in one shape, so a header writing 490251108000 and
+    a report writing 49-025-11080 do not count as two wells.
+    """
+    found = find("\n".join(part for _, part in segments if part))
+    if not found:
+        return {}
+
+    def merged(key: str, values: list[str], canonical=lambda v: v) -> list[str]:
+        existing = metadata.get(key, [])
+        existing = list(existing) if isinstance(existing, (list, tuple, set)) else [existing]
+        out: list[str] = []
+        for value in [*(str(v).strip() for v in existing), *values]:
+            value = canonical(value)
+            if value and value not in out:
+                out.append(value)
+        return out
+
+    facts = {
+        "api": merged("api", [w.api for w in found], canonical=ten),
+        "api_state": merged("api_state", sorted({w.state for w in found})),
+        "api_county": merged("api_county", sorted({c for w in found for c in w.counties})),
+    }
+    if metadata.get("uwi"):   # a header that wrote the API number under UWI
+        facts["uwi"] = merged("uwi", [], canonical=ten)
+    return facts
+
+
+def in_question(question: str) -> list[tuple[str, str]]:
+    """(key, value) pairs a question names, for looking up rather than ranking.
+
+    `well 4902511080` scores 0.324 against the log that carries it and 0.729
+    against a page of unrelated digits, so no boost small enough to be safe can
+    rescue it. Looked up, it is exact. No label is required here: a question is
+    a dozen words typed on purpose, and the code table alone decides.
+    """
+    return [("api", well.api) for well in find(question, require_label=False)]

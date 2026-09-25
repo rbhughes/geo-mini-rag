@@ -21,7 +21,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from geo_mini_rag.errors import UserError
-from geo_mini_rag.rag.index import DB_PATH, search
+from geo_mini_rag.rag.search import search
+from geo_mini_rag.rag.store import DB_PATH
 
 DEPTHS = (1, 3, 5, 10)
 

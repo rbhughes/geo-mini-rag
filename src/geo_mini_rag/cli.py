@@ -12,7 +12,7 @@ from geo_mini_rag import openrouter, settings
 
 app = typer.Typer(
     no_args_is_help=True,
-    help="Appraise a directory of E&P documents and run RAG over it.",
+    help="A small RAG pipeline that reads E&P file formats.",
     context_settings={"help_option_names": ["-h", "--help"]},
 )
 console = Console()
@@ -65,7 +65,7 @@ WHERE_OPTION = typer.Option(
 
 def _where(pairs: list[str] | None) -> list[tuple[str, str, str]]:
     """key=value, or a comparison on a numeric fact: depth_max>5000, log_year>=1990."""
-    from geo_mini_rag.rag.index import COMPARISONS
+    from geo_mini_rag.rag.search import COMPARISONS
 
     clauses: list[tuple[str, str, str]] = []
     for pair in pairs or []:
@@ -82,7 +82,7 @@ def _where(pairs: list[str] | None) -> list[tuple[str, str, str]]:
 
 
 def _db(path: Path | None) -> Path:
-    from geo_mini_rag.rag.index import DB_PATH
+    from geo_mini_rag.rag.store import DB_PATH
 
     return path or DB_PATH
 
@@ -111,7 +111,7 @@ def ingest(
     from rich.progress import Progress
     from rich.text import Text
 
-    from geo_mini_rag.rag import index
+    from geo_mini_rag.rag import ingest as ingest_mod
     from geo_mini_rag.rag.trace import OFF, Tracer
 
     db = _db(db)
@@ -130,7 +130,7 @@ def ingest(
             line.append(message)
             console.print(line, soft_wrap=True)
 
-        def on_event(e: index.IngestEvent) -> None:
+        def on_event(e: ingest_mod.IngestEvent) -> None:
             nonlocal spent
             counts[e.status] += 1
             spent += e.cost
@@ -139,7 +139,7 @@ def ingest(
                 console.print(Text(f"{e.status:>9}  ", style="bold") + Text(f"{e.path}  {e.detail}"))
 
         tracer = Tracer(emit, trace_chars) if trace else OFF
-        index.ingest(root, db=db, rebuild=rebuild, limit=limit, embed_model=embed_model,
+        ingest_mod.ingest(root, db=db, rebuild=rebuild, limit=limit, embed_model=embed_model,
                      on_event=on_event, trace=tracer)
     console.print(f"{dict(counts)}  embedding cost this run: ${spent:.4f}")
     stats(db)
@@ -151,10 +151,10 @@ STAGE_STYLES = {"sql": "magenta", "embed": "green", "chunk": "yellow", "skip": "
 @app.command()
 def stats(db: Path = DB_OPTION) -> None:
     """Summarize what the index holds and why files were skipped."""
-    from geo_mini_rag.rag import index
+    from geo_mini_rag.rag import store
 
     db = _db(db)
-    s = index.stats(db)
+    s = store.stats(db)
     table = Table("status", "kind", "files", "chunks", "embed tokens", "embed $", title=f"{db} ({s['embed_model']})")
     for status, kind, files, chunks, tokens, cost in s["by_status"]:
         table.add_row(status, kind, str(files), str(chunks or 0), str(tokens or 0), f"{cost or 0:.4f}")
@@ -177,10 +177,10 @@ def meta(
     db: Path = DB_OPTION,
 ) -> None:
     """What document metadata the index holds, and what can be filtered on. Free."""
-    from geo_mini_rag.rag import index
+    from geo_mini_rag.rag import store
 
     db = _db(db)
-    with index.connect(db, read_only=True) as con:
+    with store.connect(db, read_only=True) as con:
         if key:
             rows = con.execute(
                 "SELECT value, count(*) FROM doc_meta WHERE key = ? GROUP BY 1 ORDER BY 2 DESC, 1 LIMIT ?",
@@ -201,7 +201,7 @@ def meta(
                 console.print(f"[dim]numeric on {span[2]} documents: {span[0]:g} to {span[1]:g} "
                               f"— filter with --where {key}'>'{span[0]:g}[/]")
             return
-        keys = index.metadata_keys(con)
+        keys = store.metadata_keys(con)
     if not keys:
         console.print(f"[dim]{db} has no document metadata: no handler has extracted any.[/]")
         return
@@ -268,10 +268,10 @@ def search(
     db: Path = DB_OPTION,
 ) -> None:
     """Retrieval only, no LLM. Costs one tiny embedding call."""
-    from geo_mini_rag.rag import index
+    from geo_mini_rag.rag import search as search_mod
 
     cfg = settings.load_rag_config()
-    hits, _ = index.search(question, k or cfg["retrieve"]["top_k"], _db(db),
+    hits, _ = search_mod.search(question, k or cfg["retrieve"]["top_k"], _db(db),
                            where=_where(where), cfg=cfg)
     _print_hits(hits, full)
 

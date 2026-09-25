@@ -1,7 +1,6 @@
 import pytest
 
-from geo_mini_rag.ep.api_number import WellId, find, offshore
-from geo_mini_rag.ep.well_ids import enrich
+from geo_mini_rag.ep.api_number import WellId, enrich, find, offshore
 
 LAS_HEADER = """~Well Information Block
  WELL.                NPR #3 #13SX11-11:  WELL
@@ -143,4 +142,4 @@ def test_nothing_can_cap_the_identifiers_a_document_yields():
     from geo_mini_rag.settings import load_rag_config
 
     assert not [k for k in DEFAULTS if "max" in k]
-    assert not [k for k in load_rag_config().get("enrich", {}).get("well_ids", {}) if "max" in k]
+    assert "enrich" not in load_rag_config()

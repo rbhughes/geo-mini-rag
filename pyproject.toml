@@ -1,16 +1,14 @@
 [project]
 name = "geo-mini-rag"
 version = "0.1.0"
-description = "Triage a messy E&P document drive, then RAG over what survives with cheap OpenRouter models"
+description = "A small RAG pipeline for cheap models, showing how E&P file formats can be read into it"
 readme = "README.md"
 authors = [
     { name = "Bryan Hughes", email = "bryan@purr.io" }
 ]
 requires-python = ">=3.12"
 dependencies = [
-    "datasketch>=2.0.0",
     "duckdb>=1.5.5",
-    "fsspec>=2026.7.0",
     "httpx>=0.28.1",
     "lasio>=0.32",
     "pyarrow>=25.0.1",
