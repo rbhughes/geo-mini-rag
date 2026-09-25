@@ -208,3 +208,51 @@ def test_an_unfilled_column_heading_is_not_part_of_the_value():
         "C 1 CLIENT ENCANA OIL & GAS (USA) INC. COMPANY                    CREW NO",
     ])
     assert header.labels()["client"] == "ENCANA OIL & GAS (USA) INC"
+
+
+def test_later_columns_on_a_template_card_are_read():
+    """C 2 carries the line and the area side by side; only the line was read."""
+    from geo_mini_rag.ep.segy import SegyHeader
+
+    header = SegyHeader(path=pathlib.Path("x.sgy"), encoding="cp037", cards=[
+        "C 1 CLIENT ENCANA OIL & GAS (USA) INC. COMPANY                    CREW NO",
+        "C 2 LINE SWA-10        AREA SOUTHWEST ARKOMA BASIN   MAP ID",
+    ])
+    assert header.labels() == {
+        "client": "ENCANA OIL & GAS (USA) INC",
+        "line": "SWA-10",
+        "area": "SOUTHWEST ARKOMA BASIN",
+    }
+
+
+def test_an_empty_template_row_names_nothing():
+    """Every column blank. Reading it by shape gave a line named AREA."""
+    from geo_mini_rag.ep.segy import SegyHeader
+
+    header = SegyHeader(path=pathlib.Path("x.sgy"), encoding="cp037", cards=[
+        "C 1 CLIENT                        COMPANY                       CREW NO",
+        "C 2 LINE            AREA                        MAP ID",
+        "C20 MAP PROJECTION                      ZONE ID       COORDINATE UNITS",
+    ])
+    assert header.labels() == {}
+
+
+def test_a_filled_second_column_is_read_when_the_first_is_blank():
+    from geo_mini_rag.ep.segy import SegyHeader
+
+    header = SegyHeader(path=pathlib.Path("x.sgy"), encoding="cp037", cards=[
+        "C 1 CLIENT                   COMPANY FAIRFIELD IND., INC.",
+        "C 2 LINE  1               AREA:",
+    ])
+    labels = header.labels()
+    assert labels["client"] == "FAIRFIELD IND., INC"
+    assert labels["line"] == "1", "two spaces to a filled value, not an empty column"
+
+
+def test_a_byte_offset_map_is_not_a_line_name():
+    from geo_mini_rag.ep.segy import SegyHeader
+
+    header = SegyHeader(path=pathlib.Path("x.sgy"), encoding="cp037", cards=[
+        "C 5 LINE NUMBER:  17       LONG       LINE RECORD",
+    ])
+    assert "line" not in header.labels()

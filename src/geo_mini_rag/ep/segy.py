@@ -149,11 +149,27 @@ CARD_NUMBER = re.compile(r"^C\s*\d{0,2}\s?")
 _COLUMN_NAMES = "|".join(
     re.escape(name) for name in sorted(TEXT_LABELS, key=len, reverse=True)
 )
+# The label is matched from the known list, never by shape: a shape that allows
+# two words reads "CLIENT ENCANA" as the label and drops the company name.
 BARE_LABEL = re.compile(
-    r"^(?P<label>[A-Z][A-Z &/.]{2,18}?) (?P<value>\S[^\n]*?)"
+    rf"(?:^|\s{{2,}})(?P<label>{_COLUMN_NAMES})\s{{1,2}}(?P<value>[^\s:][^\n:]*?)"
     rf"(?=\s{{2,}}|\s+(?:{_COLUMN_NAMES})\b|$)"
 )
+# "ZONE ID" and "CREW NO" are headings standing over empty columns, not a zone
+# called ID. A survey name carries a digit or is longer than this.
+HEADING_WORD = re.compile(r"^[A-Z]{1,3}$")
 
+CARD_NUMBER = re.compile(r"^C\s*\d{0,2}\s?")
+# Half the headers in this corpus write the line name without a colon, on a
+# card of their own: "LINE 700", "LINE CPB-3", "LINE 71-117-277  LOUISIANA".
+# Only the start of a card counts, and only across a single space: "LINE
+# NUMBER:  17   LONG   LINE RECORD" is a byte-offset map, and the template
+# card "CLIENT                COMPANY" is an unfilled form, not a client named
+# COMPANY. A value carrying a colon is a label of its own, so it is not one.
+# The value also stops at the next column's name, because a template card fills
+# one column and leaves the next heading standing right beside it:
+#   C 1 CLIENT ENCANA OIL & GAS (USA) INC. COMPANY          CREW NO
+# without this the client is read as "... INC. COMPANY".
 
 class NotSegy(ValueError):
     """The file does not hold SEG-Y headers."""
@@ -218,10 +234,16 @@ class SegyHeader:
                 value = " ".join(match["value"].split()).strip(" .-")
                 if key and value and key not in found:
                     found[key] = value
-            if bare := BARE_LABEL.match(body):
+            # Not on a card that already names something with a colon: that
+            # card has been read above, and "LINE NUMBER:  17   LONG   LINE
+            # RECORD" is a byte-offset map whose later columns would otherwise
+            # file the line name as "RECORD". An empty "AREA:" does not count.
+            if any(m["value"].strip() for m in LABEL.finditer(body)):
+                continue
+            for bare in BARE_LABEL.finditer(body):
                 key = TEXT_LABELS.get(" ".join(bare["label"].split()))
                 value = " ".join(bare["value"].split()).strip(" .-")
-                if key and value and ":" not in value and key not in found:
+                if key and value and not HEADING_WORD.match(value) and key not in found:
                     found[key] = value
         return found
 
@@ -404,6 +426,6 @@ def _acquisition_text(path: Path, header: SegyHeader) -> str:
         ("line_number", "Line number"),
         ("reel_number", "Reel number"),
     ):
-        if key in header.binary:
-            lines.append(f"{label}: {header.binary[key]}")
+        if key in (usable := header.numbers()):
+            lines.append(f"{label}: {usable[key]}")
     return "\n".join(lines)
