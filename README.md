@@ -68,6 +68,36 @@ text; one that is 90% the same value describes the layer, not the row; one that
 is bare digits is dropped, because retrieval is text and a number that names
 nothing cannot be searched for.
 
+### Seismic, measured
+
+Without a reader a SEG-Y file is `application/octet-stream`: libmagic cannot
+name it, so it is dropped with a reason and nothing in it is searchable. With
+one, the same 54 files yield 119 passages and 741 facts, every stored number
+inside the range its field allows.
+
+Ground truth comes from the headers themselves, the way the LAS test uses the
+API each log declares: a file whose card reads `CLIENT: LITHOPROBE` belongs in
+the answer set for a question about Lithoprobe. A seismic archive is many files
+per survey, so these questions have several right answers and are scored
+against the set.
+
+| question | files | top hit right | recall@10 |
+|---|---|---|---|
+| which surveys were shot for Lithoprobe? | 23 | yes | 100% |
+| which lines cover Abitibi-Grenville '93? | 23 | yes | 100% |
+| which data was acquired by Enertec Geophysical? | 23 | yes | 100% |
+| which lines were processed by CGG Geophysics Canada? | 23 | yes | 100% |
+| which surveys were shot for Fairfield Ind.? | 4 | yes | 100% |
+| where is seismic line 93D? | 4 | no | 0% |
+| where is seismic line 53? | 2 | no | 0% |
+| **13 questions** | | **38%** | **73%** |
+
+The split is the finding. Questions about **who and where** — client, contractor,
+processor, area — are answered perfectly. Questions naming a **bare line
+number** are answered badly: `93D` and `53` are short identifiers, which is
+what embeddings are worst at, and the identifier lookup that rescues API
+numbers does not yet cover seismic line names.
+
 **API well numbers** are found in any document, not just the ones with headers
 — a completion report, a loader log, a scanned permit. They are validated
 against `src/geo_mini_rag/ep/data/api_codes.csv`, this project's table of state
