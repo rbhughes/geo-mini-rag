@@ -21,6 +21,7 @@ falls through to the generic extractor (PDF, DOCX, HTML, plain text).
 
 from __future__ import annotations
 
+import os
 from pathlib import Path
 from typing import Protocol, runtime_checkable
 
@@ -46,6 +47,16 @@ def register(handler: Handler) -> Handler:
 
 
 def find(path: Path, head: bytes) -> Handler | None:
+    """The handler that claims this file, or None.
+
+    Setting GEO_NO_EP_HANDLERS=1 turns every handler off, so the same corpus
+    can be indexed as a generic pipeline would index it. That is the baseline
+    arm of the experiment this project exists to run: without it a LAS file is
+    423 MB of floating point read as prose, and a SEG-Y or shapefile is binary
+    nobody can read at all.
+    """
+    if os.environ.get("GEO_NO_EP_HANDLERS") == "1":
+        return None
     for handler in HANDLERS:
         if handler.matches(path, head):
             return handler

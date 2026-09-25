@@ -93,6 +93,27 @@ FORMAT_CODES = {
     16: "1-byte unsigned integer",
 }
 MEASUREMENT_SYSTEMS = {1: "meters", 2: "feet"}
+
+# What each numeric field is allowed to hold. Most of the binary block is
+# optional, and a writer that never set a field leaves whatever was in memory
+# there, so 45 of 950 facts read off this corpus were things like an ensemble
+# fold of -13,922 or a reel number of -1,868,250,301. A count cannot be
+# negative and a sample interval cannot be zero; a value outside its range is
+# not a measurement and is dropped rather than stored.
+NUMERIC_LIMITS: dict[str, tuple[int, int]] = {
+    "line_number": (0, 2**31 - 1),
+    "reel_number": (0, 2**31 - 1),
+    "traces_per_ensemble": (0, 32767),
+    "aux_traces_per_ensemble": (0, 32767),
+    "sample_interval_us": (1, 32767),
+    "sample_interval_us_original": (1, 32767),
+    "samples_per_trace": (1, 32767),
+    "samples_per_trace_original": (1, 32767),
+    "ensemble_fold": (0, 32767),
+    "sweep_frequency_start_hz": (0, 32767),
+    "sweep_frequency_end_hz": (0, 32767),
+    "sweep_length_ms": (0, 32767),
+}
 SORTING_CODES = {
     -1: "other", 0: "unknown", 1: "as recorded", 2: "CDP ensemble",
     3: "single fold continuous profile", 4: "horizontally stacked",
@@ -114,6 +135,13 @@ LABEL = re.compile(
     r"(?=\s{2,}[A-Z][A-Z &/.]{2,18}\s*:|$)"
 )
 CARD_NUMBER = re.compile(r"^C\s*\d{0,2}\s?")
+# Half the headers in this corpus write the line name without a colon, on a
+# card of their own: "LINE 700", "LINE CPB-3", "LINE 71-117-277  LOUISIANA".
+# Only the start of a card counts, and only across a single space: "LINE
+# NUMBER:  17   LONG   LINE RECORD" is a byte-offset map, and the template
+# card "CLIENT                COMPANY" is an unfilled form, not a client named
+# COMPANY. A value carrying a colon is a label of its own, so it is not one.
+BARE_LABEL = re.compile(r"^(?P<label>[A-Z][A-Z &/.]{2,18}?) (?P<value>\S[^\n]*?)(?=\s{2,}|$)")
 
 
 class NotSegy(ValueError):
@@ -154,6 +182,21 @@ class SegyHeader:
             out["trace_length_ms"] = interval * samples / 1000
         return out
 
+    def numbers(self) -> dict[str, int]:
+        """Binary fields that hold a usable measurement.
+
+        The coded fields are left out on purpose: `trace_sorting_code: 4` is
+        not something anyone searches for, and `described()` already offers it
+        as "horizontally stacked". What remains is counts and intervals, each
+        inside the range its field allows.
+        """
+        return {
+            name: value
+            for name, value in self.binary.items()
+            if name in NUMERIC_LIMITS
+            and NUMERIC_LIMITS[name][0] <= value <= NUMERIC_LIMITS[name][1]
+        }
+
     def labels(self) -> dict[str, str]:
         """Best-effort fields off the C-cards, limited to conventional labels."""
         found: dict[str, str] = {}
@@ -163,6 +206,11 @@ class SegyHeader:
                 key = TEXT_LABELS.get(" ".join(match["label"].split()))
                 value = " ".join(match["value"].split()).strip(" .-")
                 if key and value and key not in found:
+                    found[key] = value
+            if bare := BARE_LABEL.match(body):
+                key = TEXT_LABELS.get(" ".join(bare["label"].split()))
+                value = " ".join(bare["value"].split()).strip(" .-")
+                if key and value and ":" not in value and key not in found:
                     found[key] = value
         return found
 
@@ -277,7 +325,7 @@ def summary(header: SegyHeader) -> str:
     """Both headers as one readable block, for the command line."""
     lines = [f"{header.path.name} — textual header ({header.encoding})", "", header.text]
     if header.binary:
-        lines += ["", "Binary header"] + [f"  {k}: {v}" for k, v in header.binary.items()]
+        lines += ["", "Binary header"] + [f"  {k}: {v}" for k, v in header.numbers().items()]
     if described := header.described():
         lines += ["", "Meaning"] + [f"  {k}: {v}" for k, v in described.items()]
     if labels := header.labels():
@@ -306,7 +354,7 @@ class SegyHandler:
 
         meta: dict[str, object] = {"text_encoding": header.encoding}
         meta.update(header.labels())
-        meta.update({k: v for k, v in header.binary.items() if k != "job_id"})
+        meta.update(header.numbers())
         meta.update(header.described())
 
         card_text = f"Seismic survey header (SEG-Y) for {path.name}.\n{header.text}"

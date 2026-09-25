@@ -33,6 +33,15 @@ from geo_mini_rag.rag.trace import Tracer
 
 MAX_BYTES = 5_000_000
 LABEL = re.compile(r"^\s*(?P<label>[A-Z][A-Z ()/.]{2,20}?)\s*:\s*(?P<value>.*?)\s*$")
+# Three header conventions turned up in real files. A bare "H" then the title; G3236.SEGP1 writes numbered
+# H-records, H1500 Geodetic Datum: NAD_1927; esw_1.segp writes # comments,
+# "# Type: scattered data (SEGP1-3 Format)". Both are "name: value" once the
+# record marker is off the front, so neither needs a table of codes.
+H_RECORD = re.compile(r"^H\d{0,4}\s+(?P<rest>.*?)\s*$")
+HASH_RECORD = re.compile(r"^#\s*(?P<rest>.*?)\s*$")
+NAMED = re.compile(r"^(?P<label>[A-Za-z][\w ()/.]{2,32}?)\s*:\s*(?P<value>.+?)\s*$")
+# esw_1.segp declares its own columns: "# Field: LINEID     2 17 non-numeric"
+FIELD_DECL = re.compile(r"^Field:\s*(?P<name>\w+)\s+(?P<start>\d+)\s+(?P<end>\d+)")
 LEGEND = re.compile(r"<[^>]*>")
 RULE = re.compile(r"^[\s|-]{20,}$")
 
@@ -95,8 +104,19 @@ def read_survey(path: str | Path, *, max_bytes: int = MAX_BYTES) -> Survey:
     for line in text.splitlines():
         if RULE.match(line) or not line.strip():
             continue
-        if line.startswith("H") and not survey.title:
-            survey.title = line[1:].strip()
+        record = H_RECORD.match(line) or HASH_RECORD.match(line)
+        if record:
+            rest = record["rest"]
+            if declared := FIELD_DECL.match(rest):
+                # the file states its own column spans; 1-based, inclusive
+                survey.columns.append((declared["name"].lower(),
+                                       int(declared["start"]) - 1, int(declared["end"])))
+                continue
+            if named := NAMED.match(rest):
+                key = " ".join(named["label"].split()).lower().replace(" ", "_")
+                survey.labels.setdefault(key, named["value"])
+            elif not survey.title and len(rest) > 3 and not rest.endswith(":"):
+                survey.title = rest
             continue
         if legend := _columns_from_legend(line):
             survey.columns = legend
@@ -157,7 +177,9 @@ class SegP1Handler:
     """Positioning data: a header worth reading, coordinates worth counting."""
 
     name = "segp1"
-    extensions = (".seg", ".p1", ".sp1")
+    # .segp1 and .segp arrived in data/raw/seis2 and fell through to the text
+    # reader, though both files name their own format in their first line.
+    extensions = (".seg", ".p1", ".sp1", ".segp1", ".segp")
 
     def matches(self, path: Path, head: bytes) -> bool:
         if path.suffix.lower() not in self.extensions:

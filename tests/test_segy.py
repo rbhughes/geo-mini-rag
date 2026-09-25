@@ -1,3 +1,4 @@
+import pathlib
 import struct
 
 import pytest
@@ -139,3 +140,47 @@ def test_handler_skips_a_file_it_cannot_read(tmp_path):
     path.write_bytes(b"")
     with pytest.raises(Skip, match="unreadable segy"):
         SegyHandler().parse(path, settings.load_rag_config(), OFF)
+
+
+def test_a_field_outside_its_range_is_not_a_measurement():
+    """Most of the binary block is optional. A writer that never set a field
+    leaves whatever was in memory there: this corpus yielded an ensemble fold
+    of -13,922 and a reel number of -1,868,250,301, stored as facts."""
+    from geo_mini_rag.ep.segy import SegyHeader
+
+    header = SegyHeader(
+        path=pathlib.Path("x.sgy"), encoding="cp037", cards=["C 1 CLIENT: ACME"],
+        binary={
+            "samples_per_trace": 1500,       # plausible, kept
+            "sample_interval_us": 4000,      # plausible, kept
+            "ensemble_fold": -13922,         # a fold cannot be negative
+            "reel_number": -1868250301,
+            "trace_sorting_code": 4,         # a code, never a searchable fact
+        },
+    )
+    numbers = header.numbers()
+    assert numbers == {"samples_per_trace": 1500, "sample_interval_us": 4000}
+    assert "trace_sorting" in header.described(), "the code's meaning is still offered"
+
+
+def test_a_line_named_without_a_colon_is_still_a_line():
+    """Eight of nine files in data/raw/seis2 write "LINE CPB-3" with no colon,
+    on a card of their own, and lost their line name because of it."""
+    from geo_mini_rag.ep.segy import SegyHeader
+
+    header = SegyHeader(path=pathlib.Path("x.sgy"), encoding="cp037", cards=[
+        "C 2 LINE CPB-3      AREA                        MAP ID",
+        "C 5 LINE NUMBER:  17       LONG       LINE RECORD",
+    ])
+    labels = header.labels()
+    assert labels["line"] == "CPB-3"
+    assert "area" not in labels, "an unfilled template column is not a value"
+
+
+def test_an_unfilled_template_card_yields_nothing():
+    from geo_mini_rag.ep.segy import SegyHeader
+
+    header = SegyHeader(path=pathlib.Path("x.sgy"), encoding="cp037", cards=[
+        "C 1 CLIENT                        COMPANY                       CREW NO",
+    ])
+    assert header.labels() == {}, "CLIENT is a blank column here, not a client named COMPANY"

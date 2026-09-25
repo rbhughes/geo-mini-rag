@@ -95,3 +95,12 @@ def test_handler_skips_what_it_cannot_read(tmp_path):
     path.write_text("no header here\n")
     with pytest.raises(Skip, match="unreadable segp1"):
         SegP1Handler().parse(path, settings.load_rag_config(), OFF)
+
+
+def test_the_extensions_the_format_actually_arrives_under(tmp_path):
+    """.SEGP1 and .segp were read as prose until real files turned up."""
+    handler = SegP1Handler()
+    for suffix in (".seg", ".p1", ".sp1", ".segp1", ".segp"):
+        path = tmp_path / f"survey{suffix}"
+        path.write_text("H0100 Merged Survey Export\nH0201 Date of Export: 09.06.2006\n")
+        assert handler.matches(path, path.read_bytes()), suffix

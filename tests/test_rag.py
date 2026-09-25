@@ -264,3 +264,17 @@ def test_rebuild_empties_every_table(tmp_path, monkeypatch):
     for table in ("documents", "doc_meta"):
         assert con.execute(f"SELECT count(*) FROM {table}").fetchone()[0] == 0, table
     con.close()
+
+
+def test_handlers_can_be_turned_off_for_the_baseline_arm(tmp_path, monkeypatch):
+    """The comparison this project exists to make needs a pipeline with no
+    domain knowledge in it at all."""
+    from geo_mini_rag import ep
+
+    path = tmp_path / "well.las"
+    path.write_text("~VERSION\nVERS. 2.0 :\n~WELL\nWELL. TEST #1 : Well\n")
+    head = path.read_bytes()
+
+    assert ep.find(path, head) is not None
+    monkeypatch.setenv("GEO_NO_EP_HANDLERS", "1")
+    assert ep.find(path, head) is None
