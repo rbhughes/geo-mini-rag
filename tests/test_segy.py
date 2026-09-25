@@ -197,3 +197,14 @@ def test_the_projection_card_is_read_like_any_other_label():
     labels = header.labels()
     assert labels["projection"] == "State Plane"
     assert labels["zone"] == "Lousiana North 1701"
+
+
+def test_an_unfilled_column_heading_is_not_part_of_the_value():
+    """A template card fills one column and leaves the next heading standing
+    right beside it, so the client read as "... INC. COMPANY"."""
+    from geo_mini_rag.ep.segy import SegyHeader
+
+    header = SegyHeader(path=pathlib.Path("x.sgy"), encoding="cp037", cards=[
+        "C 1 CLIENT ENCANA OIL & GAS (USA) INC. COMPANY                    CREW NO",
+    ])
+    assert header.labels()["client"] == "ENCANA OIL & GAS (USA) INC"

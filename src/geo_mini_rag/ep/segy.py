@@ -142,7 +142,17 @@ CARD_NUMBER = re.compile(r"^C\s*\d{0,2}\s?")
 # NUMBER:  17   LONG   LINE RECORD" is a byte-offset map, and the template
 # card "CLIENT                COMPANY" is an unfilled form, not a client named
 # COMPANY. A value carrying a colon is a label of its own, so it is not one.
-BARE_LABEL = re.compile(r"^(?P<label>[A-Z][A-Z &/.]{2,18}?) (?P<value>\S[^\n]*?)(?=\s{2,}|$)")
+# The value also stops at the next column's name, because a template card fills
+# one column and leaves the next heading standing right beside it:
+#   C 1 CLIENT ENCANA OIL & GAS (USA) INC. COMPANY          CREW NO
+# without this the client is read as "... INC. COMPANY".
+_COLUMN_NAMES = "|".join(
+    re.escape(name) for name in sorted(TEXT_LABELS, key=len, reverse=True)
+)
+BARE_LABEL = re.compile(
+    r"^(?P<label>[A-Z][A-Z &/.]{2,18}?) (?P<value>\S[^\n]*?)"
+    rf"(?=\s{{2,}}|\s+(?:{_COLUMN_NAMES})\b|$)"
+)
 
 
 class NotSegy(ValueError):
