@@ -128,7 +128,8 @@ TEXT_LABELS = {
     "CLIENT": "client", "COMPANY": "client", "AREA": "area", "PROSPECT": "area",
     "FIELD": "field", "LINE": "line", "SURVEY": "survey", "CONTRACTOR": "contractor",
     "SHOT BY": "shot_by", "PROCESSED BY": "processed_by", "DATUM": "datum",
-    "PROJECTION": "projection", "MEAS UNITS": "units", "UNITS": "units",
+    "PROJECTION": "projection", "MAP PROJECTION": "projection", "ZONE": "zone",
+    "MEAS UNITS": "units", "UNITS": "units",
 }
 LABEL = re.compile(
     r"(?P<label>[A-Z][A-Z &/.]{2,18}?)\s*:\s*(?P<value>[^:]*?)"

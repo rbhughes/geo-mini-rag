@@ -184,3 +184,16 @@ def test_an_unfilled_template_card_yields_nothing():
         "C 1 CLIENT                        COMPANY                       CREW NO",
     ])
     assert header.labels() == {}, "CLIENT is a blank column here, not a client named COMPANY"
+
+
+def test_the_projection_card_is_read_like_any_other_label():
+    """Three ENCANA files carry the coordinate system on one card, in exactly
+    the form the reader already parses; the labels were simply not in the table."""
+    from geo_mini_rag.ep.segy import SegyHeader
+
+    header = SegyHeader(path=pathlib.Path("x.sgy"), encoding="cp037", cards=[
+        "C33 MAP PROJECTION: State Plane  ZONE: Lousiana North 1701  COORD. UNITS: feet",
+    ])
+    labels = header.labels()
+    assert labels["projection"] == "State Plane"
+    assert labels["zone"] == "Lousiana North 1701"
