@@ -92,8 +92,29 @@ this one:
   of 2,111 wells is 500 chunks that read alike, and without this it held every
   place in the top ten for any question about wells.
 
-`geo-mini-rag eval evals/subset.jsonl` scores retrieval against questions with
-known answers: recall@k and MRR, no model judging the output.
+`geo-mini-rag eval` scores retrieval against questions with known answers:
+recall@k and MRR, with no model judging the output.
+
+`evals/corpus.jsonl` holds 103 of them, one per document, spread across
+formats rather than across the corpus — two thirds of the files are well logs,
+and a proportional sample would only measure the LAS reader. Where it lands
+today:
+
+| format | n | recall@1 | recall@5 | MRR |
+|---|---|---|---|---|
+| LAS | 28 | 82% | 93% | 0.851 |
+| PDF | 22 | 50% | 77% | 0.636 |
+| plain text | 22 | 50% | 59% | 0.545 |
+| HTML | 18 | 44% | 72% | 0.569 |
+| shapefile | 10 | 60% | 90% | 0.703 |
+| **all** | **103** | **58%** | **77%** | **0.663** |
+
+Read recall@5 first: `top_k` is 6, so it is what the model actually sees.
+
+Sample size is the reason this set exists. At 22 questions the 95% interval on
+a recall figure is about +/- 16 points, so any change worth less than that was
+indistinguishable from luck. At 103 it is about +/- 8, which is still wide
+enough to be careful with.
 
 ## Layout
 

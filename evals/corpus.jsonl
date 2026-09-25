@@ -1,0 +1,121 @@
+# 103 questions over data/raw, one per document.
+#
+# How they were made: each question comes from one chunk the index actually
+# holds. Most were drafted by the project's own chat model reading that chunk;
+# the ones marked las/segy were templated from header fields instead, because a
+# model reading one LAS header writes the same question every time.
+#
+# Every question then had to survive four checks, whatever wrote it:
+#   - the answer appears verbatim in the source document
+#   - the question does not contain its own answer, or name the file
+#   - the question stands alone: no "this well", which nobody could answer
+#   - the answer appears in at most 3 documents, so there is one right answer
+#
+# What this set does not measure: these questions are literal and well-formed,
+# because whatever wrote them could see the answer. A person asking vaguely is
+# a harder case, and evals/subset.jsonl keeps 22 hand-written questions for it.
+#
+# By format: docx 1, html 18, las 28, pdf 22, segy 2, shapefile 10, text 22
+{"q": "What parameter besides Tau can you edit to change the shape of the SED curve?", "expect_path": "data/raw/biz/aries_update.docx", "expect_text": "edit S/n to also change the shape", "note": "docx"}
+{"q": "What is the composition of the decagonal quasicrystal studied by Suck, Scheffer and Sterzel?", "expect_path": "data/raw/govdocs1_thread0/001/001350.html", "expect_text": "Zn58Mg40Y2", "note": "html"}
+{"q": "What was confirmed in blood samples from lizards in Florida and South Carolina?", "expect_path": "data/raw/govdocs1_thread0/016/016006.html", "expect_text": "numerous strains of B. burgdorferi sensu lato", "note": "html"}
+{"q": "What did the FAA propose to provide relief from in Proposal 51?", "expect_path": "data/raw/govdocs1_thread0/043/043267.html", "expect_text": "relief from non-destructive testing requirements for critical castings", "note": "html"}
+{"q": "What chart symbol applies to the abandoned pipeline entries?", "expect_path": "data/raw/govdocs1_thread0/122/122925.html", "expect_text": "Cht. 1 symbol L 44", "note": "html"}
+{"q": "What does the TBT_C field represent?", "expect_path": "data/raw/govdocs1_thread0/176/176977.html", "expect_text": "concentration of Tributyl tin", "note": "html"}
+{"q": "What was established in 1880 after the Silver Bow Basin was discovered?", "expect_path": "data/raw/govdocs1_thread0/192/192476.html", "expect_text": "the establishment of Juneau", "note": "html"}
+{"q": "What structure did Nakayama, Makoto and Kanamaru, Masahiro create for Yazaki Corporation?", "expect_path": "data/raw/govdocs1_thread0/203/203006.html", "expect_text": "housing electrical junction box in housing box", "note": "html"}
+{"q": "What is the function of the Stellar Camera's star images during laser altimetry?", "expect_path": "data/raw/govdocs1_thread0/340/340363.html", "expect_text": "calibrates the laser's direction", "note": "html"}
+{"q": "What did Amos G. Warner use to publish his studies of the causes of poverty?", "expect_path": "data/raw/govdocs1_thread0/427/427558.html", "expect_text": "COS case records", "note": "html"}
+{"q": "What did the President deny about the Paula Jones civil suit allegations during his January 21 NPR interview?", "expect_path": "data/raw/govdocs1_thread0/514/514378.html", "expect_text": "No, sir, there's not. It's just not true.", "note": "html"}
+{"q": "On what date did the wood-chipping incident occur?", "expect_path": "data/raw/govdocs1_thread0/580/580767.html", "expect_text": "Sunday, June 14, 2003", "note": "html"}
+{"q": "What must travelers demonstrate regarding yellow fever before arrival?", "expect_path": "data/raw/govdocs1_thread0/583/583534.html", "expect_text": "proof of inoculation against yellow fever", "note": "html"}
+{"q": "What does the R8ntb designation mean in the AMPR data files?", "expect_path": "data/raw/govdocs1_thread0/611/611577.html", "expect_text": "High precision navigated brightness temperatures", "note": "html"}
+{"q": "What is the solicitation number for the CASA 352L aircraft?", "expect_path": "data/raw/govdocs1_thread0/636/636257.html", "expect_text": "NMUSAF-SOLICITATION-08-001", "note": "html"}
+{"q": "What is used in two-stage total knee arthroplasty for infection?", "expect_path": "data/raw/govdocs1_thread0/642/642316.html", "expect_text": "Use of recombinant human erythropoietin", "note": "html"}
+{"q": "What is the name of the railroad company that had a correction entry?", "expect_path": "data/raw/govdocs1_thread0/758/758458.html", "expect_text": "Tongue River Railroad Co.", "note": "html"}
+{"q": "Which fault is plotted in Figure 10 with pre- and post-Loma Prieta seismicity?", "expect_path": "data/raw/govdocs1_thread0/876/876727.html", "expect_text": "Berrocal fault", "note": "html"}
+{"q": "Which book examines a 19th-century British artist's fascination with steam power?", "expect_path": "data/raw/govdocs1_thread0/958/958074.html", "expect_text": "J.M.W.Turner: Romantic Painter of the Industrial Revolution", "note": "html"}
+{"q": "Which service company logged 21-5-9 Sooner Unit?", "expect_path": "data/raw/data/EarthPAK Data/SoonerLASIHS/Su2159.las", "expect_text": "Phoenix Surveys, Inc.", "note": "las"}
+{"q": "What is the operator of the Chambers 43-24 well?", "expect_path": "data/raw/data/Powder/Digitallogs/49005227970000.LAS", "expect_text": "BURLINGTON NORTHERN", "note": "las"}
+{"q": "What is the logged interval for well Southland Fed 22-9?", "expect_path": "data/raw/data/Powder/Digitallogs/49005240220000.LAS", "expect_text": "9890 to 10220 F, step 1", "note": "las"}
+{"q": "Who operates the Dunlap Farms 1 well?", "expect_path": "data/raw/data/Powder/Digitallogs/49005259110000.LAS", "expect_text": "AMINOIL USA INC", "note": "las"}
+{"q": "When was US TP #1-3 logged?", "expect_path": "data/raw/las/teapot_deep/49025064250000_13345_00015H308204.LAS", "expect_text": "27-FEB-1953", "note": "las"}
+{"q": "What is the API number for the FENIX NPR 3 \"AX\" well?", "expect_path": "data/raw/las/teapot_deep/49025103840000_275244.LAS", "expect_text": "49025103840000", "note": "las"}
+{"q": "When was FENIX SCISSON #18-27 logged?", "expect_path": "data/raw/las/teapot_deep/49025104210000_276959.LAS", "expect_text": "26-SEP-1977", "note": "las"}
+{"q": "What is the API number for the FENIX & SCISSON \"A\" #108-29 well located in Natrona County, Wyoming?", "expect_path": "data/raw/las/teapot_deep/49025104380000_294736.LAS", "expect_text": "49025104380000", "note": "las"}
+{"q": "What is the API number of well FENIX & SCISSON INC A 405-20?", "expect_path": "data/raw/las/teapot_deep/49025104440000_289992.LAS", "expect_text": "49025104440000", "note": "las"}
+{"q": "What is the API number for the FENIX & SCISSON \"A\" #201-33 well?", "expect_path": "data/raw/las/teapot_deep/49025105950000_294998.LAS", "expect_text": "49025105950000", "note": "las"}
+{"q": "What field is the well FENIX \"LX\" #33-10 in?", "expect_path": "data/raw/las/teapot_deep/49025105980000_282179.LAS", "expect_text": "TEAPOT DOME (NPR #3)", "note": "las"}
+{"q": "What field is the well FENIX \"AX\" #78-34 in?", "expect_path": "data/raw/las/teapot_deep/49025108670000_284780.LAS", "expect_text": "NAVAL PET. RES. NO. 3", "note": "las"}
+{"q": "Which service company logged LAWRENCE \"A\" #401-10?", "expect_path": "data/raw/las/teapot_deep/49025108800000_288151.LAS", "expect_text": "BELL PETROLEUM SURVEY", "note": "las"}
+{"q": "What field is the well LAWRENCE \"X\" #25-11 in?", "expect_path": "data/raw/las/teapot_deep/49025109170000_13344_00005H309034.LAS", "expect_text": "N.P.R NO. 3", "note": "las"}
+{"q": "What is the logged interval for well LAWRENCE X #85-10?", "expect_path": "data/raw/las/teapot_deep/49025109580000_281428.LAS", "expect_text": "2496 to 4120 F", "note": "las"}
+{"q": "Which service company logged LAWRENCE \"X\" #86-3?", "expect_path": "data/raw/las/teapot_deep/49025110920000_276520.LAS", "expect_text": "DRESSER ALAS", "note": "las"}
+{"q": "Which service company logged 84-6 X 10?", "expect_path": "data/raw/las/teapot_deep/490252275300/846X10D002.las", "expect_text": "WESTERN ATLAS LOGGING SERVICES", "note": "las"}
+{"q": "What is the API number for well NRR 3 ##65S-11?", "expect_path": "data/raw/las/teapot_shallow/49025063410000_480730.LAS", "expect_text": "API number: 490250634100", "note": "las"}
+{"q": "What is the logged interval for well N.P.R. #3 #48-S-2?", "expect_path": "data/raw/las/teapot_shallow/49025063920000_481206.LAS", "expect_text": "67 to 812 F", "note": "las"}
+{"q": "Who operated well 37 STX 10?", "expect_path": "data/raw/las/teapot_shallow/49025109420000_494414.LAS", "expect_text": "Operator: US DEPTMNT OF ENRGY", "note": "las"}
+{"q": "When was NPR 3 #51-41SX10UP4 logged?", "expect_path": "data/raw/las/teapot_shallow/49025110000000_484711.las", "expect_text": "15-DEC-1984", "note": "las"}
+{"q": "What field is the well NPR 3 #58-66SX3LI1 in?", "expect_path": "data/raw/las/teapot_shallow/49025110010000_486662.las", "expect_text": "WALDCAT", "note": "las"}
+{"q": "What is the logged interval for well NPR 3 #52-51SX10OB5?", "expect_path": "data/raw/las/teapot_shallow/49025110100000_483758.las", "expect_text": "18 to 449 F, step 0.5", "note": "las"}
+{"q": "When was 52-15 STX #52-10 logged?", "expect_path": "data/raw/las/teapot_shallow/49025111460000_485465.las", "expect_text": "23-JUL-1987", "note": "las"}
+{"q": "What is the logged interval for well NAVAL PETROLEUM RESERVE 3 X-23 #52-23?", "expect_path": "data/raw/las/teapot_shallow/49025227150000_484775.las", "expect_text": "52.5 to 2929 F", "note": "las"}
+{"q": "When was 26 SX 3 #26-3 logged?", "expect_path": "data/raw/las/teapot_shallow/us49025107150000_0_00223h492381.las", "expect_text": "01-OCT-1978", "note": "las"}
+{"q": "What field is the well CLAIR E SPRAQUE 2 in?", "expect_path": "data/raw/las2/35003203240000.las", "expect_text": "RINGWOOD", "note": "las"}
+{"q": "Which service company logged PURCELL 1-32?", "expect_path": "data/raw/las2/7_hzslam.las", "expect_text": "Baker Atlas", "note": "las"}
+{"q": "Who has the exclusive right to operate the unit?", "expect_path": "data/raw/gis/Allpoints_Petro/Hyperlink/UnitAgreements/EAST_TEAPOT_AMAX.pdf", "expect_text": "Unit Operator shall have the exclusive right", "note": "pdf"}
+{"q": "Who is the Vice President of Kewanee Oil Company?", "expect_path": "data/raw/gis/Allpoints_Petro/Hyperlink/UnitAgreements/SALT_CREEK_WEST.pdf", "expect_text": "J. M. Harbison", "note": "pdf"}
+{"q": "What was the amount of the Federal Assistance Award from the U.S. Embassy in New Delhi that funded the restoration of the University of Madras Senate House?", "expect_path": "data/raw/govdocs1_thread0/013/013366.pdf", "expect_text": "more than $35,000", "note": "pdf"}
+{"q": "What population is targeted in the proposed RCT examining aerosolized heparin for burn patients?", "expect_path": "data/raw/govdocs1_thread0/050/050739.pdf", "expect_text": "critically injured burn patients", "note": "pdf"}
+{"q": "What mechanism does TLS provide for users to authenticate more quickly while roaming between access points?", "expect_path": "data/raw/govdocs1_thread0/054/054018.pdf", "expect_text": "TLS provides a connection reestablishment mechanism", "note": "pdf"}
+{"q": "What is Taiwan's targeted rice production area?", "expect_path": "data/raw/govdocs1_thread0/092/092145.pdf", "expect_text": "258,000 hectares", "note": "pdf"}
+{"q": "What past effects are identified for the change in prey availability of the GOA shallow water flatfish stock complex?", "expect_path": "data/raw/govdocs1_thread0/106/106794.pdf", "expect_text": "climate changes and regime shifts", "note": "pdf"}
+{"q": "What methods have expanded the observational base for postseismic deformation?", "expect_path": "data/raw/govdocs1_thread0/180/180527.pdf", "expect_text": "new high-precision methods of space geodesy", "note": "pdf"}
+{"q": "Which university received funds for the Salton Sea project?", "expect_path": "data/raw/govdocs1_thread0/218/218817.pdf", "expect_text": "The University of Redlands was appropriated funds", "note": "pdf"}
+{"q": "What did the absence of Bragg peaks after injecting CRM197 at 0.93 mM and lowering the pH to 5.1 indicate about the DPPG monolayer?", "expect_path": "data/raw/govdocs1_thread0/235/235936.pdf", "expect_text": "insertion of protein segments into the DPPG monolayer", "note": "pdf"}
+{"q": "Who donated the wool Afghani rug to the U.S. Government?", "expect_path": "data/raw/govdocs1_thread0/249/249193.pdf", "expect_text": "His Excellency Hamid Karzai", "note": "pdf"}
+{"q": "On what date did Sherwin Williams Chemical Division buy the plant?", "expect_path": "data/raw/govdocs1_thread0/264/264762.pdf", "expect_text": "November 24, 1980", "note": "pdf"}
+{"q": "What is Australia's tourism promotion budget over three years?", "expect_path": "data/raw/govdocs1_thread0/278/278775.pdf", "expect_text": "more than $300 million", "note": "pdf"}
+{"q": "What case is cited as an example of a small emotional distress award?", "expect_path": "data/raw/govdocs1_thread0/308/308432.pdf", "expect_text": "HUD v. Murphy", "note": "pdf"}
+{"q": "What was Fenton Hill's former designation on Laboratory maps?", "expect_path": "data/raw/govdocs1_thread0/331/331933.pdf", "expect_text": "TA-57", "note": "pdf"}
+{"q": "What effect do reductions in transgenic fertility below 1% have on transgene flow?", "expect_path": "data/raw/govdocs1_thread0/379/379900.pdf", "expect_text": "had little effect on transgene flow", "note": "pdf"}
+{"q": "How many vehicle groups were used to calculate backing rates in the State Data System analysis?", "expect_path": "data/raw/govdocs1_thread0/426/426558.pdf", "expect_text": "21 vehicle groups", "note": "pdf"}
+{"q": "What phrase in Look about You links attire to headdress?", "expect_path": "data/raw/govdocs1_thread0/476/476931.pdf", "expect_text": "night attire on his head", "note": "pdf"}
+{"q": "Which financial sustainability measures are recommended for malaria control projects?", "expect_path": "data/raw/govdocs1_thread0/520/520936.pdf", "expect_text": "Prendre des mesures de p\u00e9rennisation financi\u00e8res:", "note": "pdf"}
+{"q": "What is the elemental mercury capacity of S-AC in argon?", "expect_path": "data/raw/govdocs1_thread0/734/734451.pdf", "expect_text": "3.5 mg/g in argon", "note": "pdf"}
+{"q": "What channel substitution was proposed for Astoria, Oregon?", "expect_path": "data/raw/govdocs1_thread0/870/870165.pdf", "expect_text": "Channel 226C3 for Channel 225C1 at Astoria, Oregon", "note": "pdf"}
+{"q": "What reference number is associated with the QUICK State Status Page?", "expect_path": "data/raw/govdocs1_thread0/977/977110.pdf", "expect_text": "OCSE Ref # 2489", "note": "pdf"}
+{"q": "What line and area does the ENCANA Oil & Gas seismic survey cover in the Arkoma Basin?", "expect_path": "data/raw/seis/debug/P55254.PCP-TER-MX-97-33.mig.199709.sgl.MIG.0.sgy", "expect_text": "LINE SWA-10 AREA SOUTHWEST ARKOMA BASIN", "note": "segy"}
+{"q": "What velocity value was used for refraction correction in processing?", "expect_path": "data/raw/seis/ld0042_file_00017.sgy", "expect_text": "REFRACTION VELOCITY: 5941 M/SEC", "note": "segy"}
+{"q": "Who operates the Salt Creek gas plant?", "expect_path": "data/raw/gis/Allpoints_Petro/Editing/WY_gas_plants.shp", "expect_text": "HOWELL PETROLEUM CORP 1111", "note": "shapefile"}
+{"q": "White population range for this region?", "expect_path": "data/raw/gis/Allpoints_Petro/GeoReferencing/States_TX_OK.shp", "expect_text": "2.62843e+06 to 1.47995e+07", "note": "shapefile"}
+{"q": "What geological formation is listed as a fault description in Wyoming?", "expect_path": "data/raw/gis/Allpoints_Petro/Projections/WY_faults_dd.shp", "expect_text": "base of Shannon Sandstone Member", "note": "shapefile"}
+{"q": "How many features does the USGS Prov UTM12-27 polygon map layer contain?", "expect_path": "data/raw/gis/Allpoints_Petro/Tables/USGS_Prov_UTM12-27.shp", "expect_text": "113 features", "note": "shapefile"}
+{"q": "What historical detail was added for each state?", "expect_path": "data/raw/gis/Allpoints_Petro/Tables/UT_State_UTM12_NAD27.shp", "expect_text": "the date when each State was admitted", "note": "shapefile"}
+{"q": "What is the alternate name for Schoonover Rd?", "expect_path": "data/raw/gis/Allpoints_Petro/WY_data/MajorRoads_WY.shp", "expect_text": "ALT1_NAME: BUFFALO CUT ACROSS RD", "note": "shapefile"}
+{"q": "What positional offset threshold was used for snapping hydrographic features?", "expect_path": "data/raw/gis/Allpoints_Petro/WY_data/Streams_WY.shp", "expect_text": "less than or equal to 200 m", "note": "shapefile"}
+{"q": "What is the surface name for S University Blvd?", "expect_path": "data/raw/gis/DENV/FCROADS.shp", "expect_text": "61 High Flexible", "note": "shapefile"}
+{"q": "What legend category is Bungalow listed under?", "expect_path": "data/raw/gis/boulder_All_Files/Histdist.shp", "expect_text": "POTENTIAL LOCAL HISTORIC DISTRICTS", "note": "shapefile"}
+{"q": "When was the Sooner Unit field discovered?", "expect_path": "data/raw/tks/SOONER/Sooner Unit_lin.shp", "expect_text": "1985 to 1985", "note": "shapefile"}
+{"q": "Where is the MI112 C lease located?", "expect_path": "data/raw/data/Powder/Leases/Sample.ldf", "expect_text": "Big Horn Campbell Wyoming USA", "note": "text"}
+{"q": "What error message appears for wells with missing coordinate data?", "expect_path": "data/raw/ggx/Teapot/User Files/rhughes/Log Files/Import.log", "expect_text": "Missing or invalid coordinate(s) for UWI", "note": "text"}
+{"q": "What fragment contains the substring 'OTkm5ub'?", "expect_path": "data/raw/gis/Allpoints_Petro/GeoReferencing/Counties_TX_OK.shp.xml", "expect_text": "lLi45OTkm5ub", "note": "text"}
+{"q": "Where was the National Atlas of the United States hydrography map published?", "expect_path": "data/raw/gis/Allpoints_Petro/Tables/UT_State_UTM12_NAD27.shp.xml", "expect_text": "Reston, Virginia", "note": "text"}
+{"q": "What does WELLV stand for?", "expect_path": "data/raw/gis/usgs/shape/ohcells04g.shp.xml", "expect_text": "WELLV = Oil and gas well.", "note": "text"}
+{"q": "What opportunity do technical soil services provide for new customers?", "expect_path": "data/raw/govdocs1_thread0/032/032132.txt", "expect_text": "a means to obtain advocates for the program", "note": "text"}
+{"q": "What percentage of voting stock ownership creates a presumption of control over a concern?", "expect_path": "data/raw/govdocs1_thread0/076/076430.txt", "expect_text": "50 percent or more", "note": "text"}
+{"q": "What is the unemployment rate as a percent of the civilian labor force?", "expect_path": "data/raw/govdocs1_thread0/111/111807.csv", "expect_text": "7.1,+/-0.2,8.1,+/-0.3,5.9,+/-0.3,4.7,+/-0.5,7.2,+/-0.5", "note": "text"}
+{"q": "How many department and other general merchandise stores are there?", "expect_path": "data/raw/govdocs1_thread0/131/131213.csv", "expect_text": "9,856", "note": "text"}
+{"q": "What is the first character sequence embedded within the repeated 'f' pattern?", "expect_path": "data/raw/govdocs1_thread0/234/234507.ps", "expect_text": "271f27", "note": "text"}
+{"q": "What data is associated with the WAY GAR location in the GPS1533 entry?", "expect_path": "data/raw/govdocs1_thread0/243/243616.txt", "expect_text": "WAY GAR AB6137 1832 NASH AB6094 1789", "note": "text"}
+{"q": "When was well BBO1 recorded?", "expect_path": "data/raw/govdocs1_thread0/344/344378.txt", "expect_text": "19990608", "note": "text"}
+{"q": "What was the population of Mississippi County, Arkansas in the first year shown?", "expect_path": "data/raw/govdocs1_thread0/481/481301.csv", "expect_text": "40,391", "note": "text"}
+{"q": "What onsource status warning was reported for antenna 195142816?", "expect_path": "data/raw/govdocs1_thread0/542/542766.log", "expect_text": "ONSOURCE status is SLEWING", "note": "text"}
+{"q": "What must the agreement promote regarding bulk-power system reliability?", "expect_path": "data/raw/govdocs1_thread0/556/556176.xml", "expect_text": "effective and efficient administration of bulk-power system reliability", "note": "text"}
+{"q": "What units are used to express the minimum temperature values?", "expect_path": "data/raw/govdocs1_thread0/576/576891.xml", "expect_text": "degrees Celsius*100", "note": "text"}
+{"q": "What is the email address of the DAPS Group Leader at USGS?", "expect_path": "data/raw/govdocs1_thread0/582/582771.xml", "expect_text": "csteele@usgs.gov", "note": "text"}
+{"q": "What are the expected snowfall totals for Schuylkill County and the counties north of it?", "expect_path": "data/raw/govdocs1_thread0/648/648587.txt", "expect_text": "12 to 15 INCHES", "note": "text"}
+{"q": "What is the measured/calculated noise for Channel 1 after adding pair 23?", "expect_path": "data/raw/govdocs1_thread0/810/810515.txt", "expect_text": "Channel 1: measured/calculated noise = 0.973", "note": "text"}
+{"q": "What was the 6 hour rainfall total at Allandale on March 15 2009?", "expect_path": "data/raw/govdocs1_thread0/879/879798.kml", "expect_text": "0.00 in.", "note": "text"}
+{"q": "What values correspond to a depth of 800.0000?", "expect_path": "data/raw/las/sub/49025063280000_483470.txt", "expect_text": "800.0000 42.5826 -37.6458 76.9614 13.7500 12.5349", "note": "text"}
+{"q": "What is the UWI for WSN 734?", "expect_path": "data/raw/pet/ENERDEQ_TEST/REPORTS/IHSLoaderReport_RHUGHES.txt", "expect_text": "UWI:05001075300000", "note": "text"}
