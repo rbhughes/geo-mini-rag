@@ -64,3 +64,17 @@ def test_header_card_still_reads_for_a_person(parsed):
     assert "Well: NPR #3 #13SX11-11" in header
     assert "API number: 490251029400" in header
     assert "Logged interval: 30 to 570 F, step 0.5" in header
+
+
+def test_every_las_is_claimed_even_the_ones_that_cannot_be_read(tmp_path):
+    """A .las with no ~ sections is a curve table with a header glued on. Left to
+    the ordinary text reader it became 102 chunks of "6480.69 98.04"."""
+    from geo_mini_rag.ep.las import LasHandler
+    from geo_mini_rag.rag.extract import Skip
+
+    path = tmp_path / "headerless.las"
+    path.write_text("COMP .   Chaparral Energy : Company\n6480.69 98.04\n6480.83 98.04\n")
+    handler = LasHandler()
+    assert handler.matches(path, path.read_bytes())
+    with pytest.raises(Skip, match="unreadable las"):
+        handler.parse(path, settings.load_rag_config(), OFF)

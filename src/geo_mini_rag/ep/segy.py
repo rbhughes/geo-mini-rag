@@ -21,7 +21,6 @@ Standard library only; `cp037` is the EBCDIC code page SEG-Y writers use, with
     header.text                       # the 40 cards
     header.binary["sample_interval_us"]
 
-    python -m geo_mini_rag.ep.segy survey.sgy
 """
 
 from __future__ import annotations
@@ -349,36 +348,3 @@ def _acquisition_text(path: Path, header: SegyHeader) -> str:
         if key in header.binary:
             lines.append(f"{label}: {header.binary[key]}")
     return "\n".join(lines)
-
-
-def main(argv: list[str] | None = None) -> int:
-    import argparse
-
-    parser = argparse.ArgumentParser(description="Print the headers of a SEG-Y file.")
-    parser.add_argument("files", nargs="+", type=Path)
-    parser.add_argument("--text-only", action="store_true", help="Just the textual header.")
-    parser.add_argument("--loose", action="store_true",
-                        help="Read the headers even if the binary block is implausible.")
-    parser.add_argument("--byteorder", choices=("big", "little"), default="big",
-                        help="Binary header byte order for files written byte-swapped.")
-    parser.add_argument("--encoding", choices=ENCODINGS,
-                        help="Force the textual-header encoding instead of detecting it.")
-    args = parser.parse_args(argv)
-
-    failed = False
-    for n, path in enumerate(args.files):
-        if n:
-            print("\n" + "=" * 72 + "\n")
-        try:
-            header = read_headers(path, strict=not args.loose,
-                                  byteorder=args.byteorder, encoding=args.encoding)
-        except (NotSegy, OSError) as exc:
-            failed = True
-            print(f"{path}: {exc}")
-            continue
-        print(header.text if args.text_only else summary(header))
-    return 1 if failed else 0
-
-
-if __name__ == "__main__":
-    raise SystemExit(main())

@@ -191,7 +191,7 @@ def test_a_value_on_nearly_every_feature_is_left_to_the_layer(tmp_path):
     rows = [(f"No. {n}", "3" if n else "4", "ACTIVE" if n % 3 else "PLUGGED") for n in range(60)]
     layer = read_layer(write_bundle(tmp_path, "Roads", fields, rows))
 
-    kept = [c.name for c in detail_fields(layer, DEFAULTS)]
+    kept = [c.name for c in detail_fields(layer, DEFAULTS["dominant_max_share"])]
     assert kept == ["WELL_NAME", "STATUS"], "SURF_TYPE varies on one row in sixty"
 
 
@@ -203,7 +203,7 @@ def test_bare_number_fields_are_not_worth_a_sentence(tmp_path):
             for i in range(15) for half in (0, 1)]
     layer = read_layer(write_bundle(tmp_path, "Segments", fields, rows))
 
-    assert [c.name for c in detail_fields(layer, DEFAULTS)] == ["ROUTENAME", "FROM_DESCR"]
+    assert [c.name for c in detail_fields(layer, DEFAULTS["dominant_max_share"])] == ["ROUTENAME", "FROM_DESCR"]
     chunks = feature_chunks(layer, DEFAULTS)
     assert "SEGMID" not in chunks[0], "a segment id is not a word"
     assert len(_features(chunks[0])) == 15, "thirty segments, fifteen descriptions"

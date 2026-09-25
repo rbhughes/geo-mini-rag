@@ -166,27 +166,6 @@ def ten(value: str) -> str:
         return value.strip()
     digits = re.sub(r"\D", "", value)
     return digits[:10] if len(digits) in (10, 12, 14) else value.strip()
-
-
-def main(argv: list[str] | None = None) -> int:
-    import argparse
-
-    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("paths", nargs="+", type=Path)
-    args = parser.parse_args(argv)
-    for path in args.paths:
-        found = find(path.read_text(encoding="latin-1", errors="replace"))
-        print(f"{path}: {len(found)} identifiers")
-        for well in found[:20]:
-            counties = "/".join(well.counties)
-            print(f"  {well.api}{well.suffix}  {well.state} {counties:22} as written: {well.text!r}")
-    return 0
-
-
-if __name__ == "__main__":
-    raise SystemExit(main())
-
-
 def enrich(metadata: dict, segments: list[tuple[int | None, str]]) -> dict:
     """The `api`, `api_state` and `api_county` facts a document carries.
 

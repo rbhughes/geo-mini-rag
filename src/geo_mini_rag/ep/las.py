@@ -43,10 +43,14 @@ class LasHandler:
     name = "las"
 
     def matches(self, path: Path, head: bytes) -> bool:
-        if path.suffix.lower() != ".las":
-            return False
-        # LAS files open with a version section, sometimes after comment lines
-        return b"~V" in head[:4096].upper()
+        """Every .las file, readable or not.
+
+        Claiming only the ones with a ~V section left the rest to the ordinary
+        text reader, which turned a curve table into chunks like "6480.69 98.04
+        \n 6480.83 98.04" and embedded them. A .las this cannot read is worth a
+        row saying so, not 102 chunks of depth and gamma readings.
+        """
+        return path.suffix.lower() == ".las"
 
     def parse(self, path: Path, cfg: dict, trace: Tracer) -> Extracted:
         import lasio
@@ -54,7 +58,7 @@ class LasHandler:
         try:
             las = lasio.read(str(path), ignore_data=True)
         except Exception as exc:  # lasio raises many shapes on malformed files
-            raise Skip(f"unreadable las: {type(exc).__name__}: {exc}") from exc
+            raise Skip(f"unreadable las: {exc}") from exc
 
         meta: dict[str, object] = {}
         for item in las.well:

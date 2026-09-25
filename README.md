@@ -34,6 +34,13 @@ uv run geo-mini-rag ask "question"     # answer with citations (paid)
 uv run geo-mini-rag meta               # what metadata the index holds
 ```
 
+To see what the pipeline reads out of one file, without a key or a database:
+
+```sh
+python -m geo_mini_rag.ep.inspect data/raw/las/some.las
+python -m geo_mini_rag.ep.inspect --facts data/raw/gis/layer.shp
+```
+
 Re-running `ingest` costs nothing for files that have not changed: it compares
 size and mtime, and hashes content so a second copy of a file is recorded as a
 duplicate instead of indexed twice. `--rebuild` starts over.

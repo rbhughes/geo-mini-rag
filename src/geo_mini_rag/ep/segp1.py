@@ -20,7 +20,6 @@ format and between the vendors who write it.
     survey = read_survey("MHD-101.SEG")
     survey.labels["client"], survey.point_count
 
-    python -m geo_mini_rag.ep.segp1 MHD-101.SEG
 """
 
 from __future__ import annotations
@@ -191,30 +190,3 @@ class SegP1Handler:
             metadata=meta,
             atomic=True,
         )
-
-
-def main(argv: list[str] | None = None) -> int:
-    import argparse
-
-    parser = argparse.ArgumentParser(description="Summarise a SEG-P1 positioning file.")
-    parser.add_argument("files", nargs="+", type=Path)
-    args = parser.parse_args(argv)
-
-    failed = False
-    for n, path in enumerate(args.files):
-        if n:
-            print("\n" + "=" * 72 + "\n")
-        try:
-            survey = read_survey(path)
-        except (NotSegP1, OSError) as exc:
-            failed = True
-            print(f"{path}: {exc}")
-            continue
-        print(survey_text(survey))
-        print()
-        print(points_text(survey))
-    return 1 if failed else 0
-
-
-if __name__ == "__main__":
-    raise SystemExit(main())

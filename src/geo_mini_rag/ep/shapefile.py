@@ -27,7 +27,6 @@ fixed-format table, and `.shp.xml` is XML.
     layer = read_layer("leases.shp")
     layer.crs_name, layer.feature_count, layer.fields
 
-    python -m geo_mini_rag.ep.shapefile leases.shp
 """
 
 from __future__ import annotations
@@ -37,6 +36,7 @@ import struct
 import xml.etree.ElementTree as ET
 from collections import Counter
 from dataclasses import dataclass, field
+from functools import cached_property
 from pathlib import Path
 
 from geo_mini_rag.rag.extract import Extracted, Skip
@@ -89,19 +89,19 @@ class Field:
     length: int
     values: list[str] = field(default_factory=list)
 
-    @property
+    @cached_property
     def filled(self) -> list[str]:
         """Values that say something. A field of blanks is not a field."""
         return [v.strip() for v in self.values if v.strip()]
 
-    @property
+    @cached_property
     def distinct(self) -> int:
         return len(set(self.filled))
 
-    @property
-    def average_length(self) -> float:
-        filled = self.filled
-        return sum(len(v) for v in filled) / len(filled) if filled else 0.0
+    @cached_property
+    def dominant_share(self) -> float:
+        """How much of the field one value covers: 1.0 when every row agrees."""
+        return max(Counter(self.filled).values()) / len(self.filled) if self.filled else 0.0
 
     def role(self, limits: dict) -> str:
         """empty | categorical | identifier | prose | number — measured, not guessed.
@@ -111,14 +111,14 @@ class Field:
         worth filtering on. WELL_NUMBE holds 1,564 values in the same rows and
         names individual things, so it belongs in the text instead.
         """
-        filled = self.filled
-        if not filled:
+        if not self.filled:
             return "empty"
         if self.kind == "number":
             return "number"
-        if self.average_length >= limits["prose_min_length"]:
+        average_length = sum(len(v) for v in self.filled) / len(self.filled)
+        if average_length >= limits["prose_min_length"]:
             return "prose"
-        if self.distinct / len(filled) <= limits["categorical_max_ratio"]:
+        if self.distinct / len(self.filled) <= limits["categorical_max_ratio"]:
             return "categorical"
         return "identifier"
 
@@ -144,10 +144,14 @@ class Layer:
     crs_epsg: str = ""
     metadata: dict[str, str] = field(default_factory=dict)   # from .shp.xml
     fields: list[Field] = field(default_factory=list)
+    roles: dict[str, str] = field(default_factory=dict)      # field name -> its measured role
 
     @property
     def name(self) -> str:
         return self.path.stem
+
+    def by_role(self, *wanted: str) -> list[Field]:
+        return [f for f in self.fields if self.roles[f.name] in wanted]
 
 
 def read_shp_header(path: Path) -> tuple[str, tuple[float, float, float, float] | None]:
@@ -253,10 +257,11 @@ def read_layer(path: str | Path, limits: dict | None = None) -> Layer:
     xml = path.with_name(path.name + ".xml")
     if xml.exists():
         layer.metadata = read_shp_xml(xml)
+    layer.roles = {f.name: f.role(limits) for f in layer.fields}
     return layer
 
 
-def layer_facts(layer: Layer, limits: dict) -> dict[str, object]:
+def layer_facts(layer: Layer) -> dict[str, object]:
     """Facts for filtering and ranking: one row per value, numbers as numbers."""
     facts: dict[str, object] = {
         "geometry_type": layer.geometry,
@@ -272,15 +277,12 @@ def layer_facts(layer: Layer, limits: dict) -> dict[str, object]:
             facts[key] = value
 
     named: list[str] = []
-    for column in layer.fields:
-        role = column.role(limits)
-        if role == "empty":
-            continue
+    for column in layer.by_role("categorical", "identifier", "prose", "number"):
         named.append(column.name)
-        if role == "categorical":
+        if layer.roles[column.name] == "categorical":
             values = sorted(set(column.filled))
             facts[column.name.lower()] = values
-        elif role == "number":
+        elif layer.roles[column.name] == "number":
             numbers = column.numbers()
             if numbers and (min(numbers) or max(numbers)):
                 facts[f"{column.name.lower()}_min"] = min(numbers)
@@ -290,7 +292,7 @@ def layer_facts(layer: Layer, limits: dict) -> dict[str, object]:
     return facts
 
 
-def layer_text(layer: Layer, limits: dict) -> str:
+def layer_text(layer: Layer) -> str:
     """What this layer is, for someone reading or a model retrieving."""
     summary = (
         f"Map layer (shapefile) {layer.name}: {layer.geometry} geometry, "
@@ -314,10 +316,8 @@ def layer_text(layer: Layer, limits: dict) -> str:
         lines.append(f"Extent: {west:g} to {east:g} east, {south:g} to {north:g} north")
 
     described = []
-    for column in layer.fields:
-        role = column.role(limits)
-        if role == "empty":
-            continue
+    for column in layer.by_role("categorical", "identifier", "prose", "number"):
+        role = layer.roles[column.name]
         if role == "categorical":
             values = sorted(set(column.filled))[:8]
             described.append(f"{column.name} ({column.distinct} values): {', '.join(values)}")
@@ -350,7 +350,7 @@ def lead(layer: Layer) -> str:
     return said
 
 
-def detail_fields(layer: Layer, limits: dict) -> list[Field]:
+def detail_fields(layer: Layer, dominant_max_share: float) -> list[Field]:
     """The fields that say something about an individual feature.
 
     Three kinds are left out, all of them already in the layer's facts. A field
@@ -361,19 +361,13 @@ def detail_fields(layer: Layer, limits: dict) -> list[Field]:
     something anyone can search for; repeating it per feature only makes two
     identical rows look distinct.
     """
-    kept: list[Field] = []
-    for column in layer.fields:
-        if column.role(limits) not in ("identifier", "prose", "categorical"):
-            continue
-        filled = column.filled
-        if not filled or column.distinct <= 1:
-            continue
-        if max(Counter(filled).values()) / len(filled) >= limits["dominant_max_share"]:
-            continue
-        if all(BARE_NUMBER.match(value) for value in filled):
-            continue
-        kept.append(column)
-    return kept
+    return [
+        column
+        for column in layer.by_role("identifier", "prose", "categorical")
+        if column.distinct > 1
+        and column.dominant_share < dominant_max_share
+        and not all(BARE_NUMBER.match(value) for value in column.filled)
+    ]
 
 
 def feature_chunks(layer: Layer, limits: dict, budget: int | None = None) -> list[str]:
@@ -395,8 +389,8 @@ def feature_chunks(layer: Layer, limits: dict, budget: int | None = None) -> lis
     four or five and 2,111 wells take 452 chunks; raise chunk.max_characters to
     fit more features into each.
     """
-    carried = detail_fields(layer, limits)
-    if not any(column.role(limits) in ("identifier", "prose") for column in carried):
+    carried = detail_fields(layer, limits["dominant_max_share"])
+    if not any(layer.roles[c.name] in ("identifier", "prose") for c in carried):
         return []
 
     # Two features described by the same words are one description: a text
@@ -458,7 +452,7 @@ class ShapefileHandler:
             # and nothing a person could search for.
             raise Skip("shapefile has no attributes, projection or metadata")
 
-        segments: list[tuple[int | None, str]] = [(None, layer_text(layer, limits))]
+        segments: list[tuple[int | None, str]] = [(None, layer_text(layer))]
         features = feature_chunks(layer, limits, cfg["chunk"]["max_characters"])
         segments.extend((None, chunk) for chunk in features)
 
@@ -467,35 +461,6 @@ class ShapefileHandler:
         return Extracted(
             kind="shapefile",
             segments=segments,
-            metadata=layer_facts(layer, limits),
+            metadata=layer_facts(layer),
             atomic=True,
         )
-
-
-def main(argv: list[str] | None = None) -> int:
-    import argparse
-
-    parser = argparse.ArgumentParser(description="Summarise an ESRI shapefile bundle.")
-    parser.add_argument("files", nargs="+", type=Path)
-    parser.add_argument("--features", action="store_true", help="Print the feature chunks too.")
-    args = parser.parse_args(argv)
-
-    failed = False
-    for n, path in enumerate(args.files):
-        if n:
-            print("\n" + "=" * 72 + "\n")
-        try:
-            layer = read_layer(path)
-        except (NotShapefile, OSError, struct.error) as exc:
-            failed = True
-            print(f"{path}: {exc}")
-            continue
-        print(layer_text(layer, DEFAULTS))
-        if args.features:
-            for chunk in feature_chunks(layer, DEFAULTS)[:3]:
-                print("\n" + chunk)
-    return 1 if failed else 0
-
-
-if __name__ == "__main__":
-    raise SystemExit(main())
