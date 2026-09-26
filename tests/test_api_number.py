@@ -151,3 +151,20 @@ def test_nothing_can_cap_the_identifiers_a_document_yields():
 
     assert not [k for k in DEFAULTS if "max" in k]
     assert "enrich" not in load_rag_config()
+
+
+@pytest.mark.parametrize("written, expected", [
+    ("*2506325", "*2506325"),
+    ("2506325*", "2506325*"),
+    ("*2506325*", "*2506325*"),
+])
+def test_a_fragment_is_starred_the_way_a_glob_is(written, expected):
+    """A vendor's fourteen digits carry a sidetrack after the well, so a
+    fragment taken from a map layer lands in the middle of the longer number
+    rather than at its end: 2506325 ends 2506325 and sits inside 490250632500."""
+    assert in_question(written) == [("api", expected)]
+
+
+def test_a_number_with_no_star_is_not_a_fragment():
+    assert in_question("4902506325") == [("api", "4902506325")]
+    assert in_question("which well is 2506325") == []

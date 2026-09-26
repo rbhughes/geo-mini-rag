@@ -171,10 +171,26 @@ A value that validates is filed as the ten digits that identify the well, the
 same shape every other reader uses; otherwise a well in a map layer and the
 same well in a log are two different wells to the index.
 
-**A partial well number matches by its tail.** The same well is written at
-different lengths by different systems: 1,148 of these wells appear as seven
-digits in a map layer and ten in a log. `*2510867` finds both, and
-`--where api=*2510867` filters on it.
+**No length is imposed on a well number, and matching bridges the lengths.**
+Vendors write fourteen digits, state agencies ten, a map layer sometimes seven
+with the state left off; each is what that system holds, and choosing one would
+throw away the sidetrack and completion the longer forms carry. Separators are
+stripped, the digits are kept, and two numbers name the same well when one runs
+on from the other — sharing a start, where both begin at the state, or an end,
+where one has dropped it.
+
+A fragment is starred the way a glob is, in a question or in `--where`:
+
+| | |
+|---|---|
+| `*2506325` | ends with |
+| `2506325*` | starts with |
+| `*2506325*` | holds it anywhere |
+
+The last matters more than it looks: a fourteen-digit number carries a
+sidetrack *after* the well, so a fragment taken from a map layer lands in the
+middle of it. `2506325` ends `2506325` and sits inside `490250632500`, and only
+the double star reaches both.
 
 **API well numbers** are found in any document, not just the ones with headers
 — a completion report, a loader log, a scanned permit. They are validated

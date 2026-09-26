@@ -219,11 +219,11 @@ def enrich(metadata: dict, segments: list[tuple[int | None, str]]) -> dict:
     return facts
 
 
-# A well number written as a tail: *2500153 finds 4902500153. Archives record
-# the same well at different lengths -- a shapefile keeps county and well and
-# drops the state, a log keeps all ten digits -- and nobody should have to know
-# which before they can search.
-PARTIAL = re.compile(r"(?<![\d*])\*(?P<tail>\d{4,14})(?!\d)")
+# A fragment of a well number, starred the way a glob is: *2500153 ends with,
+# 4902506* starts with, *2506325* holds it anywhere. The last matters because a
+# vendor's fourteen digits carry a sidetrack after the well, so a fragment
+# taken from a map layer lands in the middle rather than at the end.
+PARTIAL = re.compile(r"(?<![\d*])(?P<lead>\*?)(?P<digits>\d{4,14})(?P<trail>\*?)(?!\d)")
 
 
 def in_question(question: str) -> list[tuple[str, str]]:
@@ -234,5 +234,6 @@ def in_question(question: str) -> list[tuple[str, str]]:
     rescue it. Looked up, it is exact. No label is required here: a question is
     a dozen words typed on purpose, and the code table alone decides.
     """
-    found = [("api", "*" + m["tail"]) for m in PARTIAL.finditer(question)]
+    found = [("api", m["lead"] + m["digits"] + m["trail"])
+             for m in PARTIAL.finditer(question) if m["lead"] or m["trail"]]
     return found + [("api", well.api) for well in find(question, require_label=False)]

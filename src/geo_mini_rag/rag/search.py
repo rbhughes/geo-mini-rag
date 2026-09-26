@@ -109,14 +109,16 @@ _SAME_WELL = (
 def _value_clause(key: str, value: object) -> tuple[str, list]:
     """How a stored value is matched against one a question or --where names.
 
-    Three cases, and every caller wants the same three: a leading star matches
-    the tail, a well number matches at any length, anything else matches as
-    text or as a number, since the index stores 18000.0 and a question says
-    18000.
+    Three cases, and every caller wants the same three: a starred fragment
+    matches the way a glob does, a well number matches at any length, and
+    anything else matches as text or as a number, since the index stores
+    18000.0 and a question says 18000.
     """
     value = str(value)
-    if value.startswith("*"):
-        return "value LIKE ?", ["%" + value[1:]]
+    if value.startswith("*") or value.endswith("*"):
+        pattern = ("%" if value.startswith("*") else "") + value.strip("*") \
+            + ("%" if value.endswith("*") else "")
+        return "value LIKE ?", [pattern]
     if key in WELL_KEYS and value.isdigit() and len(value) >= BRIDGE_DIGITS:
         return _SAME_WELL, [value] * 4
     return "(lower(value) = lower(?) OR num_value = try_cast(? AS DOUBLE))", [value, value]
