@@ -256,3 +256,25 @@ def test_a_byte_offset_map_is_not_a_line_name():
         "C 5 LINE NUMBER:  17       LONG       LINE RECORD",
     ])
     assert "line" not in header.labels()
+
+
+def test_a_seismic_line_named_in_a_question_is_looked_up():
+    """93D and 53 are short identifiers, which is what embeddings are worst at:
+    none of the eight line questions put a correct file first without this."""
+    from geo_mini_rag.ep.segy import in_question
+
+    assert in_question("where is seismic line 93D?") == [("line", "93D")]
+    assert in_question("what covers line SWA-10") == [("line", "SWA-10")]
+    assert in_question("how many wells are in the field?") == []
+
+
+def test_processed_for_names_the_client():
+    """Three ENCANA files write "Processed for:" in mixed case, and the label
+    pattern only matched uppercase."""
+    from geo_mini_rag.ep.segy import SegyHeader
+
+    header = SegyHeader(path=pathlib.Path("x.sgy"), encoding="cp037", cards=[
+        "C 1 Processed for: ENCANA OIL & GAS (USA)",
+        "C35 Processed in August 2005 by: Excel Geophysical Services, Inc.",
+    ])
+    assert header.labels()["client"] == "ENCANA OIL & GAS (USA)"

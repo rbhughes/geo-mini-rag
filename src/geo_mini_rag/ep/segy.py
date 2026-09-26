@@ -125,15 +125,19 @@ SORTING_CODES = {
 # these are lifted into facts; anything else stays in the chunk to be searched
 # semantically rather than becoming a half-parsed field.
 TEXT_LABELS = {
-    "CLIENT": "client", "COMPANY": "client", "AREA": "area", "PROSPECT": "area",
+    "CLIENT": "client", "COMPANY": "client", "PROCESSED FOR": "client",
+    "AREA": "area", "PROSPECT": "area",
     "FIELD": "field", "LINE": "line", "SURVEY": "survey", "CONTRACTOR": "contractor",
     "SHOT BY": "shot_by", "PROCESSED BY": "processed_by", "DATUM": "datum",
     "PROJECTION": "projection", "MAP PROJECTION": "projection", "ZONE": "zone",
     "MEAS UNITS": "units", "UNITS": "units",
 }
+# Case-insensitive because a card can read "Processed for: ENCANA OIL & GAS"
+# as easily as "PROCESSED BY: CGG". The label is uppercased before it is looked
+# up, so the table stays one spelling.
 LABEL = re.compile(
-    r"(?P<label>[A-Z][A-Z &/.]{2,18}?)\s*:\s*(?P<value>[^:]*?)"
-    r"(?=\s{2,}[A-Z][A-Z &/.]{2,18}\s*:|$)"
+    r"(?P<label>[A-Za-z][A-Za-z &/.]{2,18}?)\s*:\s*(?P<value>[^:]*?)"
+    r"(?=\s{2,}[A-Za-z][A-Za-z &/.]{2,18}\s*:|$)"
 )
 CARD_NUMBER = re.compile(r"^C\s*\d{0,2}\s?")
 # Half the headers in this corpus write the line name without a colon, on a
@@ -230,7 +234,7 @@ class SegyHeader:
         for card in self.cards:
             body = CARD_NUMBER.sub("", card)
             for match in LABEL.finditer(body):
-                key = TEXT_LABELS.get(" ".join(match["label"].split()))
+                key = TEXT_LABELS.get(" ".join(match["label"].split()).upper())
                 value = " ".join(match["value"].split()).strip(" .-")
                 if key and value and key not in found:
                     found[key] = value
@@ -401,6 +405,22 @@ class SegyHandler:
             atomic=True,
             notes=list(header.warnings),
         )
+
+
+# "seismic line 93D", "line SWA-10". The label has to be there, the same rule
+# the API detector uses: a bare "93D" in a question is not evidence of anything.
+LINE_IN_QUESTION = re.compile(r"(?i)\bline\s+(?P<name>[A-Za-z0-9][\w.\-]{0,19})\b")
+
+
+def in_question(question: str) -> list[tuple[str, str]]:
+    """(key, value) pairs a question names, for looking up rather than ranking.
+
+    A line name is a short identifier -- 93D, 53, SWA-10 -- which is what
+    embeddings are worst at: none of the eight line questions in the seismic
+    set put a correct file first. Looked up, the name is exact. Whether the
+    index holds it is checked by the caller, so a stray match costs nothing.
+    """
+    return [("line", found["name"]) for found in LINE_IN_QUESTION.finditer(question)]
 
 
 def _acquisition_text(path: Path, header: SegyHeader) -> str:

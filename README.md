@@ -81,22 +81,34 @@ the answer set for a question about Lithoprobe. A seismic archive is many files
 per survey, so these questions have several right answers and are scored
 against the set.
 
+47 questions, covering who shot and processed a survey, where it is, and what
+a data loader needs to know: sample interval, samples per trace, trace length,
+units, sample format.
+
 | question | files | top hit right | recall@10 |
 |---|---|---|---|
 | which surveys were shot for Lithoprobe? | 23 | yes | 100% |
 | which lines cover Abitibi-Grenville '93? | 23 | yes | 100% |
-| which data was acquired by Enertec Geophysical? | 23 | yes | 100% |
-| which lines were processed by CGG Geophysics Canada? | 23 | yes | 100% |
-| which surveys were shot for Fairfield Ind.? | 4 | yes | 100% |
-| where is seismic line 93D? | 4 | no | 0% |
-| where is seismic line 53? | 2 | no | 0% |
-| **13 questions** | | **38%** | **73%** |
+| which files are stored as 4-byte IBM floating point? | 52 | yes | 100% |
+| which surveys were recorded in meters? | 27 | yes | 100% |
+| where is seismic line 93D? | 4 | yes | 100% |
+| which files have 4500 samples per trace? | 8 | yes | 100% |
+| which lines have a trace length of 18000 ms? | 8 | no | 0% |
+| **47 questions** | | **57%** | **77%** |
 
-The split is the finding. Questions about **who and where** — client, contractor,
-processor, area — are answered perfectly. Questions naming a **bare line
-number** are answered badly: `93D` and `53` are short identifiers, which is
-what embeddings are worst at, and the identifier lookup that rescues API
-numbers does not yet cover seismic line names.
+A seismic line named in a question is **looked up, not ranked**, the same way an
+API number is. `93D` and `53` are short identifiers, which is what embeddings
+are worst at:
+
+| the eight line questions | top hit right | recall@10 |
+|---|---|---|
+| ranked | 0% | 56% |
+| looked up | **100%** | **100%** |
+
+What still fails is derived quantities. A trace length of 18000 ms is computed
+from the sample interval and the sample count; it is a fact and it is
+filterable, but the number never appears in the header text, so nothing
+resembles the question. `--where trace_length_ms=18000` answers it exactly.
 
 **API well numbers** are found in any document, not just the ones with headers
 — a completion report, a loader log, a scanned permit. They are validated

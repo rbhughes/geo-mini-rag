@@ -85,16 +85,21 @@ def _idf(docs_with_value: int, total_docs: int) -> float:
 
 
 def _identifiers(con: duckdb.DuckDBPyConnection, question: str) -> list[tuple[str, str]]:
-    """Well identifiers the question names that this index actually holds."""
-    from geo_mini_rag.ep.api_number import in_question
+    """Identifiers the question names that this index actually holds.
+
+    A well by its API number, a seismic line by its name. Both are short codes
+    an embedding cannot place, and both are exact once looked up.
+    """
+    from geo_mini_rag.ep import api_number, segy
 
     held = []
-    for key, value in in_question(question):
+    for key, value in api_number.in_question(question) + segy.in_question(question):
         row = con.execute(
-            "SELECT 1 FROM doc_meta WHERE key = ? AND value = ? LIMIT 1", [key, value]
+            "SELECT value FROM doc_meta WHERE key = ? AND lower(value) = lower(?) LIMIT 1",
+            [key, value],
         ).fetchone()
         if row:
-            held.append((key, value))
+            held.append((key, row[0]))
     return held
 
 
