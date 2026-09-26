@@ -237,7 +237,7 @@ def test_a_column_of_well_numbers_is_found_without_being_named(tmp_path):
     layer = read_layer(write_bundle(tmp_path, "Posted", fields, rows))
 
     found = api_values(layer)
-    assert len(found) == 6 and found[0] == "4902510000", "filed as ten digits, like every other reader"
+    assert len(found) == 6 and found[0] == "490251000000", "as the column writes it"
     assert not any(v.startswith("2098") for v in found), "TypeId is not a well number"
 
 

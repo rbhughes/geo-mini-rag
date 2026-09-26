@@ -91,6 +91,44 @@ def _idf(docs_with_value: int, total_docs: int) -> float:
     return math.log(total_docs / max(docs_with_value, 1)) / math.log(total_docs)
 
 
+# The same well is written at whatever length the system that recorded it uses:
+# a vendor's fourteen digits carry a sidetrack and a completion, a state agency
+# writes ten, a map layer sometimes seven with the state left off. Two numbers
+# name the same well when one runs on from the other -- sharing a start, where
+# both begin at the state, or sharing an end, where one has dropped it. Below
+# this many digits that is coincidence rather than evidence.
+BRIDGE_DIGITS = 7
+WELL_KEYS = frozenset({"api", "uwi"})
+# one runs on from the other: shares a start, shares an end, or is the same
+_SAME_WELL = (
+    "(value LIKE ? || '%' OR ? LIKE value || '%'"
+    " OR value LIKE '%' || ? OR ? LIKE '%' || value)"
+)
+
+
+def _value_clause(key: str, value: object) -> tuple[str, list]:
+    """How a stored value is matched against one a question or --where names.
+
+    Three cases, and every caller wants the same three: a leading star matches
+    the tail, a well number matches at any length, anything else matches as
+    text or as a number, since the index stores 18000.0 and a question says
+    18000.
+    """
+    value = str(value)
+    if value.startswith("*"):
+        return "value LIKE ?", ["%" + value[1:]]
+    if key in WELL_KEYS and value.isdigit() and len(value) >= BRIDGE_DIGITS:
+        return _SAME_WELL, [value] * 4
+    return "(lower(value) = lower(?) OR num_value = try_cast(? AS DOUBLE))", [value, value]
+
+
+def _carrying(key: str, value: object) -> tuple[str, list]:
+    """SQL for "the documents holding this fact"."""
+    clause, args = _value_clause(key, value)
+    return (f"d.doc_id IN (SELECT doc_id FROM doc_meta WHERE key = ? AND {clause})",
+            [key, *args])
+
+
 def _identifiers(con: duckdb.DuckDBPyConnection, question: str) -> list[tuple[str, str]]:
     """Identifiers the question names that this index actually holds.
 
@@ -101,20 +139,10 @@ def _identifiers(con: duckdb.DuckDBPyConnection, question: str) -> list[tuple[st
 
     held = []
     for key, value in api_number.in_question(question) + segy.in_question(question):
-        # A name matches as text, a derived quantity as a number: the index
-        # stores 18000.0 and the question says 18000. A leading * matches the
-        # tail, so *2500153 finds 4902500153.
-        if value.startswith("*"):
-            row = con.execute(
-                "SELECT 1 FROM doc_meta WHERE key = ? AND value LIKE ? LIMIT 1",
-                [key, "%" + value[1:]],
-            ).fetchone()
-        else:
-            row = con.execute(
-                """SELECT 1 FROM doc_meta WHERE key = ?
-                   AND (lower(value) = lower(?) OR num_value = try_cast(? AS DOUBLE)) LIMIT 1""",
-                [key, value, value],
-            ).fetchone()
+        clause, args = _value_clause(key, value)
+        row = con.execute(
+            f"SELECT 1 FROM doc_meta WHERE key = ? AND {clause} LIMIT 1", [key, *args]
+        ).fetchone()
         if row:
             held.append((key, value))
     return held
@@ -177,30 +205,15 @@ def search(
             # embed close to any other digits -- so it is a lookup, narrowing the
             # candidates the way --where does. Only values the index actually
             # holds get this far, so it never empties a result.
-            if value.startswith("*"):
-                filters.append(
-                    "d.doc_id IN (SELECT doc_id FROM doc_meta WHERE key = ? AND value LIKE ?)"
-                )
-                params += [key, "%" + value[1:]]
-            else:
-                filters.append(
-                    "d.doc_id IN (SELECT doc_id FROM doc_meta WHERE key = ?"
-                    " AND (lower(value) = lower(?) OR num_value = try_cast(? AS DOUBLE)))"
-                )
-                params += [key, value, value]
+            clause, args = _carrying(key, value)
+            filters.append(clause)
+            params += args
             looked_up.append(f"{key}={value}")
         for key, op, value in _as_clauses(where):
-            if op == "=" and str(value).startswith("*"):
-                filters.append(
-                    "d.doc_id IN (SELECT doc_id FROM doc_meta WHERE key = ? AND value LIKE ?)"
-                )
-                params += [key, "%" + str(value)[1:]]
-                continue
             if op == "=":
-                filters.append(
-                    "d.doc_id IN (SELECT doc_id FROM doc_meta WHERE key = ? AND lower(value) = lower(?))"
-                )
-                params += [key, value]
+                clause, args = _carrying(key, value)
+                filters.append(clause)
+                params += args
                 continue
             number = _as_number(value)
             if number is None:

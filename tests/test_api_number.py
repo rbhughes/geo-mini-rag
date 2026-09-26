@@ -11,21 +11,25 @@ LAS_HEADER = """~Well Information Block
 
 def test_reads_the_api_out_of_a_las_header():
     found = find(LAS_HEADER)
-    assert [w.api for w in found] == ["4902511080"], "one well, however many times it is named"
+    assert [w.api for w in found] == ["490251108000"], (
+        "every digit the header wrote, and it wrote twelve")
     assert found[0].state == "WY"
     assert found[0].counties == ("Natrona",)
     assert found[0].suffix == "00", "the sidetrack digits are kept as written"
+    assert len(found[0].api) == 12, "no length is imposed on the number"
 
 
-@pytest.mark.parametrize("written", [
-    "API 49-025-11080",
-    "API: 49 025 11080",
-    "API No. 4902511080",
-    "api_number=490251108000",
-    "UWI . 49025110800001 : UNIQUE WELL ID",
+@pytest.mark.parametrize("written, digits", [
+    ("API 49-025-11080", "4902511080"),
+    ("API: 49 025 11080", "4902511080"),
+    ("API No. 4902511080", "4902511080"),
+    ("api_number=490251108000", "490251108000"),
+    ("UWI . 49025110800001 : UNIQUE WELL ID", "49025110800001"),
 ])
-def test_the_shapes_a_number_is_written_in(written):
-    assert [w.api for w in find(written)] == ["4902511080"]
+def test_the_shapes_a_number_is_written_in(written, digits):
+    """Separators go, length stays: a vendor's fourteen digits carry a
+    sidetrack and a completion that ten would throw away."""
+    assert [w.api for w in find(written)] == [digits]
 
 
 def test_an_unlabelled_number_is_not_an_api_number():
@@ -48,12 +52,16 @@ def test_nothing_is_inferred_from_a_partial_number():
     assert find("API 2500153") == []
 
 
-def test_one_well_is_one_fact_however_it_was_written():
+def test_a_document_keeps_every_length_it_wrote():
+    """The same well at two lengths stays two facts, because neither length is
+    the right one: twelve digits carry a sidetrack that ten would discard, and
+    seven is what a map layer holds when the state is left off. Bridging the
+    lengths is the searching side's job."""
     facts = enrich(
         {"api": "490251108000"},
         [(None, "API . 490251108000\nsee also API 49-025-11080 and API 05-123-45678")],
     )
-    assert facts["api"] == ["4902511080", "0512345678"]
+    assert facts["api"] == ["490251108000", "4902511080", "0512345678"]
     assert facts["api_state"] == ["CO", "WY"]
     assert facts["api_county"] == ["Natrona", "Weld"]
 
@@ -91,7 +99,7 @@ def test_well_id_is_hashable_so_callers_can_deduplicate():
 
 def test_a_uwi_header_field_is_filed_the_same_way():
     facts = enrich({"uwi": "490251108000"}, [(None, "API . 490251108000")])
-    assert facts["api"] == facts["uwi"] == ["4902511080"], "one well, one shape"
+    assert facts["api"] == facts["uwi"] == ["490251108000"], "the digits the header wrote"
 
 
 def test_a_canadian_uwi_is_left_exactly_as_found():

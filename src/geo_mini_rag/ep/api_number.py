@@ -75,7 +75,7 @@ class WellId:
     """One identifier, as written and as normalised."""
 
     text: str                   # exactly what the document said
-    api: str                    # the first ten digits, separators removed
+    api: str                    # every digit, separators removed: 10, 12 or 14
     state: str                  # two-letter abbreviation from the code table
     counties: tuple[str, ...]   # usually one; a handful of codes name a county and a city
     suffix: str = ""            # sidetrack and event digits, when present
@@ -140,7 +140,7 @@ def find(text: str, limits: dict | None = None, *, require_label: bool = True) -
             state, county_names = states[state_code], counties[(state_code, county_code)]
         else:
             continue
-        api = state_code + county_code + well
+        api = "".join(part for part in match.groups() if part)
         if api in seen:
             continue
         seen.add(api)
@@ -156,8 +156,14 @@ def find(text: str, limits: dict | None = None, *, require_label: bool = True) -
     return out
 
 
-def ten(value: str) -> str:
-    """An API number as its ten identifying digits, whatever shape it was written in.
+def digits_of(value: str) -> str:
+    """An API number with its separators removed and nothing else changed.
+
+    No length is imposed. A vendor writes fourteen digits, a state agency ten,
+    a map layer sometimes seven with the state left off; every one of those is
+    what that system holds, and deciding which is "the" number would throw away
+    the sidetrack and completion that the longer forms carry. Matching across
+    lengths is the searching side's job, not the storing side's.
 
     Anything with a letter in it is left exactly as found: a Canadian UWI is not
     an API number and must not be filed as one.
@@ -165,7 +171,7 @@ def ten(value: str) -> str:
     if any(character.isalpha() for character in value):
         return value.strip()
     digits = re.sub(r"\D", "", value)
-    return digits[:10] if len(digits) in (10, 12, 14) else value.strip()
+    return digits if 7 <= len(digits) <= 14 else value.strip()
 def find_bare(value: str) -> WellId | None:
     """One value that is an API number on its own, with nothing around it.
 
@@ -204,12 +210,12 @@ def enrich(metadata: dict, segments: list[tuple[int | None, str]]) -> dict:
         return out
 
     facts = {
-        "api": merged("api", [w.api for w in found], canonical=ten),
+        "api": merged("api", [w.api for w in found], canonical=digits_of),
         "api_state": merged("api_state", sorted({w.state for w in found})),
         "api_county": merged("api_county", sorted({c for w in found for c in w.counties})),
     }
     if metadata.get("uwi"):   # a header that wrote the API number under UWI
-        facts["uwi"] = merged("uwi", [], canonical=ten)
+        facts["uwi"] = merged("uwi", [], canonical=digits_of)
     return facts
 
 
