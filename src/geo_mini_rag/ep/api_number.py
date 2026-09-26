@@ -166,6 +166,20 @@ def ten(value: str) -> str:
         return value.strip()
     digits = re.sub(r"\D", "", value)
     return digits[:10] if len(digits) in (10, 12, 14) else value.strip()
+def find_bare(value: str) -> WellId | None:
+    """One value that is an API number on its own, with nothing around it.
+
+    A column of these is evidence in a way a single one in prose is not: the
+    label rule exists because 139,629 digit runs turned up in 992 documents,
+    and a .dbf column is not prose. The caller decides on the column.
+    """
+    match = NUMBER.fullmatch(value.strip())
+    if not match:
+        return None
+    found = find(value.strip(), require_label=False)
+    return found[0] if found else None
+
+
 def enrich(metadata: dict, segments: list[tuple[int | None, str]]) -> dict:
     """The `api`, `api_state` and `api_county` facts a document carries.
 
@@ -199,6 +213,13 @@ def enrich(metadata: dict, segments: list[tuple[int | None, str]]) -> dict:
     return facts
 
 
+# A well number written as a tail: *2500153 finds 4902500153. Archives record
+# the same well at different lengths -- a shapefile keeps county and well and
+# drops the state, a log keeps all ten digits -- and nobody should have to know
+# which before they can search.
+PARTIAL = re.compile(r"(?<![\d*])\*(?P<tail>\d{4,14})(?!\d)")
+
+
 def in_question(question: str) -> list[tuple[str, str]]:
     """(key, value) pairs a question names, for looking up rather than ranking.
 
@@ -207,4 +228,5 @@ def in_question(question: str) -> list[tuple[str, str]]:
     rescue it. Looked up, it is exact. No label is required here: a question is
     a dozen words typed on purpose, and the code table alone decides.
     """
-    return [("api", well.api) for well in find(question, require_label=False)]
+    found = [("api", "*" + m["tail"]) for m in PARTIAL.finditer(question)]
+    return found + [("api", well.api) for well in find(question, require_label=False)]

@@ -224,3 +224,31 @@ def test_the_heading_is_paid_for_out_of_the_budget(wells):
     """It repeats on every chunk, so it cannot push one over the chunk size."""
     for chunk in feature_chunks(read_layer(wells), DEFAULTS, budget=600):
         assert len(chunk) <= 600
+
+
+def test_a_column_of_well_numbers_is_found_without_being_named(tmp_path):
+    """GeoGraphix layers keep well numbers under names like DataId and WellID.
+    The whole column is the evidence: a column of valid API numbers is one,
+    a single number in prose is not, which is why prose needs a label."""
+    from geo_mini_rag.ep.shapefile import api_values
+
+    fields = [("DataId", "C", 12), ("TypeId", "C", 8), ("NAME", "C", 10)]
+    rows = [(f"49025{n + 10000:05d}00", f"2098{n:03d}", f"well {n}") for n in range(6)]
+    layer = read_layer(write_bundle(tmp_path, "Posted", fields, rows))
+
+    found = api_values(layer)
+    assert len(found) == 6 and found[0].startswith("49025")
+    assert not any(v.startswith("2098") for v in found), "TypeId is not a well number"
+
+
+def test_a_numeric_api_column_is_kept_as_the_file_writes_it(tmp_path):
+    """Teapot_Wells stores API_NUMBER as a numeric column, so 2,111 wells
+    collapsed to a min and a max. 2500153 is Natrona 025 and well 00153 with
+    the state missing, and the reader does not guess the rest."""
+    from geo_mini_rag.ep.shapefile import api_values
+
+    fields = [("API_NUMBER", "N", 20), ("WELL", "C", 8)]
+    rows = [("2.50638700000e+006", "No. 1"), ("2500153", "No. 2"), ("2506390", "No. 3")]
+    layer = read_layer(write_bundle(tmp_path, "Wells", fields, rows))
+
+    assert api_values(layer) == ["2506387", "2500153", "2506390"]

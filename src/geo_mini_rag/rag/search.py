@@ -102,12 +102,19 @@ def _identifiers(con: duckdb.DuckDBPyConnection, question: str) -> list[tuple[st
     held = []
     for key, value in api_number.in_question(question) + segy.in_question(question):
         # A name matches as text, a derived quantity as a number: the index
-        # stores 18000.0 and the question says 18000.
-        row = con.execute(
-            """SELECT 1 FROM doc_meta WHERE key = ?
-               AND (lower(value) = lower(?) OR num_value = try_cast(? AS DOUBLE)) LIMIT 1""",
-            [key, value, value],
-        ).fetchone()
+        # stores 18000.0 and the question says 18000. A leading * matches the
+        # tail, so *2500153 finds 4902500153.
+        if value.startswith("*"):
+            row = con.execute(
+                "SELECT 1 FROM doc_meta WHERE key = ? AND value LIKE ? LIMIT 1",
+                [key, "%" + value[1:]],
+            ).fetchone()
+        else:
+            row = con.execute(
+                """SELECT 1 FROM doc_meta WHERE key = ?
+                   AND (lower(value) = lower(?) OR num_value = try_cast(? AS DOUBLE)) LIMIT 1""",
+                [key, value, value],
+            ).fetchone()
         if row:
             held.append((key, value))
     return held
@@ -170,13 +177,25 @@ def search(
             # embed close to any other digits -- so it is a lookup, narrowing the
             # candidates the way --where does. Only values the index actually
             # holds get this far, so it never empties a result.
-            filters.append(
-                "d.doc_id IN (SELECT doc_id FROM doc_meta WHERE key = ?"
-                " AND (lower(value) = lower(?) OR num_value = try_cast(? AS DOUBLE)))"
-            )
-            params += [key, value, value]
+            if value.startswith("*"):
+                filters.append(
+                    "d.doc_id IN (SELECT doc_id FROM doc_meta WHERE key = ? AND value LIKE ?)"
+                )
+                params += [key, "%" + value[1:]]
+            else:
+                filters.append(
+                    "d.doc_id IN (SELECT doc_id FROM doc_meta WHERE key = ?"
+                    " AND (lower(value) = lower(?) OR num_value = try_cast(? AS DOUBLE)))"
+                )
+                params += [key, value, value]
             looked_up.append(f"{key}={value}")
         for key, op, value in _as_clauses(where):
+            if op == "=" and str(value).startswith("*"):
+                filters.append(
+                    "d.doc_id IN (SELECT doc_id FROM doc_meta WHERE key = ? AND value LIKE ?)"
+                )
+                params += [key, "%" + str(value)[1:]]
+                continue
             if op == "=":
                 filters.append(
                     "d.doc_id IN (SELECT doc_id FROM doc_meta WHERE key = ? AND lower(value) = lower(?))"

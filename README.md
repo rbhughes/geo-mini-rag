@@ -152,6 +152,24 @@ right files most of the time and put the wrong one first a quarter of the time.
 One question still misses, and it does not matter: "recorded in feet" has 22
 equally correct answers and returns a different one first.
 
+**Well numbers in a map layer.** A `.dbf` may or may not say which column holds
+them, so there are two ways in. By name, for a column called API or UWI: its
+values are kept exactly as the file writes them, because `2500153` is Natrona
+025 and well 00153 with the state code missing and it is not the reader's job
+to guess the rest. By content, for a column that says nothing: if most of a
+column validates against the code table it is a column of well numbers,
+whatever it is called. GeoGraphix layers here keep them under `DataId` and
+`WellID`, and across every other numeric column in the corpus — `TypeId`,
+`ObjectID`, `ParentCode`, `ASR_ID` — not one value validates.
+
+The whole column is the evidence, which is why this needs no label where prose
+does. 6,908 well numbers over four layers, none of them searchable before.
+
+**A partial well number matches by its tail.** The same well is written at
+different lengths by different systems: 1,148 of these wells appear as seven
+digits in a map layer and ten in a log. `*2510867` finds both, and
+`--where api=*2510867` filters on it.
+
 **API well numbers** are found in any document, not just the ones with headers
 — a completion report, a loader log, a scanned permit. They are validated
 against `src/geo_mini_rag/ep/data/api_codes.csv`, this project's table of state

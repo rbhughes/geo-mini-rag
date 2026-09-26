@@ -289,6 +289,8 @@ def layer_facts(layer: Layer) -> dict[str, object]:
                 facts[f"{column.name.lower()}_max"] = max(numbers)
     if named:
         facts["field"] = named
+    if wells := api_values(layer):
+        facts["api"] = wells
     return facts
 
 
@@ -331,6 +333,73 @@ def layer_text(layer: Layer) -> str:
         lines.append("Attributes:")
         lines.extend(f"  {line}" for line in described)
     return "\n".join(lines)
+
+
+# A .dbf column holding well numbers, found two ways.
+#
+# By name, for a column that says what it is. Teapot_Wells stores API_NUMBER as
+# a numeric column, so its 2,111 wells collapsed to a min and a max and no
+# individual number was searchable. The values are kept exactly as the file
+# writes them -- 2500153 is Natrona 025 and well 00153 with the state missing,
+# and it is not this reader's business to guess the rest.
+#
+# By content, for a column that does not. GeoGraphix layers carry well numbers
+# under names like DataId and WellID: 4,023 and 1,343 of them in this corpus,
+# every value a valid API number. The test is the whole column, not one value,
+# which is why it is safe where the prose rule needs a label -- across every
+# other numeric column here, TypeId, ObjectID, ParentCode, ASR_ID, not one
+# value validates.
+API_COLUMN_NAME = re.compile(r"(?i)^(api|uwi)(_?(no|num|number|nbr|id|14|12|10))?$")
+# Most of a column, not all of it: a real table has blanks, a stray note and a
+# row someone typed by hand. Anything from a tenth upwards separates the two
+# cases seen here, so this is tolerant rather than tuned.
+API_COLUMN_SHARE = 0.8
+MIN_API_ROWS = 3
+
+
+def _plain(value: str) -> str:
+    """A .dbf number as the file means it, not as it happens to be written.
+
+    Numeric columns are text in the file and writers differ: the same well
+    number turns up as 2500153 and as 2.50638700000e+006.
+    """
+    value = value.strip()
+    if re.fullmatch(r"[-+]?\d*\.?\d+(?:[eE][-+]?\d+)?", value):
+        try:
+            number = float(value)
+        except ValueError:
+            return value
+        if number.is_integer():
+            return str(int(number))
+    return value
+
+
+def api_values(layer: Layer) -> list[str]:
+    """Well numbers held in the attribute table, as the file writes them.
+
+    Two ways in, because a table may or may not say what a column holds. The
+    content test looks at the whole column rather than one value, which is what
+    makes it safe without a label: a column of well numbers is evidence, a
+    single number in prose is not.
+    """
+    from geo_mini_rag.ep.api_number import find_bare
+
+    out: list[str] = []
+    for column in layer.fields:
+        filled = [_plain(v) for v in column.filled]
+        filled = [v for v in filled if v]
+        if len(filled) < MIN_API_ROWS:
+            continue
+        if API_COLUMN_NAME.match(column.name):
+            out += filled
+            continue
+        valid = [v for v in filled if find_bare(v)]
+        if len(valid) / len(filled) >= API_COLUMN_SHARE:
+            out += valid
+    seen: dict[str, None] = {}
+    for value in out:
+        seen.setdefault(value, None)
+    return list(seen)
 
 
 def lead(layer: Layer) -> str:
