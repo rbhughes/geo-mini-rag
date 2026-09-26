@@ -95,7 +95,8 @@ units, sample format.
 | which files have 4500 samples per trace? | 8 | yes | 100% |
 | which lines have a trace length of 18000 ms? | 8 | yes | 100% |
 | which files were recorded at a 4 ms sample interval? | 24 | yes | 100% |
-| **47 questions** | | **91%** | **97%** |
+| which files have 2000 samples per trace? | 7 | yes | 100% |
+| **47 questions** | | **98%** | **99%** |
 
 A seismic line named in a question is **looked up, not ranked**, the same way an
 API number is. `93D` and `53` are short identifiers, which is what embeddings
@@ -109,6 +110,8 @@ are worst at:
 | 11 trace-length questions, looked up | **100%** | **96%** |
 | 8 sample-interval questions, ranked | 38% | 53% |
 | 8 sample-interval questions, looked up | **100%** | **100%** |
+| 12 sample-count questions, ranked | 75% | 93% |
+| 12 sample-count questions, looked up | **100%** | **100%** |
 
 A trace length is derived — interval times sample count — so the number appears
 nowhere in the header text and nothing in the index resembles the question.
@@ -119,9 +122,12 @@ A sample interval is stored twice, in microseconds and milliseconds, so a
 question in either unit becomes both and matches whichever way the file was
 asked about.
 
-What still misses is sample counts: "2000 samples per trace" ranks the right
-files below others whose headers happen to mention 2000. The number is real
-text in the header there, so a lookup is not obviously the answer.
+Sample counts are the weakest case for a lookup and still worth it: unlike a
+derived quantity, 2000 is real text in the header, so ranking already found the
+right files most of the time and put the wrong one first a quarter of the time.
+
+One question still misses, and it does not matter: "recorded in feet" has 22
+equally correct answers and returns a different one first.
 
 **API well numbers** are found in any document, not just the ones with headers
 — a completion report, a loader log, a scanned permit. They are validated

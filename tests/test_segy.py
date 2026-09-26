@@ -300,3 +300,14 @@ def test_a_sample_interval_is_looked_up_in_either_unit():
     assert in_question("sample interval of 4000 microseconds") == [
         ("sample_interval_us", "4000"), ("sample_interval_ms", "4")]
     assert in_question("which wells were drilled to 4000 feet?") == []
+
+
+def test_a_sample_count_is_looked_up():
+    """Only samples_per_trace: a file's original sample count is a different
+    number, and asking for one is not asking for both."""
+    from geo_mini_rag.ep.segy import in_question
+
+    assert in_question("which files have 2000 samples per trace?") == [
+        ("samples_per_trace", "2000")]
+    assert in_question("number of samples: 4500") == [("samples_per_trace", "4500")]
+    assert in_question("which wells were drilled to 2000 feet?") == []

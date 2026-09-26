@@ -434,6 +434,25 @@ SAMPLE_INTERVAL = re.compile(
 )
 _MICROSECONDS = {"us", "\u00b5s", "microsecond", "microseconds"}
 
+# "2000 samples per trace", "number of samples: 1001". Unlike a trace length
+# this number is real text in the header, so the right files do rank -- just
+# below others whose headers mention the same number for another reason.
+SAMPLES_PER_TRACE = re.compile(
+    r"(?i)(?P<a>\d+)\s*samples?\s+(?:per|in\s+each|a)\s+trace"
+    r"|samples?\s+per\s+trace[^0-9]{0,16}(?P<b>\d+)"
+    r"|number\s+of\s+samples[^0-9]{0,16}(?P<c>\d+)"
+)
+
+
+def sample_counts(question: str) -> list[str]:
+    """Samples per trace a question names. Only this field: a file's original
+    sample count is a different number and asking for one is not asking both."""
+    out = []
+    for found in SAMPLES_PER_TRACE.finditer(question):
+        if number := found["a"] or found["b"] or found["c"]:
+            out.append(number)
+    return out
+
 
 def sample_intervals(question: str) -> list[tuple[str, str]]:
     """Sample intervals a question names, as both facts the index stores."""
@@ -472,6 +491,7 @@ def in_question(question: str) -> list[tuple[str, str]]:
     """
     found = [("line", m["name"]) for m in LINE_IN_QUESTION.finditer(question)]
     found += [("trace_length_ms", ms) for ms in trace_lengths(question)]
+    found += [("samples_per_trace", n) for n in sample_counts(question)]
     return found + sample_intervals(question)
 
 
