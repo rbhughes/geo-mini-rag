@@ -288,3 +288,15 @@ def test_a_trace_length_in_a_question_is_looked_up():
     assert in_question("trace length of 18000 ms?") == [("trace_length_ms", "18000")]
     assert in_question("which files have 6 second records?") == [("trace_length_ms", "6000")]
     assert in_question("how many wells produced 18000 barrels?") == [], "the unit has to be there"
+
+
+def test_a_sample_interval_is_looked_up_in_either_unit():
+    """Stored twice, in microseconds and milliseconds, so a question in either
+    unit becomes both and matches whichever way the file was asked about."""
+    from geo_mini_rag.ep.segy import in_question
+
+    assert in_question("recorded at a 4 ms sample interval?") == [
+        ("sample_interval_us", "4000"), ("sample_interval_ms", "4")]
+    assert in_question("sample interval of 4000 microseconds") == [
+        ("sample_interval_us", "4000"), ("sample_interval_ms", "4")]
+    assert in_question("which wells were drilled to 4000 feet?") == []

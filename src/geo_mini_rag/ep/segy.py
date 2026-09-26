@@ -422,6 +422,32 @@ TRACE_LENGTH = re.compile(
 )
 _SECONDS = {"s", "sec", "secs", "second", "seconds"}
 
+# "a 4 ms sample interval", "sample rate of 4000 microseconds", "2 ms sampling".
+# Stored twice, in microseconds and milliseconds, so a question in either unit
+# is turned into both and matches whichever the file was asked about.
+SAMPLE_INTERVAL = re.compile(
+    r"(?i)(?:sample\s+(?:interval|rate)|sampling)[^0-9]{0,16}(?P<a>\d+(?:\.\d+)?)\s*"
+    r"(?P<ua>ms|millisecond|milliseconds|us|\u00b5s|microsecond|microseconds)\b"
+    r"|(?P<b>\d+(?:\.\d+)?)\s*"
+    r"(?P<ub>ms|millisecond|milliseconds|us|\u00b5s|microsecond|microseconds)"
+    r"\s+(?:sample\s+(?:interval|rate)|sampling)\b"
+)
+_MICROSECONDS = {"us", "\u00b5s", "microsecond", "microseconds"}
+
+
+def sample_intervals(question: str) -> list[tuple[str, str]]:
+    """Sample intervals a question names, as both facts the index stores."""
+    out: list[tuple[str, str]] = []
+    for found in SAMPLE_INTERVAL.finditer(question):
+        number = found["a"] or found["b"]
+        unit = (found["ua"] or found["ub"] or "").lower()
+        if not number:
+            continue
+        micros = float(number) * (1 if unit in _MICROSECONDS else 1000)
+        out.append(("sample_interval_us", f"{micros:g}"))
+        out.append(("sample_interval_ms", f"{micros / 1000:g}"))
+    return out
+
 
 def trace_lengths(question: str) -> list[str]:
     """Trace lengths a question names, in milliseconds, as the index stores them."""
@@ -445,7 +471,8 @@ def in_question(question: str) -> list[tuple[str, str]]:
     index holds it is checked by the caller, so a stray match costs nothing.
     """
     found = [("line", m["name"]) for m in LINE_IN_QUESTION.finditer(question)]
-    return found + [("trace_length_ms", ms) for ms in trace_lengths(question)]
+    found += [("trace_length_ms", ms) for ms in trace_lengths(question)]
+    return found + sample_intervals(question)
 
 
 def _acquisition_text(path: Path, header: SegyHeader) -> str:
