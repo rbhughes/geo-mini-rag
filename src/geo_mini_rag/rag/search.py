@@ -65,6 +65,13 @@ def mentioned_metadata(con, question: str, cfg: dict) -> list[tuple[str, str, st
     return rows
 
 
+# Keys whose value names a group of documents rather than describing one. A
+# question that spells out "NAD 1927 UTM Zone 13N" is asking for those layers,
+# not for layers a little like them, and the boost cannot do it: 21 layers out
+# of 2,520 earn about 0.06, which will not lift them past 68,000 chunks. An
+# exact match on one of these narrows the candidates instead.
+GROUP_KEYS = frozenset({"crs_name", "crs_datum"})
+
 COMPARISONS = (">=", "<=", "!=", ">", "<", "=")
 
 
@@ -135,8 +142,13 @@ def search(
         by_doc: dict[str, list[str]] = {}
         looked_up: list[str] = []
         weights: dict[str, float] = {}
+        groups: list[tuple[str, str]] = []
         for doc_id, key, value, docs in mentioned_metadata(con, question, cfg):
             by_doc.setdefault(doc_id, []).append(f"{key}={value}")
+            if key in GROUP_KEYS and (key, value) not in groups:
+                groups.append((key, value))
+                looked_up.append(f"{key}={value}")
+                continue
             # Rarity is the evidence, the same idea as inverse document frequency
             # in lexical search: a well name held by one document says far more
             # than state=WYOMING, which 1,375 documents carry. Scaled to [0, 1]
@@ -144,6 +156,15 @@ def search(
             weights[doc_id] = max(weights.get(doc_id, 0.0), boost * _idf(docs, total_docs))
 
         filters, params = [], []
+        if groups:
+            # Any of the named groups, not all of them: a question naming two
+            # projections is asking for either.
+            filters.append(
+                "d.doc_id IN (SELECT doc_id FROM doc_meta WHERE "
+                + " OR ".join(["(key = ? AND value = ?)"] * len(groups))
+                + ")"
+            )
+            params += [part for pair in groups for part in pair]
         for key, value in _identifiers(con, question):
             # An identifier names one well. Ranking cannot find it -- the digits
             # embed close to any other digits -- so it is a lookup, narrowing the

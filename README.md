@@ -60,6 +60,22 @@ uv run geo-mini-rag ingest --root data/subset --db data/index/subset.duckdb --tr
 | **SEG-P1** positioning | header labels, line names, shotpoint range, point count | the coordinates |
 | **ESRI shapefile** | title and abstract from `.shp.xml`, CRS from `.prj`, extent from `.shp`, and the `.dbf` attributes worth searching | the geometry |
 
+**Coordinate systems are filtered, not ranked.** A question that spells out
+"NAD 1927 UTM Zone 13N" is asking for those layers, and the rarity boost cannot
+deliver them: 21 layers out of 2,520 documents earn about 0.06, which will not
+lift them past 68,000 chunks. An exact match on a projection or datum narrows
+the candidates instead.
+
+| the 10 questions naming a projection or datum | top hit right | recall@10 |
+|---|---|---|
+| ranked | 20% | 25% |
+| filtered | **100%** | **91%** |
+
+Over 35 shapefile questions the set scores 60% on the top hit and 64% recall.
+What drags it down is questions like "which layer has 53 features?" — the bare
+number is unreachable by ranking, and nobody asks it that way round; "how many
+features does Teapot_Wells have" already works.
+
 `.dbf` attributes are sorted by measurement rather than by name, because field
 names are a vendor's abbreviations and there is no list to check them against.
 A field whose values repeat is a category and becomes a filterable fact; one

@@ -278,3 +278,29 @@ def test_handlers_can_be_turned_off_for_the_baseline_arm(tmp_path, monkeypatch):
     assert ep.find(path, head) is not None
     monkeypatch.setenv("GEO_NO_EP_HANDLERS", "1")
     assert ep.find(path, head) is None
+
+
+def test_a_named_coordinate_system_narrows_instead_of_nudging(tmp_path, monkeypatch):
+    """21 layers out of 2,520 earn a rarity weight of about 0.06, which will
+    never lift them past 68,000 chunks. Asking for a projection by name is
+    asking for those layers."""
+    import duckdb
+
+    from geo_mini_rag import openrouter
+    from geo_mini_rag.rag import search as search_mod
+
+    db = tmp_path / "crs.duckdb"
+    _tiny_index(db, [
+        ("near", "roads.shp", "streets and kerbs", [1.0, 0.0, 0.0]),
+        ("want", "wells.shp", "well locations", [0.2, 0.9, 0.0]),
+    ])
+    con = duckdb.connect(str(db))
+    con.execute("INSERT INTO doc_meta VALUES ('want', 'crs_name', 'NAD 1927 UTM Zone 13N', NULL)")
+    con.close()
+    monkeypatch.setattr(openrouter, "embed",
+                        lambda *a, **k: openrouter.EmbedResult("m", "m", [[1.0, 0.0, 0.0]]))
+
+    cfg = {"retrieve": {"metadata_boost": 0.1, "metadata_min_value_length": 4}}
+    hits, _ = search_mod.search("which layers are in NAD 1927 UTM Zone 13N?", 5, db, cfg=cfg)
+    assert [h.path for h in hits] == ["wells.shp"], "the nearer chunk is not in that projection"
+    assert "crs_name=NAD 1927 UTM Zone 13N" in hits[0].matched
