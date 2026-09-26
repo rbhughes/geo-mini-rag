@@ -71,9 +71,11 @@ the candidates instead.
 | ranked | 20% | 25% |
 | filtered | **100%** | **91%** |
 
-`evals/shapefile_sets.py` asks the two questions a person actually puts to a
-pile of map layers — *do I have spatial data for X?* and *which shapefile has
-Y?* — and scores **60% on the top hit, 83% recall@10** over 87 of them. An
+`evals/shapefile_sets.py` asks the three questions a person actually puts to a
+pile of map layers — *do I have spatial data for X?*, *which shapefile has Y?*,
+and *which layer holds this well?* — and scores **67% on the top hit, 86%
+recall@10** over 107 of them. The 20 well-number questions, full and partial,
+score **100% on both**. An
 earlier version asked "which layer has 53 features?", scored 0%, and was
 measuring the question generator rather than the system: the realistic
 direction, "how many features does Teapot_Wells have", returns rank 1.
@@ -164,6 +166,10 @@ whatever it is called. GeoGraphix layers here keep them under `DataId` and
 
 The whole column is the evidence, which is why this needs no label where prose
 does. 6,908 well numbers over four layers, none of them searchable before.
+
+A value that validates is filed as the ten digits that identify the well, the
+same shape every other reader uses; otherwise a well in a map layer and the
+same well in a log are two different wells to the index.
 
 **A partial well number matches by its tail.** The same well is written at
 different lengths by different systems: 1,148 of these wells appear as seven

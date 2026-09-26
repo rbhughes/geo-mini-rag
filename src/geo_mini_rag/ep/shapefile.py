@@ -384,6 +384,18 @@ def api_values(layer: Layer) -> list[str]:
     """
     from geo_mini_rag.ep.api_number import find_bare
 
+    def stored(value: str) -> str:
+        """One well, one fact, one shape -- the ten digits that identify it.
+
+        A value that does not validate is kept exactly as written: 2500153 is
+        Natrona 025 and well 00153 with the state code missing, and the missing
+        part is not this reader's to supply. A value that does validate is
+        filed the way every other reader files it, or a well in a map layer and
+        the same well in a log are two different wells to the index.
+        """
+        well = find_bare(value)
+        return well.api if well else value
+
     out: list[str] = []
     for column in layer.fields:
         filled = [_plain(v) for v in column.filled]
@@ -391,11 +403,11 @@ def api_values(layer: Layer) -> list[str]:
         if len(filled) < MIN_API_ROWS:
             continue
         if API_COLUMN_NAME.match(column.name):
-            out += filled
+            out += [stored(v) for v in filled]
             continue
         valid = [v for v in filled if find_bare(v)]
         if len(valid) / len(filled) >= API_COLUMN_SHARE:
-            out += valid
+            out += [stored(v) for v in valid]
     seen: dict[str, None] = {}
     for value in out:
         seen.setdefault(value, None)

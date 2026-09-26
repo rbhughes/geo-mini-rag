@@ -75,8 +75,34 @@ for value, layers in holders.items():
 containment.sort(key=lambda q: q[0])
 containment = containment[::max(1, len(containment) // 20)][:20]
 
-questions = discovery + containment
-print(f"{len(questions)} questions: {len(discovery)} discovery, {len(containment)} containment\n")
+# Well numbers, which a map layer could not be searched by at all until its
+# .dbf columns were read. Two shapes: the number as one file writes it, and a
+# tail, because the same well is seven digits in a layer and ten in a log.
+wells = []
+full = con.execute(
+    """SELECT m.value, count(DISTINCT m.doc_id) FROM doc_meta m JOIN documents d USING (doc_id)
+       WHERE d.kind = 'shapefile' AND m.key = 'api' AND length(m.value) >= 10
+       GROUP BY 1 ORDER BY 2 DESC, 1 LIMIT 10""").fetchall()
+for value, _ in full:
+    want = {p for p, in con.execute(
+        """SELECT DISTINCT d.path FROM doc_meta m JOIN documents d USING (doc_id)
+           WHERE m.key = 'api' AND m.value = ?""", [value]).fetchall()}
+    wells.append((f"which shapefile has well {value}?", want, "well"))
+
+tails = con.execute(
+    """SELECT m.value FROM doc_meta m JOIN documents d USING (doc_id)
+       WHERE d.kind = 'shapefile' AND m.key = 'api' AND length(m.value) = 7
+       ORDER BY m.value LIMIT 400""").fetchall()
+for (tail,) in tails[::40][:10]:
+    want = {p for p, in con.execute(
+        "SELECT DISTINCT d.path FROM doc_meta m JOIN documents d USING (doc_id) WHERE m.key = 'api' AND m.value LIKE ?",
+        ["%" + tail]).fetchall()}
+    if len(want) >= 2:          # only where the tail really spans formats
+        wells.append((f"*{tail}", want, "well tail"))
+
+questions = discovery + containment + wells
+print(f"{len(questions)} questions: {len(discovery)} discovery, "
+      f"{len(containment)} containment, {len(wells)} well number\n")
 print(f"{'question':60} {'set':>4} {'hit@1':>6} {'rec@10':>7}")
 top1, recalls = 0, []
 for q, want, kind in questions:
