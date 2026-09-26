@@ -1,6 +1,6 @@
 import pytest
 
-from geo_mini_rag.ep.api_number import WellId, enrich, find, offshore
+from geo_mini_rag.ep.api_number import WellId, enrich, find, in_question, offshore
 
 LAS_HEADER = """~Well Information Block
  WELL.                NPR #3 #13SX11-11:  WELL
