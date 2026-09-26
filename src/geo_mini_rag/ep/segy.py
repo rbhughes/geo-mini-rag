@@ -412,6 +412,30 @@ class SegyHandler:
 LINE_IN_QUESTION = re.compile(r"(?i)\bline\s+(?P<name>[A-Za-z0-9][\w.\-]{0,19})\b")
 
 
+# "a trace length of 18000 ms", "6 second records". The quantity is derived --
+# interval times sample count -- so the number appears nowhere in the header
+# text and nothing in the index resembles the question. The unit has to be
+# there: a bare 18000 in a question is not evidence of anything.
+TRACE_LENGTH = re.compile(
+    r"(?i)(?:trace\s+length[^0-9]{0,16}(?P<a>\d+(?:\.\d+)?)\s*(?P<ua>ms|millisecond|milliseconds|s|sec|secs|second|seconds)\b"
+    r"|(?P<b>\d+(?:\.\d+)?)\s*(?P<ub>ms|millisecond|milliseconds|s|sec|secs|second|seconds)\s+(?:long\s+)?(?:trace|record)s?\b)"
+)
+_SECONDS = {"s", "sec", "secs", "second", "seconds"}
+
+
+def trace_lengths(question: str) -> list[str]:
+    """Trace lengths a question names, in milliseconds, as the index stores them."""
+    out = []
+    for found in TRACE_LENGTH.finditer(question):
+        number = found["a"] or found["b"]
+        unit = (found["ua"] or found["ub"] or "").lower()
+        if not number:
+            continue
+        millis = float(number) * (1000 if unit in _SECONDS else 1)
+        out.append(f"{millis:g}")
+    return out
+
+
 def in_question(question: str) -> list[tuple[str, str]]:
     """(key, value) pairs a question names, for looking up rather than ranking.
 
@@ -420,7 +444,8 @@ def in_question(question: str) -> list[tuple[str, str]]:
     set put a correct file first. Looked up, the name is exact. Whether the
     index holds it is checked by the caller, so a stray match costs nothing.
     """
-    return [("line", found["name"]) for found in LINE_IN_QUESTION.finditer(question)]
+    found = [("line", m["name"]) for m in LINE_IN_QUESTION.finditer(question)]
+    return found + [("trace_length_ms", ms) for ms in trace_lengths(question)]
 
 
 def _acquisition_text(path: Path, header: SegyHeader) -> str:

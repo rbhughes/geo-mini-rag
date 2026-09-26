@@ -278,3 +278,13 @@ def test_processed_for_names_the_client():
         "C35 Processed in August 2005 by: Excel Geophysical Services, Inc.",
     ])
     assert header.labels()["client"] == "ENCANA OIL & GAS (USA)"
+
+
+def test_a_trace_length_in_a_question_is_looked_up():
+    """The quantity is derived from the interval and the sample count, so the
+    number appears nowhere in the header text and ranking cannot reach it."""
+    from geo_mini_rag.ep.segy import in_question
+
+    assert in_question("trace length of 18000 ms?") == [("trace_length_ms", "18000")]
+    assert in_question("which files have 6 second records?") == [("trace_length_ms", "6000")]
+    assert in_question("how many wells produced 18000 barrels?") == [], "the unit has to be there"

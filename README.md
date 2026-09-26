@@ -93,22 +93,27 @@ units, sample format.
 | which surveys were recorded in meters? | 27 | yes | 100% |
 | where is seismic line 93D? | 4 | yes | 100% |
 | which files have 4500 samples per trace? | 8 | yes | 100% |
-| which lines have a trace length of 18000 ms? | 8 | no | 0% |
-| **47 questions** | | **57%** | **77%** |
+| which lines have a trace length of 18000 ms? | 8 | yes | 100% |
+| **47 questions** | | **81%** | **89%** |
 
 A seismic line named in a question is **looked up, not ranked**, the same way an
 API number is. `93D` and `53` are short identifiers, which is what embeddings
 are worst at:
 
-| the eight line questions | top hit right | recall@10 |
+| | top hit right | recall@10 |
 |---|---|---|
-| ranked | 0% | 56% |
-| looked up | **100%** | **100%** |
+| 8 line questions, ranked | 0% | 56% |
+| 8 line questions, looked up | **100%** | **100%** |
+| 11 trace-length questions, ranked | 0% | 42% |
+| 11 trace-length questions, looked up | **100%** | **96%** |
 
-What still fails is derived quantities. A trace length of 18000 ms is computed
-from the sample interval and the sample count; it is a fact and it is
-filterable, but the number never appears in the header text, so nothing
-resembles the question. `--where trace_length_ms=18000` answers it exactly.
+A trace length is derived — interval times sample count — so the number appears
+nowhere in the header text and nothing in the index resembles the question.
+Ranking cannot reach it; a lookup answers it exactly. The unit has to be in the
+question, so "18000 barrels" is not read as a trace length.
+
+What still misses is sample interval in milliseconds: 4, 2 and 1 are too short
+and too common to rank, and they have no lookup yet.
 
 **API well numbers** are found in any document, not just the ones with headers
 — a completion report, a loader log, a scanned permit. They are validated
