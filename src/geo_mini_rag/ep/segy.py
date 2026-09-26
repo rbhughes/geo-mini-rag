@@ -130,7 +130,7 @@ TEXT_LABELS = {
     "FIELD": "field", "LINE": "line", "SURVEY": "survey", "CONTRACTOR": "contractor",
     "SHOT BY": "shot_by", "PROCESSED BY": "processed_by", "DATUM": "datum",
     "PROJECTION": "projection", "MAP PROJECTION": "projection", "ZONE": "zone",
-    "MEAS UNITS": "units", "UNITS": "units",
+    "MEAS UNITS": "units", "UNITS": "units", "COORD. UNITS": "units",
 }
 # Case-insensitive because a card can read "Processed for: ENCANA OIL & GAS"
 # as easily as "PROCESSED BY: CGG". The label is uppercased before it is looked
@@ -140,6 +140,25 @@ LABEL = re.compile(
     r"(?=\s{2,}[A-Za-z][A-Za-z &/.]{2,18}\s*:|$)"
 )
 CARD_NUMBER = re.compile(r"^C\s*\d{0,2}\s?")
+# One client, three spellings: ENCANA OIL & GAS (USA), ENCANA OIL & GAS (USA)
+# INC, and ENCANA OIL & GAS (USA), INC. Three fact values for five files splits
+# every answer set and makes --where client=... find a third of them. Only the
+# trailing legal suffix is removed. Real company-name normalisation -- ampersand
+# and "and", abbreviations, subsidiaries, former names -- is a larger job and is
+# out of scope here; this is the typography, not the entity.
+LEGAL_SUFFIX = re.compile(
+    r"(?i)[\s,]+(?:inc|inc\.|incorporated|llc|l\.l\.c\.|ltd|ltd\.|limited|"
+    r"co|co\.|corp|corp\.|corporation|company|lp|l\.p\.)$"
+)
+NAMED_ENTITY = frozenset({"client", "shot_by", "processed_by", "contractor"})
+
+
+def _tidy(key: str, value: str) -> str:
+    """A label value as it will be stored."""
+    value = " ".join(value.split()).strip(" .-")
+    if key in NAMED_ENTITY:
+        value = LEGAL_SUFFIX.sub("", value).strip(" ,.-")
+    return value
 # Half the headers in this corpus write the line name without a colon, on a
 # card of their own: "LINE 700", "LINE CPB-3", "LINE 71-117-277  LOUISIANA".
 # Only the start of a card counts, and only across a single space: "LINE
@@ -164,6 +183,25 @@ BARE_LABEL = re.compile(
 HEADING_WORD = re.compile(r"^[A-Z]{1,3}$")
 
 CARD_NUMBER = re.compile(r"^C\s*\d{0,2}\s?")
+# One client, three spellings: ENCANA OIL & GAS (USA), ENCANA OIL & GAS (USA)
+# INC, and ENCANA OIL & GAS (USA), INC. Three fact values for five files splits
+# every answer set and makes --where client=... find a third of them. Only the
+# trailing legal suffix is removed. Real company-name normalisation -- ampersand
+# and "and", abbreviations, subsidiaries, former names -- is a larger job and is
+# out of scope here; this is the typography, not the entity.
+LEGAL_SUFFIX = re.compile(
+    r"(?i)[\s,]+(?:inc|inc\.|incorporated|llc|l\.l\.c\.|ltd|ltd\.|limited|"
+    r"co|co\.|corp|corp\.|corporation|company|lp|l\.p\.)$"
+)
+NAMED_ENTITY = frozenset({"client", "shot_by", "processed_by", "contractor"})
+
+
+def _tidy(key: str, value: str) -> str:
+    """A label value as it will be stored."""
+    value = " ".join(value.split()).strip(" .-")
+    if key in NAMED_ENTITY:
+        value = LEGAL_SUFFIX.sub("", value).strip(" ,.-")
+    return value
 # Half the headers in this corpus write the line name without a colon, on a
 # card of their own: "LINE 700", "LINE CPB-3", "LINE 71-117-277  LOUISIANA".
 # Only the start of a card counts, and only across a single space: "LINE
@@ -235,7 +273,7 @@ class SegyHeader:
             body = CARD_NUMBER.sub("", card)
             for match in LABEL.finditer(body):
                 key = TEXT_LABELS.get(" ".join(match["label"].split()).upper())
-                value = " ".join(match["value"].split()).strip(" .-")
+                value = _tidy(key or "", match["value"])
                 if key and value and key not in found:
                     found[key] = value
             # Not on a card that already names something with a colon: that
@@ -246,7 +284,7 @@ class SegyHeader:
                 continue
             for bare in BARE_LABEL.finditer(body):
                 key = TEXT_LABELS.get(" ".join(bare["label"].split()))
-                value = " ".join(bare["value"].split()).strip(" .-")
+                value = _tidy(key or "", bare["value"])
                 if key and value and not HEADING_WORD.match(value) and key not in found:
                     found[key] = value
         return found

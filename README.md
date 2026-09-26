@@ -71,10 +71,17 @@ the candidates instead.
 | ranked | 20% | 25% |
 | filtered | **100%** | **91%** |
 
-Over 35 shapefile questions the set scores 60% on the top hit and 64% recall.
-What drags it down is questions like "which layer has 53 features?" — the bare
-number is unreachable by ranking, and nobody asks it that way round; "how many
-features does Teapot_Wells have" already works.
+`evals/shapefile_sets.py` asks the two questions a person actually puts to a
+pile of map layers — *do I have spatial data for X?* and *which shapefile has
+Y?* — and scores **60% on the top hit, 83% recall@10** over 87 of them. An
+earlier version asked "which layer has 53 features?", scored 0%, and was
+measuring the question generator rather than the system: the realistic
+direction, "how many features does Teapot_Wells have", returns rank 1.
+
+A company name is tidied only as far as its trailing legal suffix, because
+ENCANA appeared as three spellings across five files and split every answer
+set. Real company-name normalisation — ampersands against "and", abbreviations,
+subsidiaries, former names — is a larger job and deliberately out of scope.
 
 `.dbf` attributes are sorted by measurement rather than by name, because field
 names are a vendor's abbreviations and there is no list to check them against.

@@ -82,7 +82,7 @@ def test_labels_come_off_the_cards(survey):
     assert labels["area"] == "ABITIBI - GRENVILLE '93"
     assert labels["line"] == "55"
     assert labels["shot_by"] == "ENERTEC GEOPHYSICAL"
-    assert labels["processed_by"] == "CGG GEOPHYSICS CANADA LTD"
+    assert labels["processed_by"] == "CGG GEOPHYSICS CANADA"
 
 
 def test_text_files_are_not_mistaken_for_segy(tmp_path):
@@ -207,7 +207,7 @@ def test_an_unfilled_column_heading_is_not_part_of_the_value():
     header = SegyHeader(path=pathlib.Path("x.sgy"), encoding="cp037", cards=[
         "C 1 CLIENT ENCANA OIL & GAS (USA) INC. COMPANY                    CREW NO",
     ])
-    assert header.labels()["client"] == "ENCANA OIL & GAS (USA) INC"
+    assert header.labels()["client"] == "ENCANA OIL & GAS (USA)"
 
 
 def test_later_columns_on_a_template_card_are_read():
@@ -219,7 +219,7 @@ def test_later_columns_on_a_template_card_are_read():
         "C 2 LINE SWA-10        AREA SOUTHWEST ARKOMA BASIN   MAP ID",
     ])
     assert header.labels() == {
-        "client": "ENCANA OIL & GAS (USA) INC",
+        "client": "ENCANA OIL & GAS (USA)",
         "line": "SWA-10",
         "area": "SOUTHWEST ARKOMA BASIN",
     }
@@ -245,7 +245,7 @@ def test_a_filled_second_column_is_read_when_the_first_is_blank():
         "C 2 LINE  1               AREA:",
     ])
     labels = header.labels()
-    assert labels["client"] == "FAIRFIELD IND., INC"
+    assert labels["client"] == "FAIRFIELD IND"
     assert labels["line"] == "1", "two spaces to a filled value, not an empty column"
 
 
@@ -311,3 +311,29 @@ def test_a_sample_count_is_looked_up():
         ("samples_per_trace", "2000")]
     assert in_question("number of samples: 4500") == [("samples_per_trace", "4500")]
     assert in_question("which wells were drilled to 2000 feet?") == []
+
+
+def test_one_client_written_three_ways_is_one_value():
+    """ENCANA appears as three spellings across five files, which splits every
+    answer set. Only the trailing legal suffix is removed: real company-name
+    normalisation is a larger job and is out of scope here."""
+    from geo_mini_rag.ep.segy import SegyHeader
+
+    def client_of(card):
+        return SegyHeader(path=pathlib.Path("x.sgy"), encoding="cp037",
+                          cards=[card]).labels().get("client")
+
+    assert client_of("C 1 CLIENT: ENCANA OIL & GAS (USA)") == "ENCANA OIL & GAS (USA)"
+    assert client_of("C 1 CLIENT: ENCANA OIL & GAS (USA) INC.") == "ENCANA OIL & GAS (USA)"
+    assert client_of("C 1 Processed for: ENCANA OIL & GAS (USA), INC") == "ENCANA OIL & GAS (USA)"
+    # a name that merely ends in a word like the suffix keeps it
+    assert client_of("C 1 CLIENT: LITHOPROBE") == "LITHOPROBE"
+
+
+def test_coordinate_units_are_read_off_the_projection_card():
+    from geo_mini_rag.ep.segy import SegyHeader
+
+    header = SegyHeader(path=pathlib.Path("x.sgy"), encoding="cp037", cards=[
+        "C33 MAP PROJECTION: State Plane  ZONE: Lousiana North 1701  COORD. UNITS: feet",
+    ])
+    assert header.labels()["units"] == "feet"
