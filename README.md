@@ -60,23 +60,53 @@ uv run geo-mini-rag ingest --root data/subset --db data/index/subset.duckdb --tr
 | **SEG-P1** positioning | header labels, line names, shotpoint range, point count | the coordinates |
 | **ESRI shapefile** | title and abstract from `.shp.xml`, CRS from `.prj`, extent from `.shp`, and the `.dbf` attributes worth searching | the geometry |
 
-**Coordinate systems are filtered, not ranked.** A question that spells out
-"NAD 1927 UTM Zone 13N" is asking for those layers, and the rarity boost cannot
-deliver them: 21 layers out of 2,520 documents earn about 0.06, which will not
-lift them past 68,000 chunks. An exact match on a projection or datum narrows
-the candidates instead.
+**Group membership is filtered, not ranked.** A projection, a state and a
+county each name a set of documents rather than describing one, and the rarity
+boost cannot deliver them: 21 layers out of 2,520 documents earn about 0.06,
+which will not lift them past 68,000 chunks. An exact match narrows the
+candidates instead. `evals/group_sets.py` measures both arms over 19 questions
+across the four group keys:
 
-| the 10 questions naming a projection or datum | top hit right | recall@10 |
+| 19 questions naming a projection, datum, state or county | top hit right | recall@10 |
 |---|---|---|
-| ranked | 20% | 25% |
-| filtered | **100%** | **91%** |
+| ranked | 16% | 18% |
+| filtered | **47%** | **44%** |
+
+Read that as "filtering is how these are answered at all", not as a score.
+Ground truth here is *the documents carrying the value*, which is close to what
+the filter selects, so the filtered arm is partly measuring itself. The ranked
+arm is the honest half: without a filter these questions are mostly unanswered.
+What says the filter costs nothing is that every other set below is unchanged
+by it.
+
+**Whether silence is a contradiction is read from the index.** A filter that
+simply drops every document without the key deleted every road and benchmark
+layer for any question naming a state, and cost the shapefile set seven points,
+because only a document with a parsed well number carries `api_state`. So for
+each key the index is asked which kinds carry it nearly always: `api_state` is
+on 96% of LAS files, so a log that says WY is out when the question says TX,
+while `crs_name` is on 66% of shapefiles — a third have no usable `.prj` — so a
+layer that never mentions a projection is not claiming to be outside it. No
+list of keys is maintained for this; a new handler that always records
+something gets the same treatment without an edit.
 
 `evals/shapefile_sets.py` asks the three questions a person actually puts to a
-pile of map layers — *do I have spatial data for X?*, *which shapefile has Y?*,
-and *which layer holds this well?* — and scores **67% on the top hit, 86%
-recall@10** over 107 of them. The 20 well-number questions, full and partial,
-score **100% on both**. An
-earlier version asked "which layer has 53 features?", scored 0%, and was
+pile of map layers, and scores **67% on the top hit, 81% recall@10** over 107
+of them:
+
+| | n | top hit right | recall@10 |
+|---|---|---|---|
+| *do I have spatial data for X?* | 67 | 64% | 87% |
+| *which shapefile has Y?* | 20 | 45% | 65% |
+| *which layer holds well 490250632500?* | 10 | **100%** | 60% |
+| *which layer holds `*2506325`?* | 10 | **100%** | **100%** |
+
+Every well-number question puts a right answer first. Only the starred form
+recovers the whole answer set, which is the point of the wildcards: a
+full-length number matches the layers that write it that way, and the fragment
+reaches the ones that do not.
+
+An earlier version asked "which layer has 53 features?", scored 0%, and was
 measuring the question generator rather than the system: the realistic
 direction, "how many features does Teapot_Wells have", returns rank 1.
 
@@ -106,7 +136,7 @@ the answer set for a question about Lithoprobe. A seismic archive is many files
 per survey, so these questions have several right answers and are scored
 against the set.
 
-47 questions, covering who shot and processed a survey, where it is, and what
+48 questions, covering who shot and processed a survey, where it is, and what
 a data loader needs to know: sample interval, samples per trace, trace length,
 units, sample format.
 
@@ -121,7 +151,7 @@ units, sample format.
 | which lines have a trace length of 18000 ms? | 8 | yes | 100% |
 | which files were recorded at a 4 ms sample interval? | 24 | yes | 100% |
 | which files have 2000 samples per trace? | 7 | yes | 100% |
-| **47 questions** | | **98%** | **99%** |
+| **48 questions** | | **98%** | **99%** |
 
 A seismic line named in a question is **looked up, not ranked**, the same way an
 API number is. `93D` and `53` are short identifiers, which is what embeddings
@@ -199,6 +229,32 @@ and county codes, and a label (`API`, `UWI`) must precede the digits. Measured
 on 992 documents that have nothing to do with wells: 139,629 bare 10/12/14-digit
 runs, of which 4,607 carry a plausible state and county and would pass on
 structure alone, and none survive the label rule.
+
+**A state and a county are read back out of the digits, at trusted lengths
+only.** The numbering puts two digits of state and three of county at the
+front, so a stored well number already says where it is — and until that is
+read out, nothing can be searched for by name. "What LAS files are in TX"
+matched nothing at all before: `TX` is below the length floor that keeps short
+values from matching everything, and the boost could not deliver a state
+anyway, so the question returned Wyoming logs.
+
+Only 12- and 14-digit values are read. Ten is excluded because the last ten
+digits of `490250632500` are `0250632500`, which parses as state 02, county
+506 — a real-looking Arizona well that does not exist. Shorter values are
+fragments whose digits do not line up at all: `Teapot_Wells` writes `2500153`,
+county 025 and well 00153 with the state gone. A wrong county is worse than no
+county. In prose a label anchors the number, so a county is resolved at any of
+the three full lengths there. Across the corpus this reads `WY`/`Natrona` off
+the two layers that store twelve digits and, correctly, nothing off the two
+that store seven.
+
+A two-letter code is only recognised written in capitals, because half of them
+are ordinary words — `IN`, `OR`, `ME`, `OK`, `HI`, `DE`, `LA` — and "wells in
+or near the field" would otherwise ask for Indiana and Oregon. A spelled-out
+name is matched however it is capitalised, through
+`src/geo_mini_rag/ep/data/state_names.csv`; the code table carries the
+abbreviation only, and a name cannot be derived from an abbreviation, so the
+pairing is written down rather than guessed.
 
 ## Retrieval
 

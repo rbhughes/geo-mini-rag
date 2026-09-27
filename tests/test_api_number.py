@@ -168,3 +168,33 @@ def test_a_fragment_is_starred_the_way_a_glob_is(written, expected):
 def test_a_number_with_no_star_is_not_a_fragment():
     assert in_question("4902506325") == [("api", "4902506325")]
     assert in_question("which well is 2506325") == []
+
+
+def test_a_trusted_length_yields_its_state_and_county():
+    """Twelve digits put the county where the numbering says it is."""
+    from geo_mini_rag.ep.api_number import codes_of
+
+    assert codes_of(["490250632500"]) == {"api_state": ["WY"], "api_county": ["Natrona"]}
+
+
+@pytest.mark.parametrize("value", ["2500153", "2506325", "4902511080"])
+def test_an_untrusted_length_yields_nothing(value):
+    """A fragment has lost its state, and the last ten digits of a fourteen read
+    as a different state entirely: 0250632500 looks like Arizona county 506. A
+    wrong county is worse than no county, so only 12 and 14 are read."""
+    from geo_mini_rag.ep.api_number import codes_of
+
+    assert codes_of([value]) == {}
+
+
+@pytest.mark.parametrize("question, expected", [
+    ("what LAS files are in TX", ["TX"]),
+    ("which wells are in Texas", ["TX"]),
+    ("wells in texas", ["TX"]),
+    ("wells in or near the field", []),     # OR is Oregon, in lower case it is a word
+    ("ok, which wells are in me", []),      # OK and ME likewise
+])
+def test_a_state_is_read_by_capitalised_code_or_by_name(question, expected):
+    from geo_mini_rag.ep.api_number import states_in_question
+
+    assert states_in_question(question) == expected

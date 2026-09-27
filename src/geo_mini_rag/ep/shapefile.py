@@ -39,6 +39,7 @@ from dataclasses import dataclass, field
 from functools import cached_property
 from pathlib import Path
 
+from geo_mini_rag.ep import api_number
 from geo_mini_rag.rag.extract import Extracted, Skip
 from geo_mini_rag.rag.trace import Tracer
 
@@ -291,6 +292,10 @@ def layer_facts(layer: Layer) -> dict[str, object]:
         facts["field"] = named
     if wells := api_values(layer):
         facts["api"] = wells
+        # The digits carry a state and a county that nothing in the layer spells
+        # out, so a question naming either cannot reach these wells until they
+        # are read out. Only trusted lengths are read; see api_number.codes_of.
+        facts.update(api_number.codes_of(wells))
     return facts
 
 

@@ -1,3 +1,5 @@
+import pathlib
+
 import pytest
 
 from geo_mini_rag.rag.answer import build_messages
@@ -132,19 +134,24 @@ def test_idf_weights_rarity():
 
 
 def _tiny_index(path, rows, dim=3):
-    """An index of hand-written vectors: (doc_id, path, text, embedding)."""
+    """An index of hand-written vectors: (doc_id, path, text, embedding).
+
+    `kind` is taken from the extension, the way ingest records it, because the
+    filter reads how widely a key is carried within a kind.
+    """
     import duckdb
 
     con = duckdb.connect(str(path))
     con.execute("CREATE TABLE meta (key VARCHAR PRIMARY KEY, value VARCHAR)")
     con.executemany("INSERT INTO meta VALUES (?, ?)",
                     [("embed_model", "test-model"), ("dim", str(dim))])
-    con.execute("CREATE TABLE documents (doc_id VARCHAR, path VARCHAR)")
+    con.execute("CREATE TABLE documents (doc_id VARCHAR, path VARCHAR, kind VARCHAR)")
     con.execute("CREATE TABLE doc_meta (doc_id VARCHAR, key VARCHAR, value VARCHAR, num_value DOUBLE)")
     con.execute(f"CREATE TABLE chunks (doc_id VARCHAR, ord INTEGER, page INTEGER,"
                 f" text VARCHAR, embedding FLOAT[{dim}])")
     for i, (doc_id, doc_path, text, vector) in enumerate(rows):
-        con.execute("INSERT INTO documents VALUES (?, ?)", [doc_id, doc_path])
+        kind = pathlib.Path(doc_path).suffix.lstrip(".").lower()
+        con.execute("INSERT INTO documents VALUES (?, ?, ?)", [doc_id, doc_path, kind])
         con.execute("INSERT INTO chunks VALUES (?, ?, NULL, ?, ?)", [doc_id, i, text, vector])
     con.close()
 
@@ -296,6 +303,10 @@ def test_a_named_coordinate_system_narrows_instead_of_nudging(tmp_path, monkeypa
     ])
     con = duckdb.connect(str(db))
     con.execute("INSERT INTO doc_meta VALUES ('want', 'crs_name', 'NAD 1927 UTM Zone 13N', NULL)")
+    # Every shapefile has a .prj, so the layer that loses says which projection
+    # it is in rather than saying nothing. Being in a different one is what
+    # takes it out; see the silence test below.
+    con.execute("INSERT INTO doc_meta VALUES ('near', 'crs_name', 'WGS 1984', NULL)")
     con.close()
     monkeypatch.setattr(openrouter, "embed",
                         lambda *a, **k: openrouter.EmbedResult("m", "m", [[1.0, 0.0, 0.0]]))
@@ -304,6 +315,36 @@ def test_a_named_coordinate_system_narrows_instead_of_nudging(tmp_path, monkeypa
     hits, _ = search_mod.search("which layers are in NAD 1927 UTM Zone 13N?", 5, db, cfg=cfg)
     assert [h.path for h in hits] == ["wells.shp"], "the nearer chunk is not in that projection"
     assert "crs_name=NAD 1927 UTM Zone 13N" in hits[0].matched
+
+
+def test_a_document_silent_on_a_group_key_is_not_filtered_out(tmp_path, monkeypatch):
+    """A filter must remove the document that contradicts the question, not the
+    one that never raised the subject. Only documents with a parsed well number
+    carry api_state, so excluding everything without it lost every road and
+    benchmark layer for any question that named a state."""
+    import duckdb
+
+    from geo_mini_rag import openrouter
+    from geo_mini_rag.rag import search as search_mod
+
+    db = tmp_path / "state.duckdb"
+    _tiny_index(db, [
+        ("quiet", "roads.shp", "streets and kerbs", [1.0, 0.0, 0.0]),
+        ("texan", "tx.las", "well log header", [0.2, 0.9, 0.0]),
+        ("wyo", "wy.las", "well log header", [0.9, 0.3, 0.0]),
+    ])
+    con = duckdb.connect(str(db))
+    con.execute("INSERT INTO doc_meta VALUES ('texan', 'api_state', 'TX', NULL)")
+    con.execute("INSERT INTO doc_meta VALUES ('wyo', 'api_state', 'WY', NULL)")
+    con.close()
+    monkeypatch.setattr(openrouter, "embed",
+                        lambda *a, **k: openrouter.EmbedResult("m", "m", [[1.0, 0.0, 0.0]]))
+
+    cfg = {"retrieve": {"metadata_boost": 0.1, "metadata_min_value_length": 4}}
+    hits, _ = search_mod.search("what LAS files are in TX?", 5, db, cfg=cfg)
+    paths = [h.path for h in hits]
+    assert "wy.las" not in paths, "a document that says WY contradicts the question"
+    assert "tx.las" in paths and "roads.shp" in paths, "silence is not a contradiction"
 
 
 def test_a_source_cannot_close_its_own_fence():

@@ -186,6 +186,87 @@ def find_bare(value: str) -> WellId | None:
     return found[0] if found else None
 
 
+# The state names, so a question saying Texas reaches a fact filed as TX. The
+# code table carries the two-letter abbreviation only, and a name cannot be
+# derived from an abbreviation, so the pairing is written down rather than
+# guessed. The four offshore pseudo-states already carry a full name.
+STATE_NAMES = Path(__file__).parent / "data" / "state_names.csv"
+
+# Lengths at which the middle three digits are certainly the county. A 12- or
+# 14-digit number cannot be a tail of anything longer that is in use, so its
+# leading 2-3-5 is where the numbering says it is. Ten is excluded on purpose:
+# the last ten digits of 490250632500 are 0250632500, which reads as state 02
+# and county 506 and is a real-looking well in Arizona that does not exist.
+# Shorter values are fragments -- Teapot_Wells writes 2500153, which is county
+# 025 and well 00153 with the state gone -- and their digits do not line up at
+# all. Prose is a separate matter: there a label anchors the number, so `find`
+# resolves a county at any of the three full lengths.
+TRUSTED_LENGTHS = frozenset({12, 14})
+
+
+@cache
+def _names() -> dict[str, str]:
+    """Two-letter code to state name."""
+    with STATE_NAMES.open(newline="", encoding="utf-8-sig") as f:
+        return {row["state"].strip(): row["name"].strip() for row in csv.DictReader(f)}
+
+
+def codes_of(values: list[str]) -> dict[str, list[str]]:
+    """The `api_state` and `api_county` a column of well numbers implies.
+
+    For the unlabelled case: a .dbf column whose values validated as well
+    numbers carries a state and a county in its digits, and neither is text
+    anyone can search for until it is read out. Only values of a trusted length
+    are read; the rest keep their digits and contribute nothing else, because a
+    wrong county is worse than no county.
+    """
+    states, counties = _tables()
+    found_states: list[str] = []
+    found_counties: list[str] = []
+    for value in values:
+        digits = re.sub(r"\D", "", str(value))
+        if len(digits) not in TRUSTED_LENGTHS:
+            continue
+        state_code, county_code = digits[:2], digits[2:5]
+        if state_code in offshore():
+            state, names = states[state_code], ()
+        elif state_code in states and (state_code, county_code) in counties:
+            state, names = states[state_code], counties[(state_code, county_code)]
+        else:
+            continue
+        if state not in found_states:
+            found_states.append(state)
+        for name in names:
+            if name not in found_counties:
+                found_counties.append(name)
+    out = {}
+    if found_states:
+        out["api_state"] = sorted(found_states)
+    if found_counties:
+        out["api_county"] = sorted(found_counties)
+    return out
+
+
+def states_in_question(question: str) -> list[str]:
+    """State codes a question names, by code or by name.
+
+    A code is only read when it is written in capitals. Half of them are
+    ordinary words -- IN, OR, ME, OK, HI, DE, LA -- and "what LAS files are in
+    TX" would otherwise ask for Indiana as well. A name is matched however it
+    is capitalised, because a name is not a word that means something else.
+    """
+    codes = set(_names())
+    out: list[str] = []
+    for token in re.findall(r"(?<![A-Za-z])([A-Z]{2})(?![A-Za-z])", question):
+        if token in codes and token not in out:
+            out.append(token)
+    lowered = f" {re.sub(r'[^a-z ]+', ' ', question.lower())} "
+    for code, name in _names().items():
+        if f" {name.lower()} " in lowered and code not in out:
+            out.append(code)
+    return out
+
+
 def enrich(metadata: dict, segments: list[tuple[int | None, str]]) -> dict:
     """The `api`, `api_state` and `api_county` facts a document carries.
 

@@ -16,6 +16,7 @@ from pathlib import Path
 import duckdb
 
 from geo_mini_rag import openrouter, settings
+from geo_mini_rag.ep import api_number
 from geo_mini_rag.errors import UserError
 from geo_mini_rag.rag.store import (
     DB_PATH,
@@ -57,6 +58,15 @@ def mentioned_metadata(con, question: str, cfg: dict) -> list[tuple[str, str, st
     retrieve = cfg.get("retrieve", {})
     min_len = retrieve.get("metadata_min_value_length", 4)
     words = "trim(regexp_replace(lower({}), '[^a-z0-9]+', ' ', 'g'))"
+    # A two-letter state code is below the length floor, and has to be, since
+    # half the codes are also ordinary words. It comes in through the one door
+    # that reads them safely: capitalised in the question, or spelled out as a
+    # state name. See api_number.states_in_question.
+    codes = api_number.states_in_question(question)
+    by_code = ""
+    if codes:
+        by_code = (" OR (m.key = 'api_state' AND m.value IN ("
+                   + ", ".join("?" * len(codes)) + "))")
     rows = con.execute(
         f"""
         SELECT m.doc_id, m.key, m.value, c.docs
@@ -64,11 +74,13 @@ def mentioned_metadata(con, question: str, cfg: dict) -> list[tuple[str, str, st
         JOIN (
             SELECT key, value, count(DISTINCT doc_id) AS docs FROM doc_meta GROUP BY 1, 2
         ) c USING (key, value)
-        WHERE length({words.format("m.value")}) >= ?
-          AND ' ' || {words.format("?")} || ' '
-              LIKE '%' || ' ' || {words.format("m.value")} || ' ' || '%'
+        WHERE (
+            length({words.format("m.value")}) >= ?
+            AND ' ' || {words.format("?")} || ' '
+                LIKE '%' || ' ' || {words.format("m.value")} || ' ' || '%'
+        ){by_code}
         """,
-        [min_len, question],
+        [min_len, question, *codes],
     ).fetchall()
     return rows
 
@@ -78,7 +90,31 @@ def mentioned_metadata(con, question: str, cfg: dict) -> list[tuple[str, str, st
 # not for layers a little like them, and the boost cannot do it: 21 layers out
 # of 2,520 earn about 0.06, which will not lift them past 68,000 chunks. An
 # exact match on one of these narrows the candidates instead.
-GROUP_KEYS = frozenset({"crs_name", "crs_datum"})
+#
+# A state and a county are the same kind of thing. "What LAS files are in TX"
+# names 11 documents out of 2,520 and the boost left every one of them off the
+# first page, returning Wyoming logs; a filter answers it. Values within one
+# key are alternatives and are OR'd; separate keys are separate conditions and
+# are AND'd, so a question naming a state and a county asks for both.
+GROUP_KEYS = frozenset({"crs_name", "crs_datum", "api_state", "api_county"})
+
+# A key is near-universal in a kind when almost every document of that kind
+# carries it. Read from the index instead of listed, so a new handler that
+# always records something gets the same treatment without an edit here.
+UNIVERSAL_SHARE = 0.9
+
+
+def _universal_kinds(con, key: str) -> list[str]:
+    """Kinds where this key is near-universal, so not carrying it means not matching."""
+    return [kind for kind, in con.execute(
+        """
+        SELECT d.kind
+        FROM documents d
+        LEFT JOIN (SELECT DISTINCT doc_id FROM doc_meta WHERE key = ?) m USING (doc_id)
+        GROUP BY d.kind
+        HAVING count(m.doc_id) >= ? * count(*)
+        """, [key, UNIVERSAL_SHARE]).fetchall()]
+
 
 COMPARISONS = (">=", "<=", "!=", ">", "<", "=")
 
@@ -242,15 +278,30 @@ def search(
             weights[doc_id] = max(weights.get(doc_id, 0.0), boost * _idf(docs, total_docs))
 
         filters, params = [], []
-        if groups:
-            # Any of the named groups, not all of them: a question naming two
-            # projections is asking for either.
-            filters.append(
-                "d.doc_id IN (SELECT doc_id FROM doc_meta WHERE "
-                + " OR ".join(["(key = ? AND value = ?)"] * len(groups))
-                + ")"
-            )
-            params += [part for pair in groups for part in pair]
+        for key in dict.fromkeys(key for key, _ in groups):
+            # Values under one key are alternatives -- a question naming two
+            # projections is asking for either -- so they are OR'd, and each
+            # key becomes its own condition.
+            values = [value for group_key, value in groups if group_key == key]
+            # Whether silence is a contradiction depends on the key, and the
+            # index says which. Every shapefile has a .prj, so a layer that
+            # does not answer to the projection named is in a different one and
+            # goes. Only a document with a parsed well number carries
+            # api_state, so a road layer saying nothing about a state is not
+            # claiming to be outside it -- excluding those cost the shapefile
+            # set seven points. The rule is read off the data rather than
+            # listed here: among the kinds where a key is near-universal it
+            # must match, and elsewhere silence passes.
+            universal = _universal_kinds(con, key)
+            clause = ("d.doc_id IN (SELECT doc_id FROM doc_meta WHERE key = ? AND value IN ("
+                      + ", ".join("?" * len(values)) + "))")
+            args = [key, *values]
+            if universal:
+                clause += (" OR (d.kind NOT IN (" + ", ".join("?" * len(universal)) + ")"
+                           " AND d.doc_id NOT IN (SELECT doc_id FROM doc_meta WHERE key = ?))")
+                args += [*universal, key]
+            filters.append(f"({clause})")
+            params += args
         for key, value in _identifiers(con, question):
             # An identifier names one well. Ranking cannot find it -- the digits
             # embed close to any other digits -- so it is a lookup, narrowing the
