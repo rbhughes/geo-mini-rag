@@ -161,10 +161,12 @@ footer p{max-width:68rem;margin:.35rem auto}
 <figure>
   <img src="/pipeline.svg" alt="Flowchart: a file passes three gates, is read by a format reader into text and facts, then chunked, embedded and stored in DuckDB.">
   <figcaption>
-    A file passes three gates before anything is spent on it, then goes to a format reader
-    that produces text and facts separately. Text a person would search for goes to the
-    embedder; numbers a person would filter on become facts. Sending a sample interval to an
-    embedding model is how you lose it.
+    One real file, end to end: a 1977 density log from Teapot Dome. It passes three gates
+    before anything is spent on it, then the LAS reader takes the header block and leaves
+    2,900 rows of curves unread. The callout is that header verbatim &mdash; every line
+    becomes a fact row, and the same lines are rewritten as a sentence for the embedder. The
+    query on the right asks about the same well, and its answer, <code>26-SEP-1977</code>, is
+    the <code>DATE</code> line on the left.
   </figcaption>
 </figure>
 
