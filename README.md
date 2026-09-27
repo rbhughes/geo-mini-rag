@@ -69,7 +69,7 @@ across the four group keys:
 
 | 19 questions naming a projection, datum, state or county | top hit right | recall@10 |
 |---|---|---|
-| ranked | 16% | 18% |
+| ranked | 16% | 21% |
 | filtered | **47%** | **44%** |
 
 Read that as "filtering is how these are answered at all", not as a score.
