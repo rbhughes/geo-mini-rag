@@ -23,6 +23,7 @@ from geo_mini_rag.rag.store import (
     _has_table,
     connect,
     has_text_index,
+    load_vector_index,
 )
 
 
@@ -213,8 +214,11 @@ def search(
     boost = cfg.get("retrieve", {}).get("metadata_boost", 0.15)
     per_document = cfg.get("retrieve", {}).get("per_document", 0)
     lexical_weight = cfg.get("retrieve", {}).get("lexical_weight", 1.0)
+    vector_index = cfg.get("retrieve", {}).get("vector_index", False)
 
     with connect(db, read_only=True) as con:
+        if vector_index:
+            load_vector_index(con)
         meta = dict(con.execute("SELECT key, value FROM meta").fetchall())
         if "dim" not in meta:
             raise UserError(f"{db} has no chunks yet; run `geo-mini-rag ingest`")
@@ -274,17 +278,51 @@ def search(
         con.execute("CREATE OR REPLACE TEMP TABLE metadata_boost (doc_id VARCHAR, weight DOUBLE)")
         if weights:
             con.executemany("INSERT INTO metadata_boost VALUES (?, ?)", list(weights.items()))
-        scored = f"""
-            SELECT array_cosine_similarity(c.embedding, ?::FLOAT[{int(dim)}])
-                   + coalesce(b.weight, 0) AS score,
+        # An HNSW index over the embeddings is built at ingest and switched
+        # off here, because it was measured and it costs more than it buys.
+        # The planner only reaches it through a bare
+        # `ORDER BY array_cosine_distance(...) LIMIT n` over the table, so the
+        # nearest chunks must be cut before the filter and the boost are
+        # applied -- and both of those have to be exact. A filter must narrow
+        # before the nearest are chosen, or a search for one well returns
+        # whichever of its chunks happened to make a global top sixty. A boost
+        # must reach anywhere: 63 of the 103 corpus questions carry one.
+        # Merging the boosted documents back in recovered most of it, but not
+        # all: recall@5 came back 78% -> 73% and MRR 0.668 -> 0.637, to save
+        # 0.3s of a query whose embedding round trip is most of a second.
+        # At 68,000 vectors an exact scan is the better trade. Turn
+        # `vector_index` on to reproduce it.
+        pool = max(CANDIDATES, k)
+        exact = f"""
+            SELECT array_cosine_distance(c.embedding, ?::FLOAT[{int(dim)}])
+                   - coalesce(b.weight, 0) AS score,
                    c.rowid, d.path, c.page, c.text, d.doc_id
             FROM chunks c
             JOIN documents d USING (doc_id)
             LEFT JOIN metadata_boost b ON b.doc_id = d.doc_id
-            {"WHERE " + " AND ".join(filters) if filters else ""}"""
-        pool = max(CANDIDATES, k)
-        dense = con.execute(f"{scored} ORDER BY score DESC LIMIT ?",
-                            [qres.vectors[0], *params, pool]).fetchall()
+            WHERE {" AND ".join(filters) or "TRUE"}
+            ORDER BY score ASC LIMIT ?"""
+        if vector_index and not filters:
+            dense = con.execute(f"""
+                WITH nearest AS (
+                    SELECT rowid FROM chunks
+                    ORDER BY array_cosine_distance(embedding, ?::FLOAT[{int(dim)}]) LIMIT ?
+                ),
+                boosted AS (
+                    SELECT rowid FROM chunks WHERE doc_id IN (SELECT doc_id FROM metadata_boost)
+                ),
+                candidates AS (SELECT rowid FROM nearest UNION SELECT rowid FROM boosted)
+                SELECT array_cosine_distance(c.embedding, ?::FLOAT[{int(dim)}])
+                       - coalesce(b.weight, 0) AS score,
+                       c.rowid, d.path, c.page, c.text, d.doc_id
+                FROM candidates n
+                JOIN chunks c ON c.rowid = n.rowid
+                JOIN documents d USING (doc_id)
+                LEFT JOIN metadata_boost b ON b.doc_id = d.doc_id
+                ORDER BY score ASC LIMIT ?""",
+                [qres.vectors[0], pool, qres.vectors[0], pool]).fetchall()
+        else:
+            dense = con.execute(exact, [qres.vectors[0], *params, pool]).fetchall()
 
         lexical = []
         if lexical_weight and has_text_index(con):

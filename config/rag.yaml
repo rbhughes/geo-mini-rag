@@ -49,6 +49,14 @@ retrieve:
   # discriminating token is in 138. Raise it to reproduce that; evals/ has the
   # comparison. Not dead code -- the measurement is the point.
   lexical_weight: 0.0
+  # An HNSW vector index is built at ingest and not used, for the same reason:
+  # measured, and it loses. DuckDB only reaches the index through a bare
+  # nearest-neighbour query, so the filter and the metadata boost -- the two
+  # things this pipeline depends on being exact -- would have to be applied
+  # after the candidates were already cut. recall@5 78% -> 73%, MRR 0.668 ->
+  # 0.637, to save 0.3s of a query that spends most of a second embedding the
+  # question. At 68,000 vectors the exact scan wins. Turn it on to see it.
+  vector_index: false
   # Document metadata a handler extracted (well, api, field, operator...) is part
   # of ranking: when a question names a value that exists in the index, that
   # document's chunks get this added to their cosine score. Identifiers are what
