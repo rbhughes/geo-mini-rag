@@ -9,6 +9,7 @@ no single document may take more than its share of the answer.
 from __future__ import annotations
 
 import math
+from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -16,7 +17,13 @@ import duckdb
 
 from geo_mini_rag import openrouter, settings
 from geo_mini_rag.errors import UserError
-from geo_mini_rag.rag.store import DB_PATH, _as_number, _has_table, connect
+from geo_mini_rag.rag.store import (
+    DB_PATH,
+    _as_number,
+    _has_table,
+    connect,
+    has_text_index,
+)
 
 
 @dataclass
@@ -97,6 +104,14 @@ def _idf(docs_with_value: int, total_docs: int) -> float:
 # name the same well when one runs on from the other -- sharing a start, where
 # both begin at the state, or sharing an end, where one has dropped it. Below
 # this many digits that is coincidence rather than evidence.
+# Reciprocal rank fusion. Two retrievers disagree about scale -- a cosine
+# similarity of 0.66 and a BM25 score of 6.6 are not comparable -- so their
+# ranks are combined rather than their scores. 60 is the constant the method
+# was published with; it flattens the difference between rank 1 and rank 2 so
+# that agreeing on a document matters more than either ranking it first.
+RRF_K = 60
+CANDIDATES = 60        # how deep each retriever is read before fusing
+
 BRIDGE_DIGITS = 7
 WELL_KEYS = frozenset({"api", "uwi"})
 # one runs on from the other: shares a start, shares an end, or is the same
@@ -150,6 +165,35 @@ def _identifiers(con: duckdb.DuckDBPyConnection, question: str) -> list[tuple[st
     return held
 
 
+def _fuse(dense: list, lexical: list, lexical_weight: float,
+          per_document: int, k: int) -> list:
+    """Combine two rankings by reciprocal rank, then cap how much one file takes.
+
+    Ranks rather than scores, because a cosine similarity of 0.66 and a BM25
+    score of 6.6 do not share a scale. A chunk both retrievers place well beats
+    one that either places first.
+    """
+    fused: dict[int, list] = {}
+    scores: dict[int, float] = {}
+    for weight, ranking in ((1.0, dense), (lexical_weight, lexical)):
+        for rank, row in enumerate(ranking, 1):
+            rowid = row[1]
+            fused.setdefault(rowid, row)
+            scores[rowid] = scores.get(rowid, 0.0) + weight / (RRF_K + rank)
+
+    order = sorted(scores, key=lambda rowid: -scores[rowid])
+    out, per_doc = [], Counter()
+    for rowid in order:
+        _, _, path, page, text, doc_id = fused[rowid]
+        if per_document and per_doc[doc_id] >= per_document:
+            continue
+        per_doc[doc_id] += 1
+        out.append((scores[rowid], path, page, text, doc_id))
+        if len(out) >= k:
+            break
+    return out
+
+
 def search(
     question: str,
     k: int,
@@ -168,6 +212,7 @@ def search(
     cfg = cfg if cfg is not None else settings.load_rag_config()
     boost = cfg.get("retrieve", {}).get("metadata_boost", 0.15)
     per_document = cfg.get("retrieve", {}).get("per_document", 0)
+    lexical_weight = cfg.get("retrieve", {}).get("lexical_weight", 1.0)
 
     with connect(db, read_only=True) as con:
         meta = dict(con.execute("SELECT key, value FROM meta").fetchall())
@@ -232,25 +277,29 @@ def search(
         scored = f"""
             SELECT array_cosine_similarity(c.embedding, ?::FLOAT[{int(dim)}])
                    + coalesce(b.weight, 0) AS score,
-                   d.path, c.page, c.text, d.doc_id
+                   c.rowid, d.path, c.page, c.text, d.doc_id
             FROM chunks c
             JOIN documents d USING (doc_id)
             LEFT JOIN metadata_boost b ON b.doc_id = d.doc_id
             {"WHERE " + " AND ".join(filters) if filters else ""}"""
-        if per_document:
-            # A layer of 2,111 wells is 452 chunks that read alike, and without
-            # this it takes every place in the answer. Rank within each document
-            # first, then across documents, so the k places go to k different
-            # sources wherever there are that many.
-            sql = f"""
-                SELECT score, path, page, text, doc_id FROM (
-                    SELECT *, row_number() OVER (PARTITION BY doc_id ORDER BY score DESC) AS seat
-                    FROM ({scored})
-                ) WHERE seat <= ? ORDER BY score DESC LIMIT ?"""
-            rows = con.execute(sql, [qres.vectors[0], *params, per_document, k]).fetchall()
-        else:
-            rows = con.execute(f"{scored} ORDER BY score DESC LIMIT ?",
-                               [qres.vectors[0], *params, k]).fetchall()
+        pool = max(CANDIDATES, k)
+        dense = con.execute(f"{scored} ORDER BY score DESC LIMIT ?",
+                            [qres.vectors[0], *params, pool]).fetchall()
+
+        lexical = []
+        if lexical_weight and has_text_index(con):
+            # The same filters, so a lookup narrows both retrievers alike.
+            matched = f"""
+                SELECT fts_main_chunks.match_bm25(c.rowid, ?) AS score,
+                       c.rowid, d.path, c.page, c.text, d.doc_id
+                FROM chunks c
+                JOIN documents d USING (doc_id)
+                {"WHERE " + " AND ".join(filters) if filters else ""}"""
+            lexical = con.execute(
+                f"SELECT * FROM ({matched}) WHERE score IS NOT NULL ORDER BY score DESC LIMIT ?",
+                [question, *params, pool]).fetchall()
+
+        rows = _fuse(dense, lexical, lexical_weight, per_document, k)
 
     hits = [
         Hit(i + 1, s, p, pg, t, ", ".join(dict.fromkeys([*looked_up, *by_doc.get(doc_id, [])])))

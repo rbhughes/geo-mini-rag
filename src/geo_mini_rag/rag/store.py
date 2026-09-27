@@ -14,7 +14,7 @@ import duckdb
 
 from geo_mini_rag import settings
 from geo_mini_rag.errors import UserError
-from geo_mini_rag.rag.trace import Tracer
+from geo_mini_rag.rag.trace import OFF, Tracer
 
 DB_PATH = settings.INDEX_DIR / "rag.duckdb"
 
@@ -169,6 +169,34 @@ def _record_serving(con: duckdb.DuckDBPyConnection, served: dict[str, str], trac
         if row and row[0] == value:
             continue
         _sql(con, trace, "INSERT OR REPLACE INTO meta VALUES (?, ?)", [key, value])
+
+
+def build_text_index(con: duckdb.DuckDBPyConnection, trace: Tracer = OFF) -> None:
+    """Rebuild the BM25 index over the chunk text.
+
+    Dense retrieval cannot place an identifier or a quantity, and this project
+    added five detectors to work around that. BM25 does the general case: it
+    matches the words as written. Neither one wins alone, so the two are fused.
+
+    The index is a snapshot, not a live view, so it is rebuilt whenever chunks
+    change -- 4 seconds for 68,000 of them.
+    """
+    if not _has_table(con, "chunks"):
+        return
+    _sql(con, trace, "INSTALL fts")
+    _sql(con, trace, "LOAD fts")
+    con.execute("PRAGMA create_fts_index('chunks', 'rowid', 'text', overwrite=1)")
+    trace("sql", "rebuilt the BM25 index over chunks.text")
+
+
+def has_text_index(con: duckdb.DuckDBPyConnection) -> bool:
+    """Whether a BM25 index is present to search."""
+    try:
+        con.execute("LOAD fts")
+        con.execute("SELECT 1 FROM fts_main_chunks.docs LIMIT 1")
+        return True
+    except duckdb.Error:
+        return False
 
 
 def _has_table(con: duckdb.DuckDBPyConnection, name: str) -> bool:

@@ -41,6 +41,14 @@ retrieve:
   # is 452 chunks that read alike, and it took ranks 1 to 5 for any question
   # about wells; the answer is then one source dressed as six. 0 turns this off.
   per_document: 2
+  # BM25 is built and fused by reciprocal rank, and weighted zero because it
+  # was measured and it hurts. On 39 seismic questions it halved retrieval with
+  # the lookups off, 36% to 18% on the top hit, and cost recall with them on.
+  # Asked "where is seismic line 93D", it returns a telephone-system
+  # procurement PDF, because "line" is in 1,121 chunks and the one
+  # discriminating token is in 138. Raise it to reproduce that; evals/ has the
+  # comparison. Not dead code -- the measurement is the point.
+  lexical_weight: 0.0
   # Document metadata a handler extracted (well, api, field, operator...) is part
   # of ranking: when a question names a value that exists in the index, that
   # document's chunks get this added to their cosine score. Identifiers are what

@@ -30,6 +30,7 @@ from geo_mini_rag.rag.store import (
     _replace_rows,
     _sql,
     _store_metadata,
+    build_text_index,
     connect,
 )
 from geo_mini_rag.rag.trace import OFF, Tracer
@@ -269,6 +270,7 @@ def ingest(
                 flush()
 
         flush()
+        build_text_index(con, trace)
 
 
 def _flush_group(
