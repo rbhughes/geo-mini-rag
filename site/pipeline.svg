@@ -1,0 +1,143 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 1040" width="960" height="1040" font-family="Helvetica, Arial, sans-serif" font-size="13">
+  <title>geo-mini-rag pipeline</title>
+  <desc>A file passes three gates, is read by a format reader into text and facts, is chunked, embedded and stored; a question is then scored against the store and the top chunks are answered from.</desc>
+
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#6c7078"/>
+    </marker>
+  </defs>
+
+  <rect width="960" height="1040" fill="#ffffff"/>
+
+  <!-- ============ INGEST ============ -->
+  <text x="40" y="44" font-size="15" font-weight="bold" fill="#1b6b63" letter-spacing="1.5">INGEST</text>
+
+  <rect x="40" y="62" width="300" height="52" rx="6" fill="#ffffff" stroke="#16191c" stroke-width="1.5"/>
+  <text x="56" y="84" font-family="monospace" font-size="12">49025104210000_276959.LAS</text>
+  <text x="56" y="103" font-size="11.5" fill="#5a6169">717 KB: header block, then 2,900 rows of curves</text>
+  <path d="M190 114 V144" stroke="#6c7078" stroke-width="1.5" marker-end="url(#a)"/>
+
+  <polygon points="190,146 300,186 190,226 80,186" fill="#ffffff" stroke="#6c7078" stroke-width="1.5"/>
+  <text x="190" y="183" text-anchor="middle" font-size="12">size and mtime</text>
+  <text x="190" y="198" text-anchor="middle" font-size="12">unchanged?</text>
+  <path d="M300 186 H434" stroke="#6c7078" stroke-width="1.5" marker-end="url(#a)"/>
+  <text x="367" y="179" text-anchor="middle" font-size="11" fill="#5a6169">yes</text>
+  <rect x="440" y="164" width="230" height="44" rx="6" fill="#f2f1ec" stroke="#b9b4a9" stroke-dasharray="4 3"/>
+  <text x="456" y="191" font-size="12.5">stop &#8212; already indexed</text>
+
+  <path d="M190 226 V256" stroke="#6c7078" stroke-width="1.5" marker-end="url(#a)"/>
+  <text x="200" y="246" font-size="11" fill="#5a6169">no</text>
+
+  <polygon points="190,258 300,298 190,338 80,298" fill="#ffffff" stroke="#6c7078" stroke-width="1.5"/>
+  <text x="190" y="295" text-anchor="middle" font-size="12">content hash</text>
+  <text x="190" y="310" text-anchor="middle" font-size="12">seen before?</text>
+  <path d="M300 298 H434" stroke="#6c7078" stroke-width="1.5" marker-end="url(#a)"/>
+  <text x="367" y="291" text-anchor="middle" font-size="11" fill="#5a6169">yes</text>
+  <rect x="440" y="276" width="230" height="44" rx="6" fill="#f2f1ec" stroke="#b9b4a9" stroke-dasharray="4 3"/>
+  <text x="456" y="303" font-size="12.5">stop &#8212; exact duplicate</text>
+
+  <path d="M190 338 V368" stroke="#6c7078" stroke-width="1.5" marker-end="url(#a)"/>
+  <text x="200" y="358" font-size="11" fill="#5a6169">no</text>
+
+  <polygon points="190,370 300,410 190,450 80,410" fill="#ffffff" stroke="#6c7078" stroke-width="1.5"/>
+  <text x="190" y="407" text-anchor="middle" font-size="12">a format reader</text>
+  <text x="190" y="422" text-anchor="middle" font-size="12">claims it?</text>
+  <path d="M300 410 H434" stroke="#6c7078" stroke-width="1.5" marker-end="url(#a)"/>
+  <text x="367" y="403" text-anchor="middle" font-size="11" fill="#5a6169">no</text>
+  <rect x="440" y="382" width="230" height="58" rx="6" fill="#ffffff" stroke="#6c7078"/>
+  <text x="456" y="404" font-size="12.5">ordinary reader</text>
+  <text x="456" y="422" font-size="11.5" fill="#5a6169">pdf, docx, html, text</text>
+  <text x="456" y="436" font-size="11.5" fill="#b4522f">no text layer &#8594; OCR, read again</text>
+  <path d="M555 440 V500 H206" stroke="#6c7078" stroke-width="1.5" fill="none" marker-end="url(#a)"/>
+
+  <path d="M190 450 V478" stroke="#1b6b63" stroke-width="2" marker-end="url(#a)"/>
+  <text x="200" y="470" font-size="11" fill="#1b6b63" font-weight="bold">yes</text>
+
+  <rect x="40" y="480" width="300" height="56" rx="6" fill="#ffffff" stroke="#1b6b63" stroke-width="2"/>
+  <text x="56" y="502" font-size="13" font-weight="bold" fill="#1b6b63">LAS reader</text>
+  <text x="56" y="521" font-size="11.5" fill="#5a6169">reads the header; the curve rows are never read</text>
+
+  <path d="M190 536 V554" stroke="#6c7078" stroke-width="1.5"/>
+  <circle cx="190" cy="558" r="4" fill="#6c7078"/>
+  <path d="M190 562 V584 H110 V612" stroke="#6c7078" stroke-width="1.5" fill="none" marker-end="url(#a)"/>
+  <path d="M190 562 V584 H300 V612" stroke="#6c7078" stroke-width="1.5" fill="none" marker-end="url(#a)"/>
+
+  <rect x="30" y="614" width="160" height="48" rx="6" fill="#ffffff" stroke="#6c7078"/>
+  <text x="44" y="634" font-size="11" fill="#5a6169" font-family="monospace">TEXT</text>
+  <text x="44" y="652" font-size="12.5">787 characters</text>
+
+  <rect x="220" y="614" width="200" height="48" rx="6" fill="#ffffff" stroke="#6c7078"/>
+  <text x="234" y="634" font-size="11" fill="#5a6169" font-family="monospace">FACTS</text>
+  <text x="234" y="652" font-size="12.5">39 rows: well, api, depths</text>
+
+  <path d="M110 662 V690" stroke="#6c7078" stroke-width="1.5" marker-end="url(#a)"/>
+  <rect x="30" y="692" width="160" height="42" rx="6" fill="#ffffff" stroke="#6c7078"/>
+  <text x="44" y="718" font-size="12.5">chunk</text>
+
+  <path d="M110 734 V762" stroke="#6c7078" stroke-width="1.5" marker-end="url(#a)"/>
+  <rect x="30" y="764" width="160" height="42" rx="6" fill="#ffffff" stroke="#6c7078"/>
+  <text x="44" y="790" font-size="12.5">embed</text>
+
+  <path d="M110 806 V842" stroke="#6c7078" stroke-width="1.5" marker-end="url(#a)"/>
+  <path d="M320 662 V842" stroke="#6c7078" stroke-width="1.5" marker-end="url(#a)"/>
+
+  <rect x="30" y="844" width="390" height="56" rx="8" fill="#ffffff" stroke="#1b6b63" stroke-width="2"/>
+  <text x="46" y="866" font-family="monospace" font-size="12" fill="#1b6b63">data/index/rag.duckdb</text>
+  <text x="46" y="885" font-size="11.5" fill="#5a6169">documents &#183; chunks + vectors &#183; doc_meta facts</text>
+
+  <!-- ============ QUERY ============ -->
+  <line x1="700" y1="40" x2="700" y2="1000" stroke="#e2dfd8" stroke-width="1"/>
+  <text x="730" y="44" font-size="15" font-weight="bold" fill="#1b6b63" letter-spacing="1.5">QUERY</text>
+
+  <rect x="730" y="62" width="200" height="52" rx="6" fill="#ffffff" stroke="#16191c" stroke-width="1.5"/>
+  <text x="744" y="84" font-size="12">When was FENIX</text>
+  <text x="744" y="102" font-size="12">SCISSON #18-27 logged?</text>
+  <path d="M830 114 V144" stroke="#6c7078" stroke-width="1.5" marker-end="url(#a)"/>
+
+  <polygon points="830,146 930,186 830,226 730,186" fill="#ffffff" stroke="#6c7078" stroke-width="1.5"/>
+  <text x="830" y="183" text-anchor="middle" font-size="12">names an API</text>
+  <text x="830" y="198" text-anchor="middle" font-size="12">well number?</text>
+  <text x="838" y="246" font-size="11" fill="#5a6169">no</text>
+  <text x="742" y="248" font-size="11" fill="#5a6169">yes &#8594; look it up, skip ranking</text>
+
+  <path d="M830 226 V292" stroke="#6c7078" stroke-width="1.5" marker-end="url(#a)"/>
+
+  <rect x="730" y="294" width="200" height="74" rx="6" fill="#ffffff" stroke="#1b6b63" stroke-width="2"/>
+  <text x="744" y="316" font-size="12.5" font-weight="bold" fill="#1b6b63">score</text>
+  <text x="744" y="335" font-size="11.5" fill="#5a6169">similarity to every chunk,</text>
+  <text x="744" y="350" font-size="11.5" fill="#5a6169">plus a bonus for each stored</text>
+  <text x="744" y="362" font-size="11.5" fill="#5a6169">fact the question names</text>
+  <path d="M830 368 V398" stroke="#6c7078" stroke-width="1.5" marker-end="url(#a)"/>
+
+  <rect x="730" y="400" width="200" height="66" rx="6" fill="#f7f6f3" stroke="#6c7078"/>
+  <text x="744" y="420" font-size="11.5">well name: 1 document</text>
+  <text x="744" y="436" font-size="11.5" fill="#1b6b63" font-weight="bold">&#8594; full bonus</text>
+  <text x="744" y="454" font-size="11.5" fill="#5a6169">operator: 40 documents &#8594; none</text>
+  <path d="M830 466 V496" stroke="#6c7078" stroke-width="1.5" marker-end="url(#a)"/>
+
+  <polygon points="830,498 930,538 830,578 730,538" fill="#ffffff" stroke="#6c7078" stroke-width="1.5"/>
+  <text x="830" y="535" text-anchor="middle" font-size="12">file already has</text>
+  <text x="830" y="550" text-anchor="middle" font-size="12">two places?</text>
+  <text x="742" y="598" font-size="11" fill="#5a6169">yes &#8594; pass it over</text>
+  <text x="838" y="600" font-size="11" fill="#5a6169">no</text>
+
+  <path d="M830 578 V642" stroke="#6c7078" stroke-width="1.5" marker-end="url(#a)"/>
+
+  <rect x="730" y="644" width="200" height="96" rx="6" fill="#ffffff" stroke="#6c7078"/>
+  <text x="744" y="665" font-size="11" fill="#5a6169" font-family="monospace">RANKED</text>
+  <text x="744" y="686" font-size="11.5"><tspan fill="#1b6b63" font-weight="bold">1</tspan>  ...0421 &#8212; this well  0.655</text>
+  <text x="744" y="706" font-size="11.5" fill="#5a6169">2  ...0399 &#8212; same operator  0.626</text>
+  <text x="744" y="726" font-size="11.5" fill="#5a6169">3  ...0409 &#8212; same operator  0.584</text>
+
+  <path d="M830 740 V770" stroke="#6c7078" stroke-width="1.5" marker-end="url(#a)"/>
+  <rect x="730" y="772" width="200" height="48" rx="6" fill="#ffffff" stroke="#1b6b63" stroke-width="2"/>
+  <text x="744" y="792" font-size="12.5" font-weight="bold" fill="#1b6b63">answer</text>
+  <text x="744" y="810" font-size="11.5" fill="#5a6169">top chunks, cited</text>
+
+  <text x="730" y="856" font-size="11.5" fill="#b4522f">Ranks 2 and 3 are why headers are read:</text>
+  <text x="730" y="872" font-size="11.5" fill="#b4522f">forty logs share that operator and nothing</text>
+  <text x="730" y="888" font-size="11.5" fill="#b4522f">else tells them apart.</text>
+
+  <text x="40" y="960" font-size="11.5" fill="#5a6169">Diamonds are decisions. Dashed boxes are dead ends. Example: a 1977 density log from Teapot Dome.</text>
+</svg>

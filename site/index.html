@@ -1,0 +1,483 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>geo-mini-rag</title>
+<meta name="description" content="A small RAG pipeline for cheap models, and what it takes to read oil and gas file formats into one.">
+<style>
+:root{
+  --bg:#fbfaf8; --fg:#1b1a17; --muted:#5d594f; --rule:#e2ded4;
+  --card:#ffffff; --accent:#8a4b1e; --accent-soft:#f3e7db;
+  --good:#1f6b3f; --bad:#8d2f2f; --code-bg:#f2efe8;
+  --measure:68ch;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#15140f; --fg:#eae5da; --muted:#a49d8e; --rule:#302d25;
+    --card:#1d1b16; --accent:#d99b62; --accent-soft:#2b241c;
+    --good:#6fbf8e; --bad:#e08585; --code-bg:#221f19;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#15140f; --fg:#eae5da; --muted:#a49d8e; --rule:#302d25;
+  --card:#1d1b16; --accent:#d99b62; --accent-soft:#2b241c;
+  --good:#6fbf8e; --bad:#e08585; --code-bg:#221f19;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--bg); color:var(--fg);
+  font:16px/1.65 Georgia,"Iowan Old Style",serif;
+  -webkit-text-size-adjust:100%;
+}
+.wrap{max-width:860px; margin:0 auto; padding:0 16px}
+header.hero{border-bottom:1px solid var(--rule); padding:72px 0 40px; margin-bottom:8px}
+h1{font-size:2.6rem; line-height:1.1; margin:0 0 .4em; letter-spacing:-.02em}
+.tagline{font-size:1.2rem; color:var(--muted); max-width:var(--measure); margin:0}
+.kicker{font:600 .75rem/1 ui-sans-serif,system-ui,sans-serif; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--accent); margin:0 0 1.2em}
+h2{font-size:1.6rem; margin:2.6em 0 .6em; letter-spacing:-.01em; scroll-margin-top:16px}
+h3{font-size:1.15rem; margin:2em 0 .4em}
+p,li{max-width:var(--measure)}
+a{color:var(--accent)}
+code,kbd{font:0.88em/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;
+  background:var(--code-bg); padding:.12em .35em; border-radius:4px}
+pre{background:var(--code-bg); padding:14px 16px; border-radius:8px; overflow-x:auto;
+  border:1px solid var(--rule)}
+pre code{background:none; padding:0}
+.lede{font-size:1.1rem}
+.callout{background:var(--accent-soft); border-left:3px solid var(--accent);
+  padding:16px 18px; border-radius:0 8px 8px 0; margin:1.6em 0}
+.callout p{margin:.4em 0; max-width:none}
+.tablewrap{overflow-x:auto; margin:1.4em 0; -webkit-overflow-scrolling:touch}
+table{border-collapse:collapse; width:100%; font:15px/1.5 ui-sans-serif,system-ui,sans-serif}
+th,td{text-align:left; padding:9px 12px; border-bottom:1px solid var(--rule)}
+th{font-weight:600; color:var(--muted); font-size:.82rem; letter-spacing:.03em;
+  text-transform:uppercase; white-space:nowrap}
+td.n,th.n{text-align:right; font-variant-numeric:tabular-nums}
+tr.total td{font-weight:700; border-top:2px solid var(--rule); border-bottom:none}
+.win{color:var(--good); font-weight:700}
+.lose{color:var(--bad)}
+figure{margin:2em 0; text-align:center}
+figure img{max-width:100%; height:auto; background:#fff; border:1px solid var(--rule);
+  border-radius:8px; padding:12px}
+figcaption{color:var(--muted); font-size:.9rem; margin-top:.7em}
+.grid{display:grid; gap:14px; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); margin:1.6em 0}
+.stat{background:var(--card); border:1px solid var(--rule); border-radius:10px; padding:16px}
+.stat .num{font:700 1.7rem/1.1 ui-sans-serif,system-ui,sans-serif;
+  font-variant-numeric:tabular-nums; letter-spacing:-.02em}
+.stat .lab{color:var(--muted); font-size:.85rem; margin-top:.35em}
+.notdo{background:var(--card); border:1px solid var(--rule); border-radius:10px;
+  padding:4px 20px 8px; margin:1.6em 0}
+.notdo h3{margin-top:1.2em}
+.notdo blockquote{margin:.6em 0; padding-left:14px; border-left:3px solid var(--accent);
+  color:var(--fg); font-style:italic}
+footer{border-top:1px solid var(--rule); margin-top:4em; padding:28px 0 64px;
+  color:var(--muted); font-size:.9rem}
+.draft{background:var(--bad); color:#fff; font:600 .8rem/1 ui-sans-serif,system-ui,sans-serif;
+  letter-spacing:.1em; text-transform:uppercase; padding:10px 16px; text-align:center}
+@media (max-width:600px){
+  header.hero{padding:44px 0 28px}
+  h1{font-size:2rem}
+}
+</style>
+</head>
+<body>
+<div class="draft">Draft preview — not published</div>
+
+<header class="hero">
+  <div class="wrap">
+    <p class="kicker">geo-mini-rag</p>
+    <h1>Embeddings don't understand your Well ID</h1>
+    <p class="tagline">A small retrieval pipeline built for cheap models, and a demonstration of
+    what it actually takes to get oil and gas file formats into one.</p>
+  </div>
+</header>
+
+<main class="wrap">
+
+<p class="lede">Point a normal RAG pipeline at an E&amp;P data room and most of it
+disappears. A SEG-Y volume is <code>application/octet-stream</code>; a shapefile is five
+files that only mean something together; a LAS log is 40 lines of header attached to a
+megabyte of floating point. The parts a geologist would search for are there, but nothing
+in a general-purpose text pipeline goes and gets them.</p>
+
+<p>This project does two things. It keeps the pipeline deliberately small — walk a folder,
+read what can be read, chunk it, embed it, answer with citations, one DuckDB file holding
+all of it, two cheap models fixed in config. And it treats E&amp;P formats as first-class
+citizens, with a reader per format that pulls out the part a person would search for and
+leaves the numbers alone.</p>
+
+<p>Everything below is measured against the corpus in the repository. Where something
+didn't work, the number that says so is on this page.</p>
+
+<div class="grid">
+  <div class="stat"><div class="num">2,530</div><div class="lab">files indexed, 67,919 chunks</div></div>
+  <div class="stat"><div class="num">7m 24s</div><div class="lab">full cold rebuild</div></div>
+  <div class="stat"><div class="num">$0.556</div><div class="lab">to embed the whole corpus</div></div>
+  <div class="stat"><div class="num">98%</div><div class="lab">top hit, seismic questions</div></div>
+</div>
+
+<h2>The finding</h2>
+
+<p>One result shaped the whole system:</p>
+
+<div class="callout">
+  <p><strong>Embeddings cannot locate identifiers, quantities, or group membership.</strong>
+  Not "do it badly" — they have no mechanism for it. The fix is exact lookup, not a better
+  model, not a bigger model, and not more clever chunking.</p>
+</div>
+
+<p>The question <em>"well 4902511080"</em> scores <strong>0.324</strong> against the log that
+actually carries that number, and <strong>0.729</strong> against a page of unrelated digits.
+A vector space that puts digits near digits is working exactly as designed; it just cannot
+tell you <em>which</em> well. Looked up instead of ranked, recall@1 on those questions goes
+from <strong>36% to 92%</strong>.</p>
+
+<p>The same holds for a seismic line name, a derived quantity like trace length, and
+membership in a group like a coordinate system. Each got a lookup, and each one is
+measured below.</p>
+
+<figure>
+  <img src="pipeline.svg" alt="Flowchart: a file passes three gates, is read by a format reader into text and facts, then chunked, embedded and stored in DuckDB.">
+  <figcaption>A file passes three gates before anything is spent on it, then goes to a
+  format reader that produces text and facts separately.</figcaption>
+</figure>
+
+<h2>The readers</h2>
+
+<div class="tablewrap">
+<table>
+<thead><tr><th>format</th><th>what is indexed</th><th>what is not</th></tr></thead>
+<tbody>
+<tr><td><strong>LAS</strong> well logs</td><td>the header as a sentence, plus one fact per curve, depth range, well, field, operator</td><td>the log curves themselves</td></tr>
+<tr><td><strong>SEG-Y</strong> seismic</td><td>the EBCDIC textual header, decoded, plus sample rate and trace geometry</td><td>the traces</td></tr>
+<tr><td><strong>SEG-P1</strong> positioning</td><td>header labels, line names, shotpoint range, point count</td><td>the coordinates</td></tr>
+<tr><td><strong>ESRI shapefile</strong></td><td>title and abstract from <code>.shp.xml</code>, CRS from <code>.prj</code>, extent from <code>.shp</code>, and the <code>.dbf</code> attributes worth searching</td><td>the geometry</td></tr>
+</tbody>
+</table>
+</div>
+
+<p>The division is the same every time: <em>text a person would search for</em> goes to the
+embedder, <em>numbers a person would filter on</em> become facts in a metadata table. Sending
+a sample interval to an embedding model is how you lose it.</p>
+
+<h2>Seismic, measured</h2>
+
+<p>Without a reader, libmagic cannot name a SEG-Y file, so it is dropped with a reason and
+nothing inside it is searchable. With one, the same 54 files yield 119 passages and 741
+facts, every stored number checked against the range its field allows.</p>
+
+<p>Ground truth comes from the headers themselves: a file whose card reads
+<code>CLIENT: LITHOPROBE</code> belongs in the answer set for a question about Lithoprobe. A
+seismic archive is many files per survey, so these questions have several right answers and
+are scored against the set — not against one blessed document.</p>
+
+<p>Four kinds of question, ranked against looked up:</p>
+
+<div class="tablewrap">
+<table>
+<thead><tr><th>question type</th><th class="n">n</th><th class="n">top hit, ranked</th><th class="n">top hit, looked up</th></tr></thead>
+<tbody>
+<tr><td>seismic line name</td><td class="n">8</td><td class="n lose">0%</td><td class="n win">100%</td></tr>
+<tr><td>trace length</td><td class="n">11</td><td class="n lose">0%</td><td class="n win">100%</td></tr>
+<tr><td>sample interval</td><td class="n">8</td><td class="n lose">38%</td><td class="n win">100%</td></tr>
+<tr><td>samples per trace</td><td class="n">12</td><td class="n">75%</td><td class="n win">100%</td></tr>
+<tr class="total"><td>whole set</td><td class="n">48</td><td class="n">—</td><td class="n">98% top hit, 99% recall@10</td></tr>
+</tbody>
+</table>
+</div>
+
+<p>The zeroes are the interesting rows. <strong>Trace length is derived</strong> — sample
+interval times sample count — so the number appears nowhere in the file and nothing in the
+index resembles the question. Ranking has nothing to grip. A lookup answers it exactly. The
+unit has to appear in the question too, so "18000 barrels" is never read as a trace length.</p>
+
+<p>Sample counts are the weakest case for a lookup and still worth it: <code>2000</code> is
+real text in the header, so ranking already found the right files most of the time — and put
+the wrong one first a quarter of the time.</p>
+
+<p>A sample interval is stored twice, in microseconds and milliseconds, so a question in
+either unit matches whichever way the file was written.</p>
+
+<h2>Well numbers have no canonical length</h2>
+
+<p>Vendors write fourteen digits. State agencies write ten. A map layer sometimes writes
+seven, with the state code left off entirely. Each is what that system holds, and picking one
+as "correct" throws away the sidetrack and completion codes the longer forms carry.</p>
+
+<p>So no length is imposed. Separators are stripped, the digits are kept as written, and two
+numbers name the same well when one runs on from the other — sharing a start, where both
+begin at the state, or an end, where one has dropped it. A fragment can be starred like a
+glob, in a question or in <code>--where</code>:</p>
+
+<div class="tablewrap">
+<table>
+<thead><tr><th>pattern</th><th>matches</th></tr></thead>
+<tbody>
+<tr><td><code>*2506325</code></td><td>ends with</td></tr>
+<tr><td><code>2506325*</code></td><td>starts with</td></tr>
+<tr><td><code>*2506325*</code></td><td>holds it anywhere</td></tr>
+</tbody>
+</table>
+</div>
+
+<p>The last one matters more than it looks. A fourteen-digit number carries a sidetrack
+<em>after</em> the well, so a fragment lifted out of a map layer lands in the middle of it:
+<code>2506325</code> ends <code>2506325</code> and sits inside <code>490250632500</code>. Only
+the double star reaches both.</p>
+
+<h3>A label, not a shape</h3>
+
+<p>API numbers are detected in <em>any</em> document — a completion report, a loader log, a
+scanned permit — and validated against this project's own table of state and county codes.
+But structure alone is not enough. Measured on 992 documents that have nothing to do with
+wells:</p>
+
+<div class="grid">
+  <div class="stat"><div class="num">139,629</div><div class="lab">bare 10/12/14-digit runs</div></div>
+  <div class="stat"><div class="num">4,607</div><div class="lab">carry a plausible state and county — would pass on structure alone</div></div>
+  <div class="stat"><div class="num">0</div><div class="lab">survive the rule that a label must precede the digits</div></div>
+</div>
+
+<p>In prose, a label is required. In a <code>.dbf</code> column it is not, and that asymmetry
+is the point: <strong>a column is evidence, a sentence isn't.</strong> If most of a column
+validates against the code table, it is a column of well numbers whatever it happens to be
+called. In this corpus GeoGraphix layers keep them under <code>DataId</code> and
+<code>WellID</code>; across every other numeric column — <code>TypeId</code>,
+<code>ObjectID</code>, <code>ParentCode</code>, <code>ASR_ID</code> — not one value validates.
+That found <strong>6,908 well numbers across four layers</strong>, none of them searchable
+before.</p>
+
+<h2>Shapefiles: classify the columns by measurement</h2>
+
+<p><code>.dbf</code> attributes are sorted by what their values <em>do</em>, never by what
+they are named, because field names are a vendor's abbreviations and there is no list to check
+them against:</p>
+
+<ul>
+<li>values that <strong>repeat</strong> → a category, and becomes a filterable fact</li>
+<li>values nearly all <strong>distinct</strong> → names individual things, and goes into the text</li>
+<li><strong>90% one value</strong> → describes the layer, not the row</li>
+<li><strong>bare digits</strong> → dropped, because retrieval is text and a number that names nothing cannot be searched for</li>
+</ul>
+
+<h3>Group membership is filtered, not ranked</h3>
+
+<p>A projection, a state and a county each name a <em>set</em> of documents rather than
+describing one, and the rarity boost cannot deliver them: 21 layers out of 2,520 documents
+earn about 0.06, which will not lift anything past 68,000 chunks. An exact match narrows the
+candidates instead.</p>
+
+<div class="tablewrap">
+<table>
+<thead><tr><th>19 questions naming a projection, datum, state or county</th><th class="n">top hit right</th><th class="n">recall@10</th></tr></thead>
+<tbody>
+<tr><td>ranked</td><td class="n lose">16%</td><td class="n lose">18%</td></tr>
+<tr><td>filtered</td><td class="n win">47%</td><td class="n win">44%</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="callout">
+  <p>Read that as <em>filtering is how these get answered at all</em>, not as a score. Ground
+  truth here is the documents carrying the value, which is close to what the filter selects,
+  so the filtered arm is partly measuring itself. The ranked arm is the honest half: without a
+  filter, these questions mostly go unanswered. What shows the filter costs nothing is that
+  every other set on this page is unchanged by it.</p>
+</div>
+
+<h3>Whether silence is a contradiction is read from the index</h3>
+
+<p>The obvious way to filter — drop every document that doesn't carry the key — deleted every
+road and benchmark layer for any question naming a state, and cost the shapefile set seven
+points. Only a document with a parsed well number carries <code>api_state</code>; a roads
+layer saying nothing about a state is not claiming to be outside it.</p>
+
+<p>So the rule is asked of the data rather than written down. For each key, the index says
+which kinds of document carry it nearly always:</p>
+
+<div class="tablewrap">
+<table>
+<thead><tr><th>key</th><th>coverage</th><th>so a document that is silent…</th></tr></thead>
+<tbody>
+<tr><td><code>api_state</code></td><td class="n">96% of LAS files</td><td>…is a log with no API number — rare, and treated as a mismatch. A log that says WY is out when the question says TX.</td></tr>
+<tr><td><code>crs_name</code></td><td class="n">66% of shapefiles</td><td>…is one of the third with no usable <code>.prj</code> — kept, because it never raised the subject.</td></tr>
+</tbody>
+</table>
+</div>
+
+<p>My own assumption going in was that every shapefile has a <code>.prj</code>. A third of
+them don't. No list of keys is maintained for this, so a new reader that always records
+something gets the same treatment with no edit.</p>
+
+<h3>A state and a county, read back out of the digits</h3>
+
+<p>The numbering puts two digits of state and three of county at the front of every API
+number, so a stored well number already says where it is. Until that's read out, nobody can
+search for it by name — <em>"what LAS files are in TX"</em> previously matched nothing at all
+and returned Wyoming logs.</p>
+
+<p><strong>Only 12- and 14-digit values are trusted for it.</strong> Ten is excluded because
+the last ten digits of <code>490250632500</code> are <code>0250632500</code>, which parses as
+state 02, county 506 — a real-looking Arizona well that does not exist. Shorter values are
+fragments whose digits don't line up at all: <code>Teapot_Wells</code> writes
+<code>2500153</code>, which is county 025 and well 00153 with the state gone. A wrong county
+is worse than no county. Across the corpus this reads <code>WY</code>/<code>Natrona</code> off
+the two layers storing twelve digits, and correctly nothing off the two storing seven.</p>
+
+<p>A two-letter code is only recognised in capitals, because half of them are ordinary words
+— <code>IN</code>, <code>OR</code>, <code>ME</code>, <code>OK</code>, <code>HI</code>,
+<code>DE</code>, <code>LA</code>. "Wells <em>in or</em> near the field" would otherwise ask
+for Indiana and Oregon.</p>
+
+<h2>Retrieval, overall</h2>
+
+<p>Cosine similarity, with three corrections that matter for a collection like this one: an
+identifier in the question is looked up rather than ranked; metadata the question names lifts
+the documents carrying it, weighted by rarity, so a well name held by one document outweighs
+<code>state=WYOMING</code> held by 1,375; and no single document may take more than its share
+of the answer — a map layer of 2,111 wells is 500 chunks that read alike, and without that cap
+it held every place in the top ten for any question about wells.</p>
+
+<div class="tablewrap">
+<table>
+<thead><tr><th>format</th><th class="n">n</th><th class="n">recall@1</th><th class="n">recall@5</th><th class="n">MRR</th></tr></thead>
+<tbody>
+<tr><td>LAS</td><td class="n">28</td><td class="n">82%</td><td class="n">93%</td><td class="n">0.851</td></tr>
+<tr><td>PDF</td><td class="n">22</td><td class="n">50%</td><td class="n">77%</td><td class="n">0.636</td></tr>
+<tr><td>plain text</td><td class="n">22</td><td class="n">50%</td><td class="n">59%</td><td class="n">0.545</td></tr>
+<tr><td>HTML</td><td class="n">18</td><td class="n">44%</td><td class="n">72%</td><td class="n">0.569</td></tr>
+<tr><td>shapefile</td><td class="n">10</td><td class="n">60%</td><td class="n">90%</td><td class="n">0.703</td></tr>
+<tr class="total"><td>all</td><td class="n">103</td><td class="n">58%</td><td class="n">77%</td><td class="n">0.663</td></tr>
+</tbody>
+</table>
+</div>
+
+<p>Read recall@5 first — <code>top_k</code> is 6, so that is what the model actually sees. The
+LAS row is what a format reader buys you. The plain-text and HTML rows are ordinary documents
+with no reader and no metadata, and they are the honest floor this sits on.</p>
+
+<p>Sample size is why this set exists at all. At 22 questions the 95% interval on a recall
+figure is about ±16 points, so any change worth less than that was indistinguishable from
+luck. At 103 it is about ±8 — still wide enough to be careful with, and stated here rather
+than hidden.</p>
+
+<h2>Two things built, measured, and switched off</h2>
+
+<p>Both are in the repository, both are wired up, and both default to off with the numbers
+written next to the setting. Deleting them would hide the result.</p>
+
+<h3>BM25 / hybrid search</h3>
+
+<p>DuckDB's FTS extension, fused with the dense ranking by reciprocal rank. On 39 seismic
+questions with the lookups disabled it <strong>halved</strong> retrieval — 36% to 18% on the
+top hit — and cost recall with them enabled. Asked <em>"where is seismic line 93D"</em> it
+returns a telephone-system procurement PDF, because "line" appears in 1,121 chunks and the one
+discriminating token appears in 138. <code>lexical_weight: 0.0</code>.</p>
+
+<h3>HNSW vector index</h3>
+
+<p>DuckDB's VSS extension, built at ingest over all 67,919 vectors in about six seconds. The
+planner only reaches an HNSW index through a bare nearest-neighbour query, which means
+candidates get cut <em>before</em> the filter and the metadata boost are applied — and those
+are precisely the two things this pipeline needs exact. Merging every chunk of a boosted
+document back in recovered most of the loss and not all of it:</p>
+
+<div class="tablewrap">
+<table>
+<thead><tr><th></th><th class="n">recall@5</th><th class="n">MRR</th><th class="n">SQL time</th></tr></thead>
+<tbody>
+<tr><td>exact scan</td><td class="n win">78%</td><td class="n win">0.668</td><td class="n">0.40s</td></tr>
+<tr><td>HNSW index</td><td class="n lose">73%</td><td class="n lose">0.637</td><td class="n">0.09s</td></tr>
+</tbody>
+</table>
+</div>
+
+<p>It saves 0.3 seconds of SQL in a query that spends most of a second waiting on the
+embedding API. At 68,000 vectors the brute-force scan is the better trade, so
+<code>vector_index: false</code>. At ten million it would not be, and the switch is already
+there.</p>
+
+<h2>What this does not do, and why</h2>
+
+<div class="notdo">
+
+<h3>No reranker</h3>
+<blockquote>"This is just a demo for small models."</blockquote>
+<p>A cross-encoder reranker is close to table stakes in production RAG, and its absence here
+is deliberate rather than overlooked. The entire premise is a cheap, fixed model pair; adding
+a reranking pass would change what is being demonstrated.</p>
+
+<h3>Some eval questions were drafted by a model</h3>
+<blockquote>"Yes, the LLM helped write some questions, but with a lot of guidance."</blockquote>
+<p>Stated plainly because burying it would be worse. Each generated question came from a chunk
+the index actually holds and had to survive four mechanical gates; the LAS and SEG-Y questions
+were templated from header fields instead, because a model reading one LAS header writes the
+same question every time. The real defence is the 22 hand-written questions, which track the
+103 generated ones closely — <strong>55% / 77% / MRR 0.659</strong> against
+<strong>58% / 77% / MRR 0.663</strong>. If the generated set were self-flattering, that
+agreement would not hold.</p>
+
+<h3>Hard-coded key lists</h3>
+<blockquote>"Those are often part of the format spec (LAS and SEG-Y)."</blockquote>
+<p><code>WELL_KEYS = {api, uwi}</code> and <code>GROUP_KEYS = {crs_name, crs_datum}</code> look
+like special-casing to pass an eval, and are not. These are mnemonics defined by the format
+specifications themselves — a LAS header names them, a SEG-Y card names them. Deriving them at
+runtime would be inventing flexibility the formats do not have.</p>
+
+<h3>Retrieval is evaluated; groundedness is not</h3>
+<blockquote>"This is just a demo — if your E&amp;P data is crap, it can't help you."</blockquote>
+<p>Every number on this page measures retrieval: recall@k and MRR against known answers, with
+no model judging the output. Nothing verifies that the generated answer is faithful to the
+passages it cites. That is a real gap and it is named rather than papered over — but the
+prior failure in this domain is not an ungrounded sentence, it is a data room where the
+right file was never findable in the first place.</p>
+
+<h3>Company names are only half-normalised</h3>
+<p>A name is tidied as far as its trailing legal suffix, because ENCANA appeared as three
+spellings across five files and split every answer set. Real normalisation — ampersands
+against "and", abbreviations, subsidiaries, former names — is a substantially larger job and
+deliberately out of scope.</p>
+
+<h3>Legacy Office formats are unreadable</h3>
+<p>81 <code>.doc</code>, 61 <code>.xls</code> and 58 <code>.ppt</code> files are skipped with a
+reason recorded. <code>textutil</code> or headless LibreOffice would cover them; neither has
+been wired in.</p>
+
+</div>
+
+<h2>Untrusted text in the prompt</h2>
+
+<p>Retrieved chunks come from files nobody vetted, and they go into a prompt. Each source is
+fenced with a random token generated per request, and that token is stripped from the source
+text before it is inserted — so a document cannot close the fence and start addressing the
+model as the operator.</p>
+
+<h2>Running it</h2>
+
+<pre><code>uv run geo-mini-rag ingest             # read data/raw, embed via OpenRouter
+uv run geo-mini-rag stats              # what got indexed, and why the rest did not
+uv run geo-mini-rag search "question"  # retrieval only, one tiny embedding call
+uv run geo-mini-rag ask "question"     # answer with citations</code></pre>
+
+<p>To see what the pipeline reads out of a single file, with no API key and no database:</p>
+
+<pre><code>python -m geo_mini_rag.ep.inspect data/raw/las/some.las
+python -m geo_mini_rag.ep.inspect --facts data/raw/gis/layer.shp</code></pre>
+
+<p><code>openai/text-embedding-3-small</code> embeds and
+<code>inclusionai/ling-3.0-flash</code> answers, both through OpenRouter, both fixed in
+<code>config/rag.yaml</code>. Comparing models is not the point of this.</p>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>Sample corpus: GovDocs1 (Garfinkel et al., DFRWS 2009), freely redistributable for
+    research, plus public Teapot Dome and Lithoprobe data. File type detection uses libmagic
+    through python-magic.</p>
+  </div>
+</footer>
+</body>
+</html>
