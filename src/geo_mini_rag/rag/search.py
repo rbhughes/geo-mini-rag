@@ -38,8 +38,8 @@ class Hit:
     matched: str = ""   # metadata values from the question that this document carries
 
 
-def mentioned_metadata(con, question: str, cfg: dict) -> list[tuple[str, str, str, int]]:
-    """(doc_id, key, value) where a value stored in the index appears in the question.
+def mentioned_metadata(con, question: str, cfg: dict) -> list[tuple[str, str, str, int, int]]:
+    """(doc_id, key, value, documents holding it, values this document holds for that key).
 
     Identifiers are what embeddings are worst at: 1,400 near-identical LAS
     headers rank alike for "the API number of NPR #3 #13SX11-11". Matching the
@@ -69,11 +69,14 @@ def mentioned_metadata(con, question: str, cfg: dict) -> list[tuple[str, str, st
                    + ", ".join("?" * len(codes)) + "))")
     rows = con.execute(
         f"""
-        SELECT m.doc_id, m.key, m.value, c.docs
+        SELECT m.doc_id, m.key, m.value, c.docs, h.held
         FROM doc_meta m
         JOIN (
             SELECT key, value, count(DISTINCT doc_id) AS docs FROM doc_meta GROUP BY 1, 2
         ) c USING (key, value)
+        JOIN (
+            SELECT doc_id, key, count(*) AS held FROM doc_meta GROUP BY 1, 2
+        ) h USING (doc_id, key)
         WHERE (
             length({words.format("m.value")}) >= ?
             AND ' ' || {words.format("?")} || ' '
@@ -133,6 +136,32 @@ def _idf(docs_with_value: int, total_docs: int) -> float:
     if total_docs <= 1 or docs_with_value >= total_docs:
         return 0.0
     return math.log(total_docs / max(docs_with_value, 1)) / math.log(total_docs)
+
+
+def _specificity(values_held: int, best_held: int) -> float:
+    """How singular this match is, next to the most singular the question found.
+
+    Rarity across the corpus is only half the evidence, and on its own it cannot
+    tell identity from mention. Asked for well NPR 3 #51-41SX10UP4, the log that
+    records it holds one `well` and is that well; a spreadsheet of 967 Teapot
+    wells holds 71 `lease number` values, one of which is also unique in the
+    corpus, so both took the full boost and the spreadsheet won on similarity.
+    This is the document side of the same idea -- the term-frequency half that
+    inverse document frequency is usually paired with.
+
+    Relative, not absolute, because holding many values is what makes a document
+    right for a question like "which shapefile has Mulberry Street": there the
+    answer is a list, and an absolute penalty took that set from 45% to 5% on
+    the top hit. So the comparison is against the best match the question
+    actually found. When something claims the value as its identity, mentions
+    rank below it; when every candidate is a list, none is penalised.
+
+    Read from the index, so no list of keys counts as identifiers, and a
+    2,111-row map layer, a 6,164-value text file and a 71-lease spreadsheet are
+    treated alike. Identifier questions never reach it: api and uwi are looked
+    up, and a projection, state or county filters.
+    """
+    return (1.0 + math.log(max(best_held, 1))) / (1.0 + math.log(max(values_held, 1)))
 
 
 # The same well is written at whatever length the system that recorded it uses:
@@ -265,17 +294,22 @@ def search(
         looked_up: list[str] = []
         weights: dict[str, float] = {}
         groups: list[tuple[str, str]] = []
-        for doc_id, key, value, docs in mentioned_metadata(con, question, cfg):
+        mentions = mentioned_metadata(con, question, cfg)
+        best_held = min((held for *_, held in mentions), default=1)
+        for doc_id, key, value, docs, held in mentions:
             by_doc.setdefault(doc_id, []).append(f"{key}={value}")
             if key in GROUP_KEYS and (key, value) not in groups:
                 groups.append((key, value))
                 looked_up.append(f"{key}={value}")
                 continue
-            # Rarity is the evidence, the same idea as inverse document frequency
-            # in lexical search: a well name held by one document says far more
-            # than state=WYOMING, which 1,375 documents carry. Scaled to [0, 1]
-            # so a unique value takes the full boost.
-            weights[doc_id] = max(weights.get(doc_id, 0.0), boost * _idf(docs, total_docs))
+            # Rarity is half the evidence, the same idea as inverse document
+            # frequency in lexical search: a well name held by one document says
+            # far more than state=WYOMING, which 1,375 documents carry. The other
+            # half is whether the value is what this document is or merely one of
+            # many it lists; see _specificity. Both are scaled to [0, 1], so the
+            # full boost needs a value that is rare everywhere and singular here.
+            weights[doc_id] = max(weights.get(doc_id, 0.0),
+                                  boost * _idf(docs, total_docs) * _specificity(held, best_held))
 
         filters, params = [], []
         for key in dict.fromkeys(key for key, _ in groups):

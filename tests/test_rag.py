@@ -239,11 +239,11 @@ def test_metadata_matches_on_words_not_on_raw_substrings(tmp_path):
     cfg = {"retrieve": {"metadata_min_value_length": 4}}
 
     question = "What depth interval does the log for FLUOR 41 X #1-2 cover?"
-    matched = {(k, v) for _, k, v, _ in mentioned_metadata(con, question, cfg)}
+    matched = {(k, v) for _, k, v, _, _ in mentioned_metadata(con, question, cfg)}
     assert ("well", 'FLUOR 41 "X" #1-2') in matched, "punctuation does not survive the trip"
     assert ("curve", "DEPT") not in matched, "DEPT is not the word depth"
 
-    matched = {k for _, k, _, _ in mentioned_metadata(con, "wells in the teapot dome field", cfg)}
+    matched = {k for _, k, _, _, _ in mentioned_metadata(con, "wells in the teapot dome field", cfg)}
     assert "field" in matched, "case and word order within the value still match"
     con.close()
 
@@ -373,3 +373,26 @@ def test_each_request_gets_its_own_token():
     first = build_messages("q", [hit])[1]["content"]
     second = build_messages("q", [hit])[1]["content"]
     assert first != second, "a token reused across requests is a token a file can learn"
+
+
+def test_a_document_that_is_the_value_outranks_one_that_merely_lists_it():
+    """Rarity alone could not tell them apart. Asked for well NPR 3
+    #51-41SX10UP4, the log holding one `well` and a spreadsheet holding 71
+    `lease number` values both had a value unique in the corpus, so both took
+    the full boost and the spreadsheet won on similarity."""
+    from geo_mini_rag.rag.search import _specificity
+
+    assert _specificity(1, 1) == 1.0
+    assert _specificity(71, 1) < 0.25
+    assert _specificity(2111, 1) < _specificity(71, 1)
+
+
+def test_when_every_match_is_a_list_none_of_them_is_penalised():
+    """Holding many values is what makes a document right for "which shapefile
+    has Mulberry Street". Penalising that absolutely took the containment set
+    from 45% to 5% on the top hit, so the comparison is against the best match
+    the question actually found."""
+    from geo_mini_rag.rag.search import _specificity
+
+    assert _specificity(2111, 2111) == 1.0
+    assert _specificity(5000, 4000) > 0.97, "two long lists are near enough equal"
