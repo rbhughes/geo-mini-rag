@@ -42,6 +42,13 @@ handlers:
     dominant_max_share: 0.9
     prose_min_length: 40
     header_max_length: 64           # a first-row cell longer than this is data, not a header
+    header_min_share: 0.6           # this much of the first row labelled for it to be a header
+    # A spreadsheet is stricter than a .dbf: a numeric or date column gives up
+    # its header and nothing else, because nobody searches for a reading. The
+    # exception is an identifier, and API numbers are read out of any column.
+    # A column this numeric is numeric; one stray label from a second header
+    # row is an outlier, not evidence of prose.
+    numeric_min_share: 0.9
     # 0 means every row. Two GovDocs1 lab workbooks hold 4,611 and 2,076 rows
     # and produce 8,100 of the corpus's 10,300 spreadsheet chunks between them;
     # capping this trades their tail for a smaller index. Left off because the

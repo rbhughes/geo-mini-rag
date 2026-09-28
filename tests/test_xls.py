@@ -56,11 +56,38 @@ def test_a_repeating_column_becomes_a_fact_and_a_distinct_one_does_not():
     assert facts["field"] == ["Well", "Operator"]
 
 
-def test_a_number_column_becomes_a_range():
-    rows = [["Depth"]] + [[str(d)] for d in (100, 250, 3124)]
-    facts = facts_of([("Sheet1", _sheet(rows))], LIMITS)
-    assert facts["depth_min"] == 100.0
-    assert facts["depth_max"] == 3124.0
+def test_a_numeric_column_contributes_its_header_and_nothing_else():
+    """Stricter than a .dbf on purpose: nobody searches for a reading."""
+    rows = [["Depth", "Well"]] + [[d, w] for d, w in
+                                  ((100.0, "LUTIN"), (250.0, "SI TANKA"), (3124.0, "HOPKINS"))]
+    fields = _sheet(rows)
+    assert [f.kind for f in fields] == ["number", "text"]
+    facts = facts_of([("Sheet1", fields)], LIMITS)
+    assert "Depth" in facts["field"], "the header says what the sheet is about"
+    assert not any(k.startswith("depth") for k in facts), "no range, no values"
+    assert not any("3124" in c for c in row_chunks(fields, LIMITS))
+
+
+def test_a_date_column_is_dropped_and_is_not_mistaken_for_a_number():
+    """1977-09-26 is digits and separators, and so is 1,977.26; the cell type
+    is what tells them apart, not the spelling."""
+    rows = [["Spud", "Well"]] + [[dt.date(1977, 9, d), f"A-{d}"] for d in (1, 2, 3)]
+    fields = _sheet(rows)
+    assert fields[0].kind == "date"
+    facts = facts_of([("Sheet1", fields)], LIMITS)
+    assert "Spud" in facts["field"]
+    assert "spud" not in facts
+    assert not any("1977" in c for c in row_chunks(fields, LIMITS))
+
+
+def test_a_numeric_api_column_is_still_read():
+    """The identifier is the exception the rule exists to protect."""
+    rows = [["Api Number", "Operator"]] + [[n, "ACME"] for n in
+                                           (4902511080, 4902510421, 4902510399)]
+    fields = _sheet(rows)
+    assert fields[0].kind == "number"
+    facts = facts_of([("Sheet1", fields)], LIMITS)
+    assert facts["api"] == ["4902511080", "4902510421", "4902510399"]
 
 
 def test_a_column_of_bare_numbers_is_not_repeated_per_row():

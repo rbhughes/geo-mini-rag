@@ -37,6 +37,8 @@ DEFAULTS = {
     "rows_per_chunk": 25,
     "max_rows_per_sheet": 0,        # 0 means every row; a sheet is not truncated
     "header_max_length": 64,        # a first-row cell longer than this is data, not a header
+    "header_min_share": 0.6,        # this much of the first row must be labelled for it to be one
+    "numeric_min_share": 0.9,       # this much of a column numeric, and a stray label is an outlier
 }
 
 # A column name the sheet did not give. Prefixing them marks the difference,
@@ -74,15 +76,11 @@ def _cell(value) -> str:
     return str(value).strip()
 
 
-def _rows_calamine(path: Path) -> list[tuple[str, list[list[str]]]]:
+def _rows_calamine(path: Path) -> list[tuple[str, list[list]]]:
     import python_calamine
 
     book = python_calamine.CalamineWorkbook.from_path(str(path))
-    out = []
-    for name in book.sheet_names:
-        rows = [[_cell(c) for c in row] for row in book.get_sheet_by_name(name).to_python()]
-        out.append((name, rows))
-    return out
+    return [(name, book.get_sheet_by_name(name).to_python()) for name in book.sheet_names]
 
 
 def _rows_xlrd(path: Path) -> list[tuple[str, list[list[str]]]]:
@@ -93,13 +91,23 @@ def _rows_xlrd(path: Path) -> list[tuple[str, list[list[str]]]]:
     out = []
     for index in range(book.nsheets):
         sheet = book.sheet_by_index(index)
-        rows = [[_cell(sheet.cell_value(r, c)) for c in range(sheet.ncols)]
-                for r in range(sheet.nrows)]
+        rows = []
+        for r in range(sheet.nrows):
+            row = []
+            for c in range(sheet.ncols):
+                cell = sheet.cell(r, c)
+                if cell.ctype == xlrd.XL_CELL_DATE:
+                    # A spreadsheet date carries no zone; inventing one would be worse.
+                    row.append(dt.datetime(*xlrd.xldate_as_tuple(   # noqa: DTZ001
+                        cell.value, book.datemode)))
+                else:
+                    row.append(cell.value)
+            rows.append(row)
         out.append((sheet.name, rows))
     return out
 
 
-def read_sheets(path: Path) -> list[tuple[str, list[list[str]]]]:
+def read_sheets(path: Path) -> list[tuple[str, list[list]]]:
     """Every sheet as rows of strings, by whichever reader can open the file."""
     try:
         return _rows_calamine(path)
@@ -114,7 +122,31 @@ def read_sheets(path: Path) -> list[tuple[str, list[list[str]]]]:
             raise NotWorkbook(f"{first}; xlrd: {second}") from first
 
 
-def columns_of(name: str, rows: list[list[str]], limits: dict) -> list[Field]:
+def _kind(raw: list, numeric_min_share: float) -> str:
+    """text | number | date, from what the cells are rather than how they print.
+
+    A date cannot be told from a number by looking at the string: 1977-09-26 is
+    digits and separators, and so is 1,977.26. The workbook knows which is
+    which, so it is asked rather than guessed.
+
+    A share rather than all of them, because one stray label does not make a
+    column of readings textual. A sheet with a two-row header leaves its second
+    label row stranded in the data, and requiring purity there let 4,610
+    measurements through as prose.
+    """
+    present = [v for v in raw if v is not None and v != ""]
+    if not present:
+        return "text"
+    dates = sum(isinstance(v, (dt.datetime, dt.date, dt.time)) for v in present)
+    numbers = sum(isinstance(v, (int, float)) and not isinstance(v, bool) for v in present)
+    if dates / len(present) >= numeric_min_share:
+        return "date"
+    if numbers / len(present) >= numeric_min_share:
+        return "number"
+    return "text"
+
+
+def columns_of(name: str, rows: list[list], limits: dict) -> list[Field]:
     """A sheet's columns, named by its first row when that row is a header.
 
     A header row is one whose cells are short, present and distinct -- which is
@@ -125,26 +157,31 @@ def columns_of(name: str, rows: list[list[str]], limits: dict) -> list[Field]:
     if not rows:
         return []
     width = max(len(r) for r in rows)
-    first = [(rows[0][i] if i < len(rows[0]) else "") for i in range(width)]
+    first = [_cell(rows[0][i]) if i < len(rows[0]) else "" for i in range(width)]
+    # Most cells, not all: a real header often leaves a spacer column blank,
+    # and demanding a full row rejected it and left the labels stranded in the
+    # data below. The filled ones still have to be distinct, short, and not all
+    # digits, which is what makes a header a header.
+    named = [cell for cell in first if cell]
     labelled = (
         len(rows) > 1
-        and all(cell for cell in first)
-        and len(set(first)) == width
-        and all(len(cell) <= limits["header_max_length"] for cell in first)
-        and not all(BARE_NUMBER.match(cell) for cell in first)
+        and len(named) >= limits["header_min_share"] * width
+        and len(set(named)) == len(named)
+        and all(len(cell) <= limits["header_max_length"] for cell in named)
+        and not all(BARE_NUMBER.match(cell) for cell in named)
     )
-    names = first if labelled else [f"{POSITIONAL}{i + 1}" for i in range(width)]
+    names = [cell or f"{POSITIONAL}{i + 1}" for i, cell in enumerate(first)] if labelled \
+        else [f"{POSITIONAL}{i + 1}" for i in range(width)]
     body = rows[1:] if labelled else rows
     if limits["max_rows_per_sheet"]:
         body = body[: limits["max_rows_per_sheet"]]
 
     fields = []
     for i, column_name in enumerate(names):
-        values = [(r[i] if i < len(r) else "") for r in body]
-        kind = "number" if values and all(
-            not v or BARE_NUMBER.match(v) for v in values
-        ) else "text"
-        fields.append(Field(name=str(column_name), kind=kind, values=values))
+        raw = [(r[i] if i < len(r) else None) for r in body]
+        fields.append(Field(name=str(column_name),
+                            kind=_kind(raw, limits["numeric_min_share"]),
+                            values=[_cell(v) for v in raw]))
     return fields
 
 
@@ -179,30 +216,56 @@ def api_values(fields: list[Field]) -> list[str]:
     return list(seen)
 
 
+def carried_columns(fields: list[Field], limits: dict) -> list[Field]:
+    """The columns whose values are worth indexing: the textual ones.
+
+    Stricter than the rule for a .dbf, and deliberately. An attribute table is
+    mostly names; a spreadsheet is mostly arithmetic, and nobody searches for a
+    number that does not identify something. Two lab workbooks in data/raw made
+    the case: 4,611 and 2,076 rows of microarray readings produced 8,100 of the
+    10,300 spreadsheet chunks, none of them answerable by any question.
+
+    So a numeric or date column contributes no values at all -- not to the text,
+    not as a range. Its header still counts, because "Latitude" or "Spud Date"
+    says what the sheet is about even when no reading in it is searchable.
+
+    The exception is the identifier, which is what an API number is: those are
+    read out of any column by `api_values`, numeric or not, and filed as facts,
+    where identifiers belong in this pipeline anyway. A phone number or a
+    postcode is the same shape of exception and is not implemented, because
+    neither appears in this corpus and guessing at one would be inventing a
+    format.
+    """
+    return [
+        column
+        for column in fields
+        if column.kind == "text"
+        and column.role(limits) in ("identifier", "prose", "categorical")
+        and column.distinct > 1
+        and column.dominant_share < limits["dominant_max_share"]
+        and not all(BARE_NUMBER.match(value) for value in column.filled)
+    ]
+
+
 def facts_of(sheets: list[tuple[str, list[Field]]], limits: dict) -> dict:
-    """Filterable facts: categories as values, numbers as ranges."""
+    """Filterable facts: textual categories, well numbers, and the headers."""
     facts: dict = {}
     named: list[str] = []
     wells: list[str] = []
     for _, fields in sheets:
         wells += api_values(fields)
         for column in fields:
-            role = column.role(limits)
-            if role == "empty":
-                continue
-            if column.name.startswith(POSITIONAL):
+            if not column.filled or column.name.startswith(POSITIONAL):
                 continue        # an unnamed column cannot be filtered on by name
-            named.append(column.name)
-            if role == "categorical" and column.dominant_share < limits["dominant_max_share"]:
+            named.append(column.name)   # the header counts even when its values do not
+            if column.kind != "text":
+                continue
+            if (column.role(limits) == "categorical"
+                    and column.dominant_share < limits["dominant_max_share"]):
                 facts.setdefault(column.name.lower(), [])
                 for value in sorted(set(column.filled)):
                     if value not in facts[column.name.lower()]:
                         facts[column.name.lower()].append(value)
-            elif role == "number":
-                numbers = column.numbers()
-                if numbers and (min(numbers) or max(numbers)):
-                    facts[f"{column.name.lower()}_min"] = min(numbers)
-                    facts[f"{column.name.lower()}_max"] = max(numbers)
     if named:
         facts["field"] = list(dict.fromkeys(named))
     if wells:
@@ -218,21 +281,24 @@ def sheet_text(path: Path, sheets: list[tuple[str, list[Field]]], limits: dict) 
     for name, fields in sheets:
         rows = len(fields[0].values) if fields else 0
         lines.append(f"Sheet {name}: {rows:,} rows, {len(fields)} columns.")
-        described = []
+        described, plain = [], []
         for column in fields:
-            role = column.role(limits)
-            if role == "empty":
+            if not column.filled:
                 continue
+            if column.kind != "text":
+                # Named, not described: the values are unsearchable by design.
+                if not column.name.startswith(POSITIONAL):
+                    plain.append(f"{column.name} ({column.kind})")
+                continue
+            role = column.role(limits)
             if role == "categorical":
                 values = sorted(set(column.filled))[:8]
                 described.append(f"{column.name} ({column.distinct} values): {', '.join(values)}")
-            elif role == "number":
-                numbers = column.numbers()
-                if numbers:
-                    described.append(f"{column.name}: {min(numbers):g} to {max(numbers):g}")
             else:
                 described.append(f"{column.name}: {column.distinct:,} distinct {role} values")
         lines.extend(f"  {line}" for line in described)
+        if plain:
+            lines.append(f"  Numeric and date columns: {', '.join(plain)}")
     return "\n".join(lines)
 
 
@@ -244,14 +310,7 @@ def row_chunks(fields: list[Field], limits: dict, budget: int | None = None) -> 
     merged and counted, since a second copy of the same sentence adds nothing to
     a text index.
     """
-    carried = [
-        column
-        for column in fields
-        if column.role(limits) in ("identifier", "prose", "categorical")
-        and column.distinct > 1
-        and column.dominant_share < limits["dominant_max_share"]
-        and not all(BARE_NUMBER.match(value) for value in column.filled)
-    ]
+    carried = carried_columns(fields, limits)
     if not any(c.role(limits) in ("identifier", "prose") for c in carried):
         return []
 
