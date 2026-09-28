@@ -180,6 +180,7 @@ footer p{max-width:68rem;margin:.35rem auto}
 <tr><td><strong>SEG-Y</strong> seismic</td><td>the EBCDIC textual header, decoded, plus sample rate and trace geometry</td><td>the traces</td></tr>
 <tr><td><strong>SEG-P1</strong> positioning</td><td>header labels, line names, shotpoint range, point count</td><td>the coordinates</td></tr>
 <tr><td><strong>ESRI shapefile</strong></td><td>title and abstract from <code>.shp.xml</code>, CRS from <code>.prj</code>, extent from <code>.shp</code>, and the <code>.dbf</code> attributes worth searching</td><td>the geometry</td></tr>
+<tr><td><strong>Excel</strong> <code>.xls</code></td><td>every column header, the values of the textual columns, and any well numbers</td><td>the values of numeric and date columns</td></tr>
 </tbody>
 </table>
 </div>
@@ -316,7 +317,7 @@ footer p{max-width:68rem;margin:.35rem auto}
 <p>
   A projection, a state and a county each name a <em>set</em> of documents rather than
   describing one, and the rarity boost cannot deliver them: 21 layers out of 2,520 documents
-  earn about 0.06, which will not lift anything past 68,000 chunks. An exact match narrows the
+  earn about 0.06, which will not lift anything past 71,000 chunks. An exact match narrows the
   candidates instead.
 </p>
 
@@ -392,6 +393,113 @@ footer p{max-width:68rem;margin:.35rem auto}
   one.
 </p>
 
+<h2>Spreadsheets, read more strictly than a map layer</h2>
+
+<p>
+  A spreadsheet is an attribute table that happens to be in a file format, so its columns go
+  through the same four measurements as a <code>.dbf</code>. Reading is
+  <strong>python-calamine</strong>, a Rust parser with no Python dependencies and no system
+  libraries &mdash; 2 MB on disk against roughly 400 MB of LibreOffice and a subprocess per
+  file. It opens 68 of the 72 <code>.xls</code> files here. Three more are Excel 4.0, which
+  wrote raw BIFF with no OLE container, and <code>xlrd</code> still reads those. The 72nd is
+  password protected and is skipped with that as its reason.
+</p>
+
+<p>
+  Then one rule a <code>.dbf</code> does not get: <strong>a numeric or date column contributes
+  its header and nothing else.</strong> No values in the text, no range in the facts. An
+  attribute table is mostly names; a spreadsheet is mostly arithmetic, and nobody searches for
+  a reading. The header still counts, because <code>Total Depth</code> or <code>Oil BBLS</code>
+  says what a sheet is about even when no number in it is searchable. The exception is the
+  identifier: API numbers are read out of any column, numeric or not, and filed as facts.
+</p>
+
+<p>
+  Two lab workbooks in the corpus made the case &mdash; 4,611 and 2,076 rows of microarray
+  readings producing 8,100 of the 10,300 spreadsheet chunks, none of them answerable by any
+  question. But the rule alone barely touched the larger one, and the reason is the useful
+  part: it has a <strong>two-row header</strong>. A header row was required to be entirely
+  filled, real ones leave spacer columns blank, so the sheet was read as headerless and its
+  stranded label row sat inside every data column &mdash; which made 4,610 measurements look
+  like prose. Loosening that to <em>most</em> of the row is what actually worked.
+</p>
+
+<div class="tablewrap">
+<table>
+<thead><tr><th>69 readable workbooks</th><th class="n">segments</th><th class="n">text</th><th class="n">cost to embed</th></tr></thead>
+<tbody>
+<tr><td>rows as prose</td><td class="n">8,203</td><td class="n">9.1 MB</td><td class="n">$0.046</td></tr>
+<tr><td>text columns only</td><td class="n win">3,027</td><td class="n win">3.0 MB</td><td class="n win">$0.015</td></tr>
+</tbody>
+</table>
+</div>
+
+<p>
+  Facts and well numbers are untouched at 4,671 rows and 967 wells. Mixed columns stay, which
+  is the visible cost: <code>Elevation</code> is 700 numbers and 267 strings like
+  <code>5063 GR</code> where the text carries the datum, so it is not purely numeric and its
+  rows still read <code>Elevation: 0</code> where the number stands alone.
+</p>
+
+<h2>Being a thing, versus listing it</h2>
+
+<p>
+  Indexing those 69 workbooks cost the corpus three points of recall@5, and the cause was not
+  noise &mdash; it was a hole in the scoring that the spreadsheets happened to walk through.
+</p>
+
+<p>
+  Asked <em>&ldquo;when was NPR 3 #51-41SX10UP4 logged?&rdquo;</em>, the log that records that
+  well scores 0.4494 and takes the full rarity bonus, because it holds a <code>well</code>
+  value no other document has. A spreadsheet of 967 Teapot wells scores 0.4972 and takes
+  <em>the same full bonus</em>, because its own <code>Lease Number</code> column happens to
+  hold a value that is also unique in the corpus. Nothing separated <em>the question named
+  this document's well</em> from <em>the question named something this document happens to
+  contain</em>.
+</p>
+
+<div class="pull">
+  <p>Inverse document frequency is only half of the usual pair. The other half is the document
+  side: the log holds <strong>one</strong> <code>well</code> and <em>is</em> that well; the
+  spreadsheet holds <strong>71</strong> <code>lease number</code> values and <em>lists</em>
+  one. That count is already in the index, so the measure needs no list of keys that count as
+  identifiers.</p>
+</div>
+
+<p>
+  Applied absolutely, it overcorrected badly &mdash; and the failure is more instructive than
+  the fix. Holding many values is exactly what makes a document <em>right</em> for
+  <em>&ldquo;which shapefile has Mulberry Street?&rdquo;</em>, and that question set fell from
+  45% to <strong>5%</strong> on the top hit. Identity and mention are not properties of a
+  document at all; they are properties of the comparison.
+</p>
+
+<p>
+  So each match is weighed against the most singular match the question actually found. When
+  something claims the value as its identity, mentions rank below it; when every candidate is
+  a list, nobody is penalised. Measured against the index before spreadsheets existed:
+</p>
+
+<div class="tablewrap">
+<table>
+<thead><tr><th>eval set</th><th class="n">no spreadsheets</th><th class="n">spreadsheets, no fix</th><th class="n">spreadsheets + fix</th></tr></thead>
+<tbody>
+<tr><td>corpus, recall@5</td><td class="n">77%</td><td class="n lose">74%</td><td class="n win">77%</td></tr>
+<tr><td>subset, recall@5</td><td class="n">77%</td><td class="n lose">73%</td><td class="n win">82%</td></tr>
+<tr><td>shapefile, top hit</td><td class="n">67%</td><td class="n">67%</td><td class="n">67%</td></tr>
+<tr><td>group, top hit</td><td class="n">47%</td><td class="n">47%</td><td class="n win">53%</td></tr>
+<tr><td>SEG-Y, top hit</td><td class="n">98%</td><td class="n">98%</td><td class="n">98%</td></tr>
+</tbody>
+</table>
+</div>
+
+<p>
+  So 69 spreadsheets and 3,094 chunks are indexed at no cost to recall@5, and two sets come out
+  ahead of where they were before. None of this touches identifier or group questions: API and
+  UWI numbers are looked up, and a projection, state or county filters &mdash; which is why the
+  well-number sets sat at 100% throughout.
+</p>
+
 <h2>Retrieval, overall</h2>
 
 <p>
@@ -407,12 +515,12 @@ footer p{max-width:68rem;margin:.35rem auto}
 <table>
 <thead><tr><th>format</th><th class="n">n</th><th class="n">recall@1</th><th class="n">recall@5</th><th class="n">MRR</th></tr></thead>
 <tbody>
-<tr><td>LAS</td><td class="n">28</td><td class="n">82%</td><td class="n">93%</td><td class="n">0.851</td></tr>
+<tr><td>LAS</td><td class="n">28</td><td class="n">82%</td><td class="n">93%</td><td class="n">0.849</td></tr>
 <tr><td>PDF</td><td class="n">22</td><td class="n">50%</td><td class="n">77%</td><td class="n">0.636</td></tr>
 <tr><td>plain text</td><td class="n">22</td><td class="n">50%</td><td class="n">59%</td><td class="n">0.545</td></tr>
-<tr><td>HTML</td><td class="n">18</td><td class="n">44%</td><td class="n">72%</td><td class="n">0.569</td></tr>
-<tr><td>shapefile</td><td class="n">10</td><td class="n">60%</td><td class="n">90%</td><td class="n">0.703</td></tr>
-<tr class="total"><td>all</td><td class="n">103</td><td class="n">58%</td><td class="n">77%</td><td class="n">0.663</td></tr>
+<tr><td>HTML</td><td class="n">18</td><td class="n">44%</td><td class="n">72%</td><td class="n">0.574</td></tr>
+<tr><td>shapefile</td><td class="n">10</td><td class="n">50%</td><td class="n">80%</td><td class="n">0.603</td></tr>
+<tr class="total"><td>all</td><td class="n">103</td><td class="n">57%</td><td class="n">77%</td><td class="n">0.655</td></tr>
 </tbody>
 </table>
 </div>
@@ -427,8 +535,11 @@ footer p{max-width:68rem;margin:.35rem auto}
   Sample size is why this set exists at all. At 22 questions the 95% interval on a recall
   figure is about &plusmn;16 points, so any change worth less than that was indistinguishable
   from luck. At 103 it is about &plusmn;8 &mdash; still wide enough to be careful with, and
-  stated here rather than hidden. The whole corpus rebuilds cold in about five minutes for
-  <strong>$0.56</strong>: 2,530 files, 67,919 chunks.
+  stated here rather than hidden. The whole corpus rebuilds cold in about five and a half
+  minutes for <strong>$0.57</strong>: 2,599 files, 71,013 chunks, 71,612 extracted facts.
+  No question in this set has a spreadsheet as its answer &mdash; the set predates that
+  reader &mdash; so the 3,094 spreadsheet chunks appear here only as competition, which is
+  what the next section is about.
 </p>
 
 <h2>Two things built, measured, and switched off</h2>
@@ -451,7 +562,7 @@ footer p{max-width:68rem;margin:.35rem auto}
 <h3>HNSW vector index</h3>
 
 <p>
-  DuckDB's VSS extension, built at ingest over all 67,919 vectors in about six seconds. The
+  DuckDB's VSS extension, built at ingest over all 71,013 vectors in about six seconds. The
   planner only reaches an HNSW index through a bare nearest-neighbour query, which means
   candidates are cut <em>before</em> the filter and the metadata boost are applied &mdash; and
   those are precisely the two things this pipeline needs exact. Merging every chunk of a
@@ -460,7 +571,7 @@ footer p{max-width:68rem;margin:.35rem auto}
 
 <div class="tablewrap">
 <table>
-<thead><tr><th></th><th class="n">recall@5</th><th class="n">MRR</th><th class="n">SQL time</th></tr></thead>
+<thead><tr><th>measured before the spreadsheets were added</th><th class="n">recall@5</th><th class="n">MRR</th><th class="n">SQL time</th></tr></thead>
 <tbody>
 <tr><td>exact scan</td><td class="n win">78%</td><td class="n win">0.668</td><td class="n">0.40s</td></tr>
 <tr><td>HNSW index</td><td class="n lose">73%</td><td class="n lose">0.637</td><td class="n">0.09s</td></tr>
@@ -470,7 +581,7 @@ footer p{max-width:68rem;margin:.35rem auto}
 
 <p>
   It saves 0.3 seconds of SQL in a query that spends most of a second waiting on the embedding
-  API. At 68,000 vectors the brute-force scan is the better trade. At ten million it would not
+  API. At this many vectors the brute-force scan is the better trade. At ten million it would not
   be, and the switch is already there.
 </p>
 
@@ -492,9 +603,10 @@ footer p{max-width:68rem;margin:.35rem auto}
   chunk the index actually holds and had to survive four mechanical gates; the LAS and SEG-Y
   questions were templated from header fields instead, because a model reading one LAS header
   writes the same question every time. The real defence is the 22 hand-written questions, which
-  track the 103 generated ones to within half a point &mdash; <strong>55% / 77% / MRR
-  0.659</strong> against <strong>58% / 77% / MRR 0.663</strong>. If the generated set were
-  self-flattering, that agreement would not hold.</p>
+  track the 103 generated ones closely &mdash; <strong>55% / 82% / MRR 0.661</strong>
+  against <strong>57% / 77% / MRR 0.655</strong>, with the hand-written set now scoring
+  <em>higher</em> on recall@5. If the generated set were self-flattering, that would not
+  happen.</p>
 </div>
 
 <div class="position">
