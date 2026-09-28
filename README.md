@@ -59,6 +59,7 @@ uv run geo-mini-rag ingest --root data/subset --db data/index/subset.duckdb --tr
 | **SEG-Y** seismic | the EBCDIC textual header, decoded, plus sample rate and trace geometry | the traces |
 | **SEG-P1** positioning | header labels, line names, shotpoint range, point count | the coordinates |
 | **ESRI shapefile** | title and abstract from `.shp.xml`, CRS from `.prj`, extent from `.shp`, and the `.dbf` attributes worth searching | the geometry |
+| **Excel** `.xls` | every column header, the textual columns' values, and any well numbers | numeric and date columns' values |
 
 **Group membership is filtered, not ranked.** A projection, a state and a
 county each name a set of documents rather than describing one, and the rarity
@@ -256,6 +257,62 @@ name is matched however it is capitalised, through
 abbreviation only, and a name cannot be derived from an abbreviation, so the
 pairing is written down rather than guessed.
 
+### Spreadsheets, and why they are read more strictly than a `.dbf`
+
+A spreadsheet is an attribute table that happens to be in a file format, so its
+columns are sorted by the same four measurements, which now live in
+`ep/columns.py` and are shared with the shapefile reader. Reading is
+[python-calamine](https://github.com/dimastbk/python-calamine), a Rust parser
+with no Python dependencies and no system libraries: 2 MB on disk against
+roughly 400 MB of LibreOffice and a subprocess per file. It opens 68 of the 72
+`.xls` files here. Three more are Excel 4.0, which wrote raw BIFF with no OLE
+container, and `xlrd` still reads those, so it is the fallback rather than the
+reader. The 72nd is password protected and is skipped with that as its reason.
+
+Then one rule that a `.dbf` does not get: **a numeric or date column
+contributes its header and nothing else.** No values in the text, no range in
+the facts. An attribute table is mostly names and a spreadsheet is mostly
+arithmetic, and nobody searches for a reading. The header still counts, because
+`Total Depth` or `Oil BBLS` says what a sheet is about even when no number in
+it is searchable.
+
+The exception is the identifier. API numbers are read out of any column,
+numeric or not, and filed as facts — which is where identifiers belong here
+anyway, since ranking cannot find them. `WY_wellsT39_R78.xls` writes its well
+numbers under `Api Number`, seven digits each, and yields 967 of them with no
+state or county, because seven digits is below the trusted length.
+
+A phone number or a postcode is the same shape of exception and is deliberately
+not implemented: neither appears in this corpus, and guessing at a format is
+how a parser starts inventing data.
+
+Kind is decided by the cell's type rather than the spelling of its value,
+because `1977-09-26` is digits and separators and so is `1,977.26`. Only the
+workbook knows which is which, so it is asked.
+
+Two GovDocs1 lab workbooks made the case for all of this, and then showed that
+the rule alone was not enough. Between them they produced 8,100 of the corpus's
+10,300 spreadsheet chunks — 4,611 and 2,076 rows of microarray readings, none
+of them answerable by any question. But the numeric rule did not touch the
+larger one, because it has a **two-row header**: a header row was required to
+be entirely filled, real ones leave spacer columns blank, so the sheet was read
+as headerless and its stranded second label row sat inside every data column,
+which made 4,610 measurements look textual. Most of the row rather than all of
+it, plus a share test so one stray label does not make a column prose, is what
+actually worked:
+
+| | segments | text | embedding cost |
+|---|---|---|---|
+| rows as prose | 8,203 | 9.1 MB | $0.046 |
+| text columns only | **3,027** | **3.0 MB** | **$0.015** |
+
+Facts and well numbers are untouched at 4,671 rows and 967 wells; the largest
+producer falls from 6,098 chunks to 1,992. Mixed columns stay, which is the
+visible cost: `Elevation` is 700 numbers and 267 strings like `5063 GR` where
+the text carries the datum, so it is not purely numeric and its rows still read
+`Elevation: 0` where the number stands alone. `handlers.xls.numeric_min_share`
+is the dial.
+
 ## Retrieval
 
 Cosine similarity, with three corrections that matter for a collection like
@@ -311,7 +368,8 @@ src/geo_mini_rag/
     extract.py           pdf, docx, html, text
     chunk.py             combine elements up to a size
     ocr.py               scanned PDFs
-  ep/                    las, segy, segp1, shapefile, api_number
+  ep/                    las, segy, segp1, shapefile, xls, api_number
+    columns.py           what a column is for, measured; shared by shapefile and xls
 data/raw/                documents to ingest (gitignored)
 evals/                   question sets with known answers
 ```

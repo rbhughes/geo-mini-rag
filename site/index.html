@@ -526,12 +526,16 @@ footer p{max-width:68rem;margin:.35rem auto}
 </p>
 
 <ul class="gaps">
-  <li><strong>Legacy Office formats are unreadable.</strong> 81 <code>.doc</code>, 61
-  <code>.xls</code> and 58 <code>.ppt</code> files in this corpus are skipped with a recorded
+  <li><strong>Legacy word processing and slides are still unreadable.</strong> 81
+  <code>.doc</code> and 59 <code>.ppt</code> files in this corpus are skipped with a recorded
   reason &mdash; and in a real data room that stratum is where the partnership agreements, the
   AFEs and the decades of internal memos live. <code>textutil</code> covers <code>.doc</code>
-  on macOS and headless LibreOffice covers all three; neither is wired in, so the pipeline
-  reports the gap instead of quietly pretending the corpus was complete.</li>
+  on macOS and headless LibreOffice covers both; neither is wired in, so the pipeline reports
+  the gap instead of quietly pretending the corpus was complete. <code>.xls</code> used to be
+  on this list and is not any more: 69 of 73 workbooks are read by
+  <code>python-calamine</code>, a 2 MB Rust parser with no system libraries, which is the
+  argument for closing the other two the same way rather than shelling out to an office
+  suite.</li>
 
   <li><strong>Company names are only half-normalised.</strong> A name is tidied as far as its
   trailing legal suffix, and no further, because ENCANA appeared as three spellings across five
