@@ -88,10 +88,10 @@
 {"q": "What line and area does the ENCANA Oil & Gas seismic survey cover in the Arkoma Basin?", "expect_path": "data/raw/seis/debug/P55254.PCP-TER-MX-97-33.mig.199709.sgl.MIG.0.sgy", "expect_text": "LINE SWA-10 AREA SOUTHWEST ARKOMA BASIN", "note": "segy"}
 {"q": "What velocity value was used for refraction correction in processing?", "expect_path": "data/raw/seis/ld0042_file_00017.sgy", "expect_text": "REFRACTION VELOCITY: 5941 M/SEC", "note": "segy"}
 {"q": "Who operates the Salt Creek gas plant?", "expect_path": "data/raw/gis/Allpoints_Petro/Editing/WY_gas_plants.shp", "expect_text": "HOWELL PETROLEUM CORP 1111", "note": "shapefile"}
-{"q": "White population range for this region?", "expect_path": "data/raw/gis/Allpoints_Petro/GeoReferencing/States_TX_OK.shp", "expect_text": "2.62843e+06 to 1.47995e+07", "note": "shapefile"}
+{"q": "which shapefile has census population data for Texas and Oklahoma?", "expect_path": "data/raw/gis/Allpoints_Petro/GeoReferencing/States_TX_OK.shp", "expect_text": "U.S. States of TX and OK", "note": "shapefile"}
 {"q": "What geological formation is listed as a fault description in Wyoming?", "expect_path": "data/raw/gis/Allpoints_Petro/Projections/WY_faults_dd.shp", "expect_text": "base of Shannon Sandstone Member", "note": "shapefile"}
 {"q": "How many features does the USGS Prov UTM12-27 polygon map layer contain?", "expect_path": "data/raw/gis/Allpoints_Petro/Tables/USGS_Prov_UTM12-27.shp", "expect_text": "113 features", "note": "shapefile"}
-{"q": "What historical detail was added for each state?", "expect_path": "data/raw/gis/Allpoints_Petro/Tables/UT_State_UTM12_NAD27.shp", "expect_text": "the date when each State was admitted", "note": "shapefile"}
+{"q": "which shapefile records the date each state was admitted to the Union?", "expect_path": "data/raw/gis/Allpoints_Petro/Tables/UT_State_UTM12_NAD27.shp", "expect_text": "the date when each State was admitted", "note": "shapefile"}
 {"q": "What is the alternate name for Schoonover Rd?", "expect_path": "data/raw/gis/Allpoints_Petro/WY_data/MajorRoads_WY.shp", "expect_text": "ALT1_NAME: BUFFALO CUT ACROSS RD", "note": "shapefile"}
 {"q": "What positional offset threshold was used for snapping hydrographic features?", "expect_path": "data/raw/gis/Allpoints_Petro/WY_data/Streams_WY.shp", "expect_text": "less than or equal to 200 m", "note": "shapefile"}
 {"q": "What is the surface name for S University Blvd?", "expect_path": "data/raw/gis/DENV/FCROADS.shp", "expect_text": "61 High Flexible", "note": "shapefile"}
@@ -99,17 +99,17 @@
 {"q": "When was the Sooner Unit field discovered?", "expect_path": "data/raw/tks/SOONER/Sooner Unit_lin.shp", "expect_text": "1985 to 1985", "note": "shapefile"}
 {"q": "Where is the MI112 C lease located?", "expect_path": "data/raw/data/Powder/Leases/Sample.ldf", "expect_text": "Big Horn Campbell Wyoming USA", "note": "text"}
 {"q": "What error message appears for wells with missing coordinate data?", "expect_path": "data/raw/ggx/Teapot/User Files/rhughes/Log Files/Import.log", "expect_text": "Missing or invalid coordinate(s) for UWI", "note": "text"}
-{"q": "What fragment contains the substring 'OTkm5ub'?", "expect_path": "data/raw/gis/Allpoints_Petro/GeoReferencing/Counties_TX_OK.shp.xml", "expect_text": "lLi45OTkm5ub", "note": "text"}
+{"q": "which file describes the generalized U.S. counties layer for Texas and Oklahoma?", "expect_path": "data/raw/gis/Allpoints_Petro/GeoReferencing/Counties_TX_OK.shp.xml", "expect_text": "U.S. Counties for states of TX and OK", "note": "text"}
 {"q": "Where was the National Atlas of the United States hydrography map published?", "expect_path": "data/raw/gis/Allpoints_Petro/Tables/UT_State_UTM12_NAD27.shp.xml", "expect_text": "Reston, Virginia", "note": "text"}
 {"q": "What does WELLV stand for?", "expect_path": "data/raw/gis/usgs/shape/ohcells04g.shp.xml", "expect_text": "WELLV = Oil and gas well.", "note": "text"}
 {"q": "What opportunity do technical soil services provide for new customers?", "expect_path": "data/raw/govdocs1_thread0/032/032132.txt", "expect_text": "a means to obtain advocates for the program", "note": "text"}
 {"q": "What percentage of voting stock ownership creates a presumption of control over a concern?", "expect_path": "data/raw/govdocs1_thread0/076/076430.txt", "expect_text": "50 percent or more", "note": "text"}
 {"q": "What is the unemployment rate as a percent of the civilian labor force?", "expect_path": "data/raw/govdocs1_thread0/111/111807.csv", "expect_text": "7.1,+/-0.2,8.1,+/-0.3,5.9,+/-0.3,4.7,+/-0.5,7.2,+/-0.5", "note": "text"}
 {"q": "How many department and other general merchandise stores are there?", "expect_path": "data/raw/govdocs1_thread0/131/131213.csv", "expect_text": "9,856", "note": "text"}
-{"q": "What is the first character sequence embedded within the repeated 'f' pattern?", "expect_path": "data/raw/govdocs1_thread0/234/234507.ps", "expect_text": "271f27", "note": "text"}
+{"q": "which document covers coupled receiver decoders for low-rate turbo codes?", "expect_path": "data/raw/govdocs1_thread0/234/234507.ps", "expect_text": "Coupled Receiver", "note": "text"}
 {"q": "What data is associated with the WAY GAR location in the GPS1533 entry?", "expect_path": "data/raw/govdocs1_thread0/243/243616.txt", "expect_text": "WAY GAR AB6137 1832 NASH AB6094 1789", "note": "text"}
 {"q": "When was well BBO1 recorded?", "expect_path": "data/raw/govdocs1_thread0/344/344378.txt", "expect_text": "19990608", "note": "text"}
-{"q": "What was the population of Mississippi County, Arkansas in the first year shown?", "expect_path": "data/raw/govdocs1_thread0/481/481301.csv", "expect_text": "40,391", "note": "text"}
+{"q": "what was the population of Mississippi County, Arkansas in 1990?", "expect_path": "data/raw/govdocs1_thread0/481/481301.csv", "expect_text": "57,525", "note": "text"}
 {"q": "What onsource status warning was reported for antenna 195142816?", "expect_path": "data/raw/govdocs1_thread0/542/542766.log", "expect_text": "ONSOURCE status is SLEWING", "note": "text"}
 {"q": "What must the agreement promote regarding bulk-power system reliability?", "expect_path": "data/raw/govdocs1_thread0/556/556176.xml", "expect_text": "effective and efficient administration of bulk-power system reliability", "note": "text"}
 {"q": "What units are used to express the minimum temperature values?", "expect_path": "data/raw/govdocs1_thread0/576/576891.xml", "expect_text": "degrees Celsius*100", "note": "text"}

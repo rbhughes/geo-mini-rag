@@ -4,6 +4,13 @@ These name a set of documents rather than describing one, and the rarity boost
 cannot deliver them. 21 layers out of 2,520 earn about 0.06, which will not
 lift them past 68,000 chunks. An exact match narrows the candidates instead.
 
+The questions say "shapefiles" rather than "layers" because that is what a
+person asks for. Expect the filtered number to rise a little on the rewording
+alone: a workbook's summary chunk opens "Spreadsheet <name>" and a layer's opens
+"Map layer (shapefile)", and naming the format is worth 17 points on the
+spreadsheet set. That is the question getting more natural, not the system
+getting better.
+
 Both arms are measured here, ranked against filtered, because the filtered
 number alone says nothing. Ground truth is the index: the documents that carry
 the value are the documents the question is asking for.
@@ -22,8 +29,8 @@ from geo_mini_rag.rag import search as search_mod
 con = duckdb.connect(str(DB), read_only=True)
 
 ASKED = (
-    ("crs_name", "which layers are in {}?", 2),
-    ("crs_datum", "which layers use the {} datum?", 2),
+    ("crs_name", "which shapefiles are in {}?", 2),
+    ("crs_datum", "which shapefiles use the {} datum?", 2),
     ("api_state", "which wells are in {}?", 2),
     ("api_county", "which wells are in {} County?", 2),
 )
