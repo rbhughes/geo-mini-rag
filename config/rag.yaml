@@ -34,6 +34,19 @@ handlers:
     categorical_max_ratio: 0.2      # each value recurs at least five times: a category, not a name
     dominant_max_share: 0.9         # a value this common describes the layer, not the feature
     prose_min_length: 40            # average characters, above which a field is text not a label
+  xls:
+    # A sheet is an attribute table that happens to be in a spreadsheet, so the
+    # same four measurements sort its columns; see ep/columns.py.
+    rows_per_chunk: 25
+    categorical_max_ratio: 0.2
+    dominant_max_share: 0.9
+    prose_min_length: 40
+    header_max_length: 64           # a first-row cell longer than this is data, not a header
+    # 0 means every row. Two GovDocs1 lab workbooks hold 4,611 and 2,076 rows
+    # and produce 8,100 of the corpus's 10,300 spreadsheet chunks between them;
+    # capping this trades their tail for a smaller index. Left off because the
+    # rule everywhere else here is to add chunks rather than truncate.
+    max_rows_per_sheet: 0
 
 retrieve:
   top_k: 6

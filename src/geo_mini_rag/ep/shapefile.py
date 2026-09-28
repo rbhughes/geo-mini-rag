@@ -34,12 +34,11 @@ from __future__ import annotations
 import re
 import struct
 import xml.etree.ElementTree as ET
-from collections import Counter
 from dataclasses import dataclass, field
-from functools import cached_property
 from pathlib import Path
 
 from geo_mini_rag.ep import api_number
+from geo_mini_rag.ep.columns import BARE_NUMBER, Field
 from geo_mini_rag.rag.extract import Extracted, Skip
 from geo_mini_rag.rag.trace import Tracer
 
@@ -62,8 +61,6 @@ GEOMETRY_TYPES = {
     31: "multipatch",
 }
 DBF_TYPES = {"C": "text", "N": "number", "F": "number", "D": "date", "L": "boolean", "M": "memo"}
-# A value with no letters in it: 1401, 08031, 0002498.
-BARE_NUMBER = re.compile(r"^[\d.,+-]+$")
 
 WKT_NAME = re.compile(r'^\s*(?:PROJCS|GEOGCS|GEOGCRS|PROJCRS)\s*\[\s*"([^"]+)"')
 WKT_DATUM = re.compile(r'DATUM\s*\[\s*"([^"]+)"')
@@ -81,56 +78,6 @@ XML_STUBS = {"dataset copied.", "required: a brief narrative summary of the data
 
 class NotShapefile(ValueError):
     """The file is not a readable shapefile bundle."""
-
-
-@dataclass
-class Field:
-    name: str
-    kind: str                       # text | number | date | boolean | memo
-    length: int
-    values: list[str] = field(default_factory=list)
-
-    @cached_property
-    def filled(self) -> list[str]:
-        """Values that say something. A field of blanks is not a field."""
-        return [v.strip() for v in self.values if v.strip()]
-
-    @cached_property
-    def distinct(self) -> int:
-        return len(set(self.filled))
-
-    @cached_property
-    def dominant_share(self) -> float:
-        """How much of the field one value covers: 1.0 when every row agrees."""
-        return max(Counter(self.filled).values()) / len(self.filled) if self.filled else 0.0
-
-    def role(self, limits: dict) -> str:
-        """empty | categorical | identifier | prose | number — measured, not guessed.
-
-        Repetition is what makes a category: COMPANY holds 70 operators across
-        2,111 wells, so every value recurs about thirty times and the field is
-        worth filtering on. WELL_NUMBE holds 1,564 values in the same rows and
-        names individual things, so it belongs in the text instead.
-        """
-        if not self.filled:
-            return "empty"
-        if self.kind == "number":
-            return "number"
-        average_length = sum(len(v) for v in self.filled) / len(self.filled)
-        if average_length >= limits["prose_min_length"]:
-            return "prose"
-        if self.distinct / len(self.filled) <= limits["categorical_max_ratio"]:
-            return "categorical"
-        return "identifier"
-
-    def numbers(self) -> list[float]:
-        out = []
-        for value in self.filled:
-            try:
-                out.append(float(value))
-            except ValueError:
-                continue
-        return out
 
 
 @dataclass
@@ -354,7 +301,10 @@ def layer_text(layer: Layer) -> str:
 # which is why it is safe where the prose rule needs a label -- across every
 # other numeric column here, TypeId, ObjectID, ParentCode, ASR_ID, not one
 # value validates.
-API_COLUMN_NAME = re.compile(r"(?i)^(api|uwi)(_?(no|num|number|nbr|id|14|12|10))?$")
+# A space or a hyphen separates as well as an underscore: a .dbf name cannot
+# hold a space, but a spreadsheet header routinely does, and "Api Number" is
+# how the Wyoming wells workbook writes it.
+API_COLUMN_NAME = re.compile(r"(?i)^(api|uwi)([_\s-]?(no|num|number|nbr|id|14|12|10))?$")
 # Most of a column, not all of it: a real table has blanks, a stray note and a
 # row someone typed by hand. Anything from a tenth upwards separates the two
 # cases seen here, so this is tolerant rather than tuned.
