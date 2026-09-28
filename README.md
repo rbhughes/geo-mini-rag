@@ -313,6 +313,38 @@ the text carries the datum, so it is not purely numeric and its rows still read
 `Elevation: 0` where the number stands alone. `handlers.xls.numeric_min_share`
 is the dial.
 
+`evals/xls_sets.py` exists because the 103-question corpus set has no
+spreadsheet in it at all — it predates the reader — so those 69 workbooks had
+been measured only for the harm they might do to other questions, never for
+whether one can be found when it is wanted. Ground truth is mechanical, the way
+the SEG-Y and shapefile sets build theirs: every question comes from a value the
+index holds, and its answer set is every document holding that value, whatever
+format it is in. **138 questions, 57% on the top hit, 79% recall@10.**
+
+| | n | top hit | recall@10 |
+|---|---|---|---|
+| *which file has a column called `Unit or Lease Name`?* | 66 | 53% | 85% |
+| *which file lists `SALT CREEK`?* | 24 | 58% | 85% |
+| *which **spreadsheet** lists `SALT CREEK`?* | 24 | **75%** | 86% |
+| *which spreadsheet has well `2506988`?* | 12 | **0%** | 0% |
+| *which spreadsheet has well `*2506988*`?* | 12 | **100%** | 100% |
+
+The column questions are what the numeric rule pays for: a sheet gives up the
+header of every numeric column and none of its values, and those headers are
+findable.
+
+Rows two and three are the same 24 values asked twice, once with the word
+"spreadsheet" in the question. It is worth 17 points, because the summary chunk
+of a workbook begins `Spreadsheet WY_wellsT39_R78.xls: 1 sheet` — a document
+that says what it is can be asked for by what it is. Map layers do the same,
+opening `Map layer (shapefile) …`.
+
+The last two rows are one boundary measured from both sides. A workbook writes
+its well numbers seven digits long, the state code dropped, and a bare number
+that short is not treated as an identifier at all: at that length it could be
+anything. Starred, declaring it a fragment, it is exact. That is the wildcard
+design stated as a number rather than a footnote.
+
 ## Retrieval
 
 Cosine similarity, with three corrections that matter for a collection like
