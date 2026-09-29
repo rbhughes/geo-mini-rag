@@ -9,6 +9,7 @@ no single document may take more than its share of the answer.
 from __future__ import annotations
 
 import math
+import re
 from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
@@ -94,12 +95,17 @@ def mentioned_metadata(con, question: str, cfg: dict) -> list[tuple[str, str, st
 # of 2,520 earn about 0.06, which will not lift them past 68,000 chunks. An
 # exact match on one of these narrows the candidates instead.
 #
+# A year is one too: "which wells were logged in 1977" names 169 documents out
+# of 1,632, which the boost spreads evenly across and cannot tell apart. It
+# needs _subsumed to be safe, because a projection name carries a year that is
+# not a year -- NAD 1983 HARN StatePlane Colorado North.
+#
 # A state and a county are the same kind of thing. "What LAS files are in TX"
 # names 11 documents out of 2,520 and the boost left every one of them off the
 # first page, returning Wyoming logs; a filter answers it. Values within one
 # key are alternatives and are OR'd; separate keys are separate conditions and
 # are AND'd, so a question naming a state and a county asks for both.
-GROUP_KEYS = frozenset({"crs_name", "crs_datum", "api_state", "api_county"})
+GROUP_KEYS = frozenset({"crs_name", "crs_datum", "api_state", "api_county", "log_year"})
 
 # A key is near-universal in a kind when almost every document of that kind
 # carries it. Read from the index instead of listed, so a new handler that
@@ -129,6 +135,55 @@ def _as_clauses(where) -> list[tuple[str, str, str]]:
     if isinstance(where, dict):
         return [(k, "=", v) for k, v in where.items()]
     return list(where)
+
+
+def _as_words(text: str) -> list[str]:
+    """The same reduction the match itself uses: lower case, alphanumeric runs."""
+    return re.sub(r"[^a-z0-9]+", " ", text.lower()).split()
+
+
+def _covers(longer: list[str], shorter: list[str]) -> bool:
+    """Whether one word sequence contains the other, whole and unbroken."""
+    if not shorter or len(shorter) >= len(longer):
+        return False
+    return any(longer[i:i + len(shorter)] == shorter
+               for i in range(len(longer) - len(shorter) + 1))
+
+
+# A year is only a year when the question says something was done in it. The
+# same rule as the one on API numbers, and for the same reason: four digits are
+# four digits, and "the 2012 update readme" is not asking about a log date. On
+# 1,632 documents the difference is 169 candidates or all of them.
+WHEN_CUES = re.compile(
+    r"(?i)\b(logged|logging|recorded|recording|run|ran|surveyed|survey|drilled|"
+    r"spudded|completed|shot|acquired|vintage|dated|since|before|after|during)\b")
+WHEN_KEYS = frozenset({"log_year"})
+
+
+def _uncued(mentions, question: str) -> set[tuple[str, str]]:
+    """Year matches the question gives no reason to read as a date."""
+    if WHEN_CUES.search(question):
+        return set()
+    return {(key, value) for _, key, value, _, _ in mentions if key in WHEN_KEYS}
+
+
+def _subsumed(mentions) -> set[tuple[str, str]]:
+    """Matches a longer match already accounts for, which are not evidence.
+
+    "Which shapefiles are in NAD 1983 HARN StatePlane Colorado North" names one
+    thing, and the index answers with two: the projection, and a log_year of
+    1983 that is simply four characters inside the projection's name. Both
+    become filters, the filters are combined, and the answer disappears. The
+    year in a coordinate system is not a year.
+
+    So a matched value whose words sit whole and unbroken inside another
+    matched value is dropped. The longer match explains more of the question
+    and already covers the shorter one; keeping both counts the same span
+    twice and, where the span was never about the shorter thing, wrongly.
+    """
+    seqs = {(key, value): _as_words(value) for _, key, value, _, _ in mentions}
+    return {a for a, words in seqs.items()
+            if any(_covers(other, words) for b, other in seqs.items() if b != a)}
 
 
 def _idf(docs_with_value: int, total_docs: int) -> float:
@@ -295,6 +350,8 @@ def search(
         weights: dict[str, float] = {}
         groups: list[tuple[str, str]] = []
         mentions = mentioned_metadata(con, question, cfg)
+        covered = _subsumed(mentions) | _uncued(mentions, question)
+        mentions = [m for m in mentions if (m[1], m[2]) not in covered]
         best_held = min((held for *_, held in mentions), default=1)
         for doc_id, key, value, docs, held in mentions:
             by_doc.setdefault(doc_id, []).append(f"{key}={value}")
