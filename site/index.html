@@ -228,6 +228,57 @@ footer p{max-width:68rem;margin:.35rem auto}
   the wrong one first a quarter of the time.
 </p>
 
+<h2>The claim, measured on well logs</h2>
+
+<p>
+  Every reader here has a question set built the same mechanical way: each question comes from
+  a value the index actually holds, and its answer set is every document holding that value.
+  The one carrying this project's central claim was, until recently, the exception &mdash; its
+  questions lived only in the general corpus set, 28 of them drafted by a model, which left
+  the strongest claim in the repository resting on its softest evidence.
+</p>
+
+<div class="tablewrap">
+<table>
+<thead><tr><th>55 questions about well logs</th><th class="n">n</th><th class="n">top hit</th><th class="n">recall@10</th></tr></thead>
+<tbody>
+<tr><td><em>what is the API number for well <code>FENIX &amp; SCISSON "A" #108-29</code>?</em></td><td class="n">12</td><td class="n win">83%</td><td class="n win">100%</td></tr>
+<tr><td><em>which wells did <code>WELEX</code> log?</em></td><td class="n">3</td><td class="n win">100%</td><td class="n win">100%</td></tr>
+<tr><td><em>which logs have a <code>BULK DENSITY</code> curve?</em></td><td class="n">8</td><td class="n">62%</td><td class="n">81%</td></tr>
+<tr><td><em>which logs are from the <code>TEAPOT DOME</code> field?</em></td><td class="n">12</td><td class="n">58%</td><td class="n">76%</td></tr>
+<tr><td><em>which logs were run for <code>FENIX &amp; SCISSON</code>?</em></td><td class="n">8</td><td class="n">25%</td><td class="n">55%</td></tr>
+<tr><td><em>which wells were logged in <code>1977</code>?</em></td><td class="n">12</td><td class="n lose">0%</td><td class="n lose">5%</td></tr>
+<tr class="total"><td>all</td><td class="n">55</td><td class="n">49%</td><td class="n">65%</td></tr>
+</tbody>
+</table>
+</div>
+
+<p>
+  <strong>The first row is the claim.</strong> Name a well and the log that records it comes
+  back first 83% of the time, and every log of that well comes back 100% of the time. That is
+  the thing a similarity score could not do at all.
+</p>
+
+<p>
+  <strong>The last row is the same lesson arriving again, and refused this time.</strong> A
+  year names a set of documents the way a state does &mdash; 1977 is on 169 of 1,632 &mdash;
+  so the rarity bonus spreads evenly across all of them and tells them apart not at all.
+  Filtering is what this pipeline does everywhere else that shape appears, and making the year
+  a filter does take these questions from 0% to 100%. It is not done, because projection names
+  contain years: <em>"which shapefiles are in NAD 1983 HARN StatePlane Colorado North"</em>
+  would then match the year 1983 as well, the two filters are combined, and the group set
+  falls from 53% to 21% while the hand-written question set loses 0.046 of its MRR. One
+  question type is left failing rather than bought at that price.
+</p>
+
+<p>
+  Company names are asked by their root and answered by containment, because
+  <code>FENIX &amp; SCISSON</code> is written 23 ways across 461 documents &mdash;
+  <code>FENIX &amp; SCISSON INC</code>, <code>FENIX AND SCISSON</code>,
+  <code>FENIX &amp; SCISSION</code>, and once <code>FENIX $ SCISSON</code>. That is not the
+  name normalisation this project declines to do; it is what the question means.
+</p>
+
 <h2>Well numbers have no canonical length</h2>
 
 <p>
@@ -325,8 +376,8 @@ footer p{max-width:68rem;margin:.35rem auto}
 <table>
 <thead><tr><th>19 questions naming a projection, datum, state or county</th><th class="n">top hit right</th><th class="n">recall@10</th></tr></thead>
 <tbody>
-<tr><td>ranked</td><td class="n lose">16%</td><td class="n lose">21%</td></tr>
-<tr><td>filtered</td><td class="n win">47%</td><td class="n win">44%</td></tr>
+<tr><td>ranked</td><td class="n lose">21%</td><td class="n lose">29%</td></tr>
+<tr><td>filtered</td><td class="n win">53%</td><td class="n win">47%</td></tr>
 </tbody>
 </table>
 </div>
@@ -435,6 +486,40 @@ footer p{max-width:68rem;margin:.35rem auto}
 </div>
 
 <p>
+  And a set of its own, 138 questions, built the same mechanical way: <strong>57% on the top
+  hit, 79% recall@10</strong>. Two of its rows say more than the total.
+</p>
+
+<div class="tablewrap">
+<table>
+<thead><tr><th>138 questions about spreadsheets</th><th class="n">n</th><th class="n">top hit</th><th class="n">recall@10</th></tr></thead>
+<tbody>
+<tr><td><em>which file has a column called <code>Unit or Lease Name</code>?</em></td><td class="n">66</td><td class="n">53%</td><td class="n">85%</td></tr>
+<tr><td><em>which file lists <code>SALT CREEK</code>?</em></td><td class="n">24</td><td class="n">58%</td><td class="n">85%</td></tr>
+<tr><td><em>which <strong>spreadsheet</strong> lists <code>SALT CREEK</code>?</em></td><td class="n">24</td><td class="n win">75%</td><td class="n">86%</td></tr>
+<tr><td><em>which spreadsheet has well <code>2506988</code>?</em></td><td class="n">12</td><td class="n lose">0%</td><td class="n lose">0%</td></tr>
+<tr><td><em>which spreadsheet has well <code>*2506988*</code>?</em></td><td class="n">12</td><td class="n win">100%</td><td class="n win">100%</td></tr>
+</tbody>
+</table>
+</div>
+
+<p>
+  Rows two and three are the <em>same 24 values</em>, asked twice. Adding the word
+  "spreadsheet" is worth <strong>17 points</strong>, because a workbook's summary chunk opens
+  <code>Spreadsheet WY_wellsT39_R78.xls: 1 sheet</code> and a map layer's opens
+  <code>Map layer (shapefile)</code>. A document that says what it is can be asked for by what
+  it is. I had claimed the opposite before measuring it.
+</p>
+
+<p>
+  Rows four and five are one boundary seen from both sides. A workbook writes its well numbers
+  seven digits long with the state code dropped, and a bare number that short is not treated as
+  an identifier at all &mdash; at that length it could be anything. Starred, declaring it a
+  fragment, it is exact. The column questions are what the numeric rule pays for: a sheet gives
+  up the header of every numeric column and none of its values, and those headers are findable.
+</p>
+
+<p>
   Facts and well numbers are untouched at 4,671 rows and 967 wells. Mixed columns stay, which
   is the visible cost: <code>Elevation</code> is 700 numbers and 267 strings like
   <code>5063 GR</code> where the text carries the datum, so it is not purely numeric and its
@@ -517,10 +602,10 @@ footer p{max-width:68rem;margin:.35rem auto}
 <tbody>
 <tr><td>LAS</td><td class="n">28</td><td class="n">82%</td><td class="n">93%</td><td class="n">0.849</td></tr>
 <tr><td>PDF</td><td class="n">22</td><td class="n">50%</td><td class="n">77%</td><td class="n">0.636</td></tr>
-<tr><td>plain text</td><td class="n">22</td><td class="n">50%</td><td class="n">59%</td><td class="n">0.545</td></tr>
+<tr><td>plain text</td><td class="n">22</td><td class="n">50%</td><td class="n">59%</td><td class="n">0.552</td></tr>
 <tr><td>HTML</td><td class="n">18</td><td class="n">44%</td><td class="n">72%</td><td class="n">0.574</td></tr>
 <tr><td>shapefile</td><td class="n">10</td><td class="n">50%</td><td class="n">80%</td><td class="n">0.603</td></tr>
-<tr class="total"><td>all</td><td class="n">103</td><td class="n">57%</td><td class="n">77%</td><td class="n">0.655</td></tr>
+<tr class="total"><td>all</td><td class="n">103</td><td class="n">57%</td><td class="n">77%</td><td class="n">0.657</td></tr>
 </tbody>
 </table>
 </div>
@@ -604,7 +689,7 @@ footer p{max-width:68rem;margin:.35rem auto}
   questions were templated from header fields instead, because a model reading one LAS header
   writes the same question every time. The real defence is the 22 hand-written questions, which
   track the 103 generated ones closely &mdash; <strong>55% / 82% / MRR 0.661</strong>
-  against <strong>57% / 77% / MRR 0.655</strong>, with the hand-written set now scoring
+  against <strong>57% / 77% / MRR 0.657</strong>, with the hand-written set now scoring
   <em>higher</em> on recall@5. If the generated set were self-flattering, that would not
   happen.</p>
 </div>
