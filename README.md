@@ -313,6 +313,36 @@ the text carries the datum, so it is not purely numeric and its rows still read
 `Elevation: 0` where the number stands alone. `handlers.xls.numeric_min_share`
 is the dial.
 
+`evals/las_sets.py` puts the reader the project's central claim rests on onto
+the same mechanical footing as the others. Its questions had lived only in
+`corpus.jsonl`, 28 of them drafted by a model, which left the flagship result
+with a 95% interval of about 13 points. **55 questions, 49% on the top hit, 65%
+recall@10.**
+
+| | n | top hit | recall@10 |
+|---|---|---|---|
+| *what is the API number for well `FENIX & SCISSON "A" #108-29`?* | 12 | **83%** | **100%** |
+| *which wells did `WELEX` log?* | 3 | 100% | 100% |
+| *which logs have a `BULK DENSITY` curve?* | 8 | 62% | 81% |
+| *which logs are from the `TEAPOT DOME` field?* | 12 | 58% | 76% |
+| *which logs were run for `FENIX & SCISSON`?* | 8 | 25% | 55% |
+| *which wells were logged in `1977`?* | 12 | **0%** | 5% |
+
+The first row is the claim, measured: a named well is found, and every log of
+it is found. The last row is the same lesson as coordinate systems, arriving
+again and refused this time. A year names a set of documents the way a state
+does — 1977 is on 169 of 1,632 — so the rarity boost spreads evenly across all
+of them and discriminates nothing. Adding `log_year` to the group keys takes
+those questions from 0% to 100%, and it is not done: projection names contain
+years, so "which shapefiles are in NAD 1983 HARN StatePlane Colorado North"
+would match `log_year=1983` too, the filters are ANDed, and the group set falls
+from 53% to 21% while the hand-written subset loses 0.046 of its MRR. One
+question type is left failing rather than bought at that price.
+
+Company names are asked by their root and answered by containment, because
+FENIX & SCISSON is written 23 ways across 461 documents. That is not the
+normalisation this project declines to do; it is what the question means.
+
 `evals/xls_sets.py` exists because the 103-question corpus set has no
 spreadsheet in it at all — it predates the reader — so those 69 workbooks had
 been measured only for the harm they might do to other questions, never for
