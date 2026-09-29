@@ -70,8 +70,8 @@ across the four group keys:
 
 | 19 questions naming a projection, datum, state or county | top hit right | recall@10 |
 |---|---|---|
-| ranked | 16% | 21% |
-| filtered | **47%** | **44%** |
+| ranked | 21% | 29% |
+| filtered | **53%** | **47%** |
 
 Read that as "filtering is how these are answered at all", not as a score.
 Ground truth here is *the documents carrying the value*, which is close to what
@@ -316,28 +316,36 @@ is the dial.
 `evals/las_sets.py` puts the reader the project's central claim rests on onto
 the same mechanical footing as the others. Its questions had lived only in
 `corpus.jsonl`, 28 of them drafted by a model, which left the flagship result
-with a 95% interval of about 13 points. **55 questions, 49% on the top hit, 65%
+with a 95% interval of about 13 points. **55 questions, 78% on the top hit, 90%
 recall@10.**
 
 | | n | top hit | recall@10 |
 |---|---|---|---|
-| *what is the API number for well `FENIX & SCISSON "A" #108-29`?* | 12 | **83%** | **100%** |
+| *what is the API number for well `FENIX & SCISSON "A" #108-29`?* | 12 | **92%** | **100%** |
 | *which wells did `WELEX` log?* | 3 | 100% | 100% |
-| *which logs have a `BULK DENSITY` curve?* | 8 | 62% | 81% |
+| *which logs have a `BULK DENSITY` curve?* | 8 | 75% | 82% |
 | *which logs are from the `TEAPOT DOME` field?* | 12 | 58% | 76% |
-| *which logs were run for `FENIX & SCISSON`?* | 8 | 25% | 55% |
-| *which wells were logged in `1977`?* | 12 | **0%** | 5% |
+| *which logs were run for `FENIX & SCISSON`?* | 8 | 50% | 80% |
+| *which wells were logged in `1977`?* | 12 | **100%** | **100%** |
 
 The first row is the claim, measured: a named well is found, and every log of
-it is found. The last row is the same lesson as coordinate systems, arriving
-again and refused this time. A year names a set of documents the way a state
-does — 1977 is on 169 of 1,632 — so the rarity boost spreads evenly across all
-of them and discriminates nothing. Adding `log_year` to the group keys takes
-those questions from 0% to 100%, and it is not done: projection names contain
-years, so "which shapefiles are in NAD 1983 HARN StatePlane Colorado North"
-would match `log_year=1983` too, the filters are ANDed, and the group set falls
-from 53% to 21% while the hand-written subset loses 0.046 of its MRR. One
-question type is left failing rather than bought at that price.
+it is found. The last row used to read 0% and now reads 100%, and how it got
+there is the more useful half.
+
+A year names a set of documents the way a state does — 1977 is on 169 of 1,632
+— so the rarity boost spreads evenly across them and discriminates nothing.
+Making `log_year` a group key on its own was measured and refused: the group
+set fell from 53% to 21% and the hand-written subset lost 0.046 of its MRR,
+because projection names carry years. Two general rules made it safe. A match
+whose words sit whole inside another match is dropped, so "which shapefiles are
+in NAD 1983 HARN StatePlane Colorado North" no longer also filters on the year
+1983, the state Colorado and a column named FIPS. And four digits are a date
+only when the question says something was done in them — the rule API numbers
+already had — so "logged in 1977" keeps its year and "the 2012 update readme"
+does not.
+
+Every set improved or held: corpus MRR 0.657 → 0.678, well logs 49% → 78%,
+spreadsheets 57% → 61%, shapefiles 67% → 69%, group and SEG-Y unchanged.
 
 Company names are asked by their root and answered by containment, because
 FENIX & SCISSON is written 23 ways across 461 documents. That is not the

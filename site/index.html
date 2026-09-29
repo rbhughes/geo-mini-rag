@@ -242,13 +242,13 @@ footer p{max-width:68rem;margin:.35rem auto}
 <table>
 <thead><tr><th>55 questions about well logs</th><th class="n">n</th><th class="n">top hit</th><th class="n">recall@10</th></tr></thead>
 <tbody>
-<tr><td><em>what is the API number for well <code>FENIX &amp; SCISSON "A" #108-29</code>?</em></td><td class="n">12</td><td class="n win">83%</td><td class="n win">100%</td></tr>
+<tr><td><em>what is the API number for well <code>FENIX &amp; SCISSON "A" #108-29</code>?</em></td><td class="n">12</td><td class="n win">92%</td><td class="n win">100%</td></tr>
 <tr><td><em>which wells did <code>WELEX</code> log?</em></td><td class="n">3</td><td class="n win">100%</td><td class="n win">100%</td></tr>
-<tr><td><em>which logs have a <code>BULK DENSITY</code> curve?</em></td><td class="n">8</td><td class="n">62%</td><td class="n">81%</td></tr>
+<tr><td><em>which logs have a <code>BULK DENSITY</code> curve?</em></td><td class="n">8</td><td class="n">75%</td><td class="n">82%</td></tr>
 <tr><td><em>which logs are from the <code>TEAPOT DOME</code> field?</em></td><td class="n">12</td><td class="n">58%</td><td class="n">76%</td></tr>
-<tr><td><em>which logs were run for <code>FENIX &amp; SCISSON</code>?</em></td><td class="n">8</td><td class="n">25%</td><td class="n">55%</td></tr>
-<tr><td><em>which wells were logged in <code>1977</code>?</em></td><td class="n">12</td><td class="n lose">0%</td><td class="n lose">5%</td></tr>
-<tr class="total"><td>all</td><td class="n">55</td><td class="n">49%</td><td class="n">65%</td></tr>
+<tr><td><em>which logs were run for <code>FENIX &amp; SCISSON</code>?</em></td><td class="n">8</td><td class="n">50%</td><td class="n">80%</td></tr>
+<tr><td><em>which wells were logged in <code>1977</code>?</em></td><td class="n">12</td><td class="n win">100%</td><td class="n win">100%</td></tr>
+<tr class="total"><td>all</td><td class="n">55</td><td class="n">78%</td><td class="n">90%</td></tr>
 </tbody>
 </table>
 </div>
@@ -277,6 +277,44 @@ footer p{max-width:68rem;margin:.35rem auto}
   <code>FENIX &amp; SCISSON INC</code>, <code>FENIX AND SCISSON</code>,
   <code>FENIX &amp; SCISSION</code>, and once <code>FENIX $ SCISSON</code>. That is not the
   name normalisation this project declines to do; it is what the question means.
+</p>
+
+<h3>A year is a year only when something happened in it</h3>
+
+<p>
+  Those year questions scored <strong>0%</strong> until recently, and the reason is the same
+  lesson as coordinate systems arriving a third time. <em>1977</em> is on 169 of 1,632
+  documents, so the rarity bonus spreads evenly across all of them and tells them apart not at
+  all. Group membership needs a filter.
+</p>
+
+<p>
+  Making the year a filter, on its own, was measured and <strong>refused</strong>: the group
+  questions fell from 53% to 21% and the hand-written set lost 0.046 of its MRR, because
+  projection names carry years. Two smaller rules made it safe, and both are general rather
+  than special cases for dates.
+</p>
+
+<p>
+  <strong>A match that another match already contains is dropped.</strong>
+  <em>"Which shapefiles are in NAD 1983 HARN StatePlane Colorado North"</em> names one thing,
+  and the index answered with four: the projection, a log year of 1983, a state of Colorado,
+  and a column named FIPS. Each became its own filter, they combined, and nothing survived.
+  The longer match explains more of the question and already accounts for the shorter ones.
+</p>
+
+<p>
+  <strong>And four digits are a date only when the question says something was done in
+  them.</strong> That is the rule API numbers have always had, for the same reason: a bare
+  number is not evidence, a labelled one is. <em>"Logged in 1977"</em> keeps its year;
+  <em>"the 2012 update readme"</em> does not &mdash; and that second one is a real question
+  from the hand-written set, which a bare year filter broke.
+</p>
+
+<p>
+  Every question set improved or held: well logs 49% to 78% on the top hit, the corpus MRR
+  0.657 to 0.678, spreadsheets 57% to 61%, map layers 67% to 69%, and the group and seismic
+  sets unchanged.
 </p>
 
 <h2>Well numbers have no canonical length</h2>
@@ -423,7 +461,7 @@ footer p{max-width:68rem;margin:.35rem auto}
 
 <p>
   The shapefile set asks the three things a person really puts to a pile of map layers, and
-  scores <strong>67% on the top hit, 81% recall@10</strong> over 107 of them:
+  scores <strong>69% on the top hit, 82% recall@10</strong> over 107 of them:
 </p>
 
 <div class="tablewrap">
@@ -431,7 +469,7 @@ footer p{max-width:68rem;margin:.35rem auto}
 <thead><tr><th>question</th><th class="n">n</th><th class="n">top hit right</th><th class="n">recall@10</th></tr></thead>
 <tbody>
 <tr><td><em>do I have spatial data for X?</em></td><td class="n">67</td><td class="n">64%</td><td class="n">87%</td></tr>
-<tr><td><em>which shapefile has Y?</em></td><td class="n">20</td><td class="n">45%</td><td class="n">65%</td></tr>
+<tr><td><em>which shapefile has Y?</em></td><td class="n">20</td><td class="n">55%</td><td class="n">70%</td></tr>
 <tr><td><em>which layer holds well 490250632500?</em></td><td class="n">10</td><td class="n win">100%</td><td class="n">60%</td></tr>
 <tr><td><em>which layer holds <code>*2506325</code>?</em></td><td class="n">10</td><td class="n win">100%</td><td class="n win">100%</td></tr>
 </tbody>
@@ -489,17 +527,17 @@ footer p{max-width:68rem;margin:.35rem auto}
 </div>
 
 <p>
-  And a set of its own, 138 questions, built the same mechanical way: <strong>57% on the top
-  hit, 79% recall@10</strong>. Two of its rows say more than the total.
+  And a set of its own, 138 questions, built the same mechanical way: <strong>61% on the top
+  hit, 81% recall@10</strong>. Two of its rows say more than the total.
 </p>
 
 <div class="tablewrap">
 <table>
 <thead><tr><th>138 questions about spreadsheets</th><th class="n">n</th><th class="n">top hit</th><th class="n">recall@10</th></tr></thead>
 <tbody>
-<tr><td><em>which file has a column called <code>Unit or Lease Name</code>?</em></td><td class="n">66</td><td class="n">53%</td><td class="n">85%</td></tr>
-<tr><td><em>which file lists <code>SALT CREEK</code>?</em></td><td class="n">24</td><td class="n">58%</td><td class="n">85%</td></tr>
-<tr><td><em>which <strong>spreadsheet</strong> lists <code>SALT CREEK</code>?</em></td><td class="n">24</td><td class="n win">75%</td><td class="n">86%</td></tr>
+<tr><td><em>which file has a column called <code>Unit or Lease Name</code>?</em></td><td class="n">66</td><td class="n">56%</td><td class="n">89%</td></tr>
+<tr><td><em>which file lists <code>SALT CREEK</code>?</em></td><td class="n">24</td><td class="n">67%</td><td class="n">86%</td></tr>
+<tr><td><em>which <strong>spreadsheet</strong> lists <code>SALT CREEK</code>?</em></td><td class="n">24</td><td class="n win">79%</td><td class="n">86%</td></tr>
 <tr><td><em>which spreadsheet has well <code>2506988</code>?</em></td><td class="n">12</td><td class="n lose">0%</td><td class="n lose">0%</td></tr>
 <tr><td><em>which spreadsheet has well <code>*2506988*</code>?</em></td><td class="n">12</td><td class="n win">100%</td><td class="n win">100%</td></tr>
 </tbody>
@@ -508,7 +546,7 @@ footer p{max-width:68rem;margin:.35rem auto}
 
 <p>
   Rows two and three are the <em>same 24 values</em>, asked twice. Adding the word
-  "spreadsheet" is worth <strong>17 points</strong>, because a workbook's summary chunk opens
+  "spreadsheet" is worth <strong>12 points</strong>, because a workbook's summary chunk opens
   <code>Spreadsheet WY_wellsT39_R78.xls: 1 sheet</code> and a map layer's opens
   <code>Map layer (shapefile)</code>. A document that says what it is can be asked for by what
   it is. I had claimed the opposite before measuring it.
@@ -603,12 +641,12 @@ footer p{max-width:68rem;margin:.35rem auto}
 <table>
 <thead><tr><th>format</th><th class="n">n</th><th class="n">recall@1</th><th class="n">recall@5</th><th class="n">MRR</th></tr></thead>
 <tbody>
-<tr><td>LAS</td><td class="n">28</td><td class="n">82%</td><td class="n">93%</td><td class="n">0.849</td></tr>
+<tr><td>LAS</td><td class="n">28</td><td class="n win">93%</td><td class="n">93%</td><td class="n win">0.929</td></tr>
 <tr><td>PDF</td><td class="n">22</td><td class="n">50%</td><td class="n">77%</td><td class="n">0.636</td></tr>
 <tr><td>plain text</td><td class="n">22</td><td class="n">50%</td><td class="n">59%</td><td class="n">0.552</td></tr>
 <tr><td>HTML</td><td class="n">18</td><td class="n">44%</td><td class="n">72%</td><td class="n">0.574</td></tr>
 <tr><td>shapefile</td><td class="n">10</td><td class="n">50%</td><td class="n">80%</td><td class="n">0.603</td></tr>
-<tr class="total"><td>all</td><td class="n">103</td><td class="n">57%</td><td class="n">77%</td><td class="n">0.657</td></tr>
+<tr class="total"><td>all</td><td class="n">103</td><td class="n">60%</td><td class="n">77%</td><td class="n">0.678</td></tr>
 </tbody>
 </table>
 </div>
@@ -691,20 +729,42 @@ footer p{max-width:68rem;margin:.35rem auto}
   chunk the index actually holds and had to survive four mechanical gates; the LAS and SEG-Y
   questions were templated from header fields instead, because a model reading one LAS header
   writes the same question every time. The real defence is the 22 hand-written questions, which
-  track the 103 generated ones closely &mdash; <strong>55% / 82% / MRR 0.661</strong>
-  against <strong>57% / 77% / MRR 0.657</strong>, with the hand-written set now scoring
+  track the 103 generated ones closely &mdash; <strong>55% / 82% / MRR 0.668</strong>
+  against <strong>60% / 77% / MRR 0.678</strong>, with the hand-written set still scoring
   <em>higher</em> on recall@5. If the generated set were self-flattering, that would not
   happen.</p>
 </div>
 
 <div class="position">
   <h3>Hard-coded key lists</h3>
-  <blockquote>&ldquo;Those are often part of the format spec (LAS and SEG-Y).&rdquo;</blockquote>
-  <p>A short list of well and projection keys looks like special-casing to pass an eval, and is
-  not. These are mnemonics defined by the format specifications themselves &mdash; a LAS header
-  names them, a SEG-Y card names them. Deriving them at runtime would be inventing flexibility
-  the formats do not have. Where a rule genuinely <em>can</em> be read from the data, it is:
-  the silence rule above is measured per key, not listed.</p>
+  <blockquote>&ldquo;Those are often part of the format spec &mdash; valid for LAS, probably
+  no other format here.&rdquo;</blockquote>
+  <p>A short list of well and projection keys looks like special-casing to pass an eval. Where
+  a published standard names the key, it is not &mdash; deriving it at runtime would be
+  inventing flexibility the format does not have. Checking that claim key by key gives three
+  tiers, not two:</p>
+
+  <div class="tablewrap">
+  <table>
+  <thead><tr><th>keys</th><th>where they come from</th><th>hard-coding them is</th></tr></thead>
+  <tbody>
+  <tr><td><code>WELL</code>, <code>API</code>, <code>UWI</code>, <code>FLD</code>, <code>CNTY</code>, <code>STAT</code>, <code>COMP</code>, <code>SRVC</code>, <code>DATE</code>, <code>STRT</code>/<code>STOP</code></td><td>the CWLS LAS 2.0 specification names every one</td><td class="win">correct</td></tr>
+  <tr><td>sample interval, samples per trace, sample format</td><td>SEG-Y fixes them at byte offsets 3217, 3221 and 3225 of the binary header</td><td class="win">correct</td></tr>
+  <tr><td><code>PROJCS</code>, <code>GEOGCS</code>, <code>DATUM</code></td><td>OGC Well-Known Text keywords</td><td class="win">correct</td></tr>
+  <tr><td>state and county digits</td><td>the API well-number structure: 2, then 3, then 5</td><td class="win">correct</td></tr>
+  <tr><td><code>CLIENT</code>, <code>AREA</code>, <code>LINE</code>, <code>SURVEY</code>&hellip;</td><td>nothing &mdash; SEG-Y's 3,200-byte text card is free-form, and these labels are convention</td><td class="lose">a guess</td></tr>
+  <tr><td><code>.dbf</code> columns, spreadsheet headers</td><td>nothing &mdash; vendor abbreviations with no list to check against</td><td class="lose">a guess</td></tr>
+  </tbody>
+  </table>
+  </div>
+
+  <p>So the instinct behind the objection is right, and the tell is visible in the reader
+  itself: the SEG-Y text-card handler carries synonym lists &mdash;
+  <code>CLIENT</code>, <code>COMPANY</code> and <code>PROCESSED FOR</code> all mean the same
+  thing &mdash; precisely because no standard says which one a processor will write. The two
+  rows at the bottom are the ones that had to be <em>measured</em> instead: the column
+  classification, the silence rule, and the subsumption rule above are all read from the index
+  rather than listed here.</p>
 </div>
 
 <div class="position">
