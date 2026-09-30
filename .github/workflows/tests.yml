@@ -1,0 +1,35 @@
+# Unit tests, on every push and PR. Nothing here talks to OpenRouter: the
+# tests that exercise retrieval monkeypatch `openrouter.embed` with fixed
+# vectors, so the suite needs no API key, spends nothing, and runs in a
+# couple of seconds. Fixtures are built in tmp_path; the only thing the
+# suite wants from the tree is that data/ocr and data/index exist, which
+# the tracked .gitkeep files guarantee in a fresh clone.
+#
+# pytest is in the dev dependency group, which `uv sync` installs by
+# default -- no extras flag needed here.
+name: tests
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pytest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: astral-sh/setup-uv@v10.1.0
+
+      - name: Install
+        run: uv sync
+
+      - name: Run tests
+        run: uv run pytest -q
