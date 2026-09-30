@@ -25,3 +25,6 @@ evals/runs/
 
 # Local scratch
 scribble.txt
+
+# Wrangler local cache (account id, build state)
+.wrangler
